@@ -21,6 +21,11 @@ public:
 
 	static sf::Vector3f Cross(const sf::Vector3f& v1, const sf::Vector3f& v2);
 	static sf::Vector3f Diff(const sf::Vector3f& v1, const sf::Vector3f& v2);
+	static void DrawRectangle(
+			sf::Image& img,
+			const sf::Vector2i& top_left,
+			const sf::Vector2i& bottom_right,
+			const sf::Color& color);
 };
 
 } /* namespace dfv */

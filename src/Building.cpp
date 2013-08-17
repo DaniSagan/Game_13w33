@@ -75,10 +75,16 @@ void Building::SetColor(const sf::Color& color)
 	this->colors[4] = sf::Vector3f(col.x*0.7, col.y*0.7, col.z*0.7); // roof
 }
 
+sf::Color Building::GetColor() const
+{
+	return sf::Color(this->colors[0].x * 255.0, this->colors[0].y * 255.0, this->colors[0].z * 255.0);
+}
+
 void Building::Draw(const bool draw_floors) const
 {
 	glBegin(GL_QUADS);
 		// roof
+		//glEnable(GL_CULL_FACE);
 		glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
 		glNormal3f(0.0, 0.0, 1.0);
 		glVertex3f(this->roof_pos[0].x, this->roof_pos[0].y, this->roof_pos[0].z);
@@ -89,13 +95,9 @@ void Building::Draw(const bool draw_floors) const
 		// side 1
 		//glColor3f(this->colors[1].x, this->colors[1].y, this->colors[1].z);
 		glNormal3f(0.0, -1.0, 0.0);
-		glTexCoord2d(0.0,0.0);
 		glVertex3f(this->base_pos[0].x, this->base_pos[0].y, this->base_pos[0].z);
-		glTexCoord2d(0.0,1.0);
 		glVertex3f(this->base_pos[1].x, this->base_pos[1].y, this->base_pos[1].z);
-		glTexCoord2d(1.0,1.0);
 		glVertex3f(this->roof_pos[1].x, this->roof_pos[1].y, this->roof_pos[1].z);
-		glTexCoord2d(1.0,0.0);
 		glVertex3f(this->roof_pos[0].x, this->roof_pos[0].y, this->roof_pos[0].z);
 
 		// side 2
@@ -122,6 +124,7 @@ void Building::Draw(const bool draw_floors) const
 		glVertex3f(this->roof_pos[0].x, this->roof_pos[0].y, this->roof_pos[0].z);
 		glVertex3f(this->roof_pos[3].x, this->roof_pos[3].y, this->roof_pos[3].z);
 
+		//glDisable(GL_CULL_FACE);
 		if(draw_floors == true)
 		{
 			glColor3f(0.1f, 0.1f, 0.1f);
@@ -144,6 +147,19 @@ void Building::Draw(const bool draw_floors) const
 					}
 				}
 			}
+
+			glNormal3f(0.7071, -0.7071, 0.0);
+			glVertex3f(this->floor_pos[0].x, this->floor_pos[0].y, this->floor_heights.front());
+			glVertex3f(this->floor_pos[2].x, this->floor_pos[2].y, this->floor_heights.front());
+			glVertex3f(this->floor_pos[2].x, this->floor_pos[2].y, this->floor_heights.back());
+			glVertex3f(this->floor_pos[0].x, this->floor_pos[0].y, this->floor_heights.back());
+
+			glNormal3f(0.7071, 0.7071, 0.0);
+			glVertex3f(this->floor_pos[1].x, this->floor_pos[1].y, this->floor_heights.front());
+			glVertex3f(this->floor_pos[3].x, this->floor_pos[3].y, this->floor_heights.front());
+			glVertex3f(this->floor_pos[3].x, this->floor_pos[3].y, this->floor_heights.back());
+			glVertex3f(this->floor_pos[1].x, this->floor_pos[1].y, this->floor_heights.back());
+
 		}
 	glEnd();
 }

@@ -29,13 +29,19 @@ public:
 		straight,
 		cross,
 		tcross,
-		curve
+		curve,
+		av_straight,
+		av_cross,
+		av_tcross,
+		count
 	};
 
 	void Create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
 	void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
 	void SetType(Type type);
 	void SetOrientation(unsigned int orientation);
+	unsigned int GetOrientation() const;
+	Type GetType() const;
 
 private:
 	Type type;

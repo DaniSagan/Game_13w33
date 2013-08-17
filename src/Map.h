@@ -37,11 +37,19 @@ public:
 	bool LoadHeightMap(const std::string& filename);
 	bool SaveBuildingMap(const std::string& filename);
 	bool LoadBuildingMap(const std::string& filename);
+	void GenerateMapImg(const unsigned int tile_size);
+
+	bool IsRoad(const sf::Vector2i& tile_pos) const;
+	bool HasBuilding(const sf::Vector2i& tile_pos) const;
+	sf::Color GetBuildingColor(const sf::Vector2i& tile_pos) const;
+	bool ChangeRoadType(const sf::Vector2i& tile_pos);
+	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
 
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;
 	std::vector<std::vector<dfv::Tile*> > lp_tiles;
+	sf::Image map_img;
 	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 

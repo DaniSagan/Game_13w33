@@ -111,6 +111,46 @@ void Road::SetType(Type type)
 void Road::SetOrientation(unsigned int orientation)
 {
 	this->orientation = orientation;
+	if(this->orientation == 0)
+	{
+		this->tex_coords[0] = sf::Vector2f(0.f, 0.f);
+		this->tex_coords[1] = sf::Vector2f(1.f, 0.f);
+		this->tex_coords[2] = sf::Vector2f(1.f, 1.f);
+		this->tex_coords[3] = sf::Vector2f(0.f, 1.f);
+	}
+	if(this->orientation == 1)
+	{
+		this->tex_coords[0] = sf::Vector2f(1.f, 0.f);
+		this->tex_coords[1] = sf::Vector2f(1.f, 1.f);
+		this->tex_coords[2] = sf::Vector2f(0.f, 1.f);
+		this->tex_coords[3] = sf::Vector2f(0.f, 0.f);
+	}
+	if(this->orientation == 2)
+	{
+		this->tex_coords[0] = sf::Vector2f(1.f, 1.f);
+		this->tex_coords[1] = sf::Vector2f(0.f, 1.f);
+		this->tex_coords[2] = sf::Vector2f(0.f, 0.f);
+		this->tex_coords[3] = sf::Vector2f(1.f, 0.f);
+	}
+	if(this->orientation == 3)
+	{
+		this->tex_coords[0] = sf::Vector2f(0.f, 1.f);
+		this->tex_coords[1] = sf::Vector2f(0.f, 0.f);
+		this->tex_coords[2] = sf::Vector2f(1.f, 0.f);
+		this->tex_coords[3] = sf::Vector2f(1.f, 1.f);
+	}
+}
+
+unsigned int Road::GetOrientation() const
+{
+	return this->orientation;
+}
+
+Road::Type Road::GetType() const
+{
+	return this->type;
 }
 
 } /* namespace dfv */
+
+

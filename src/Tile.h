@@ -32,10 +32,15 @@ public:
 	void AddBuilding(float height);
 	bool HasBuilding() const;
 	void DrawBuilding(const bool draw_floors) const;
+	sf::Color GetBuildingColor() const;
 	void SetAsRoad(const bool r);
 	bool IsRoad() const;
 	float GetBuildingHeight() const;
 	void AddRoad(dfv::Road::Type type, unsigned int orientation);
+	Road::Type GetRoadType() const;
+	unsigned int GetRoadOrientation() const;
+	bool SetRoadType(Road::Type road_type);
+	bool SetRoadOrientation(unsigned int road_orientation);
 
 private:
 	std::vector<sf::Vector3f> vertices;

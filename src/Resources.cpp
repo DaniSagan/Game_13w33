@@ -44,7 +44,7 @@ bool Resources::Load()
 	    GL_RGBA, GL_UNSIGNED_BYTE, img_1.GetPixelsPtr()
 	);*/
 
-	const unsigned int img_road_count = 4;
+	const unsigned int img_road_count = 7;
 	this->img_roads.resize(img_road_count);
 	this->img_roads_handles.resize(img_road_count);
 	for(unsigned int i = 0; i < img_road_count; i++)

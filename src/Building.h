@@ -23,6 +23,7 @@ public:
 
 	void Create(const std::vector<sf::Vector3f>& base_pos, float height);
 	void SetColor(const sf::Color& color);
+	sf::Color GetColor() const;
 	void Draw(const bool draw_floors) const;
 	float GetHeight() const;
 

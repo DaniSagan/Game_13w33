@@ -53,6 +53,7 @@ void App::Initialize()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_CULL_FACE);
 
 	this->map.CreateRandom(400);
 	this->map.LoadHeightMap("res/map/sinheights.hm");
@@ -64,6 +65,9 @@ void App::Initialize()
 	// save the map to a file
 	//this->map.SaveHeightMap("res/map/sinheights.hm");
 	//this->map.SaveBuildingMap("res/map/sinbuildings.png");
+	this->map.GenerateMapImg(16);
+	this->minimap.Create(256);
+	this->minimap.GenerateFromMap(&(this->map), this->camera);
 }
 
 void App::Run()
@@ -79,9 +83,10 @@ void App::Run()
 void App::Update()
 {
 	++this->frame;
-	if(frame % 60 == 0)
+	if(frame % 15 == 0)
 	{
 		std::cout << 1.0 / this->window.GetFrameTime() << " FPS" << std::endl;
+		this->minimap.GenerateFromMap(&(this->map), this->camera);
 	}
 
 	float height = this->map.GetHeight((int)this->camera.GetPosition().x, (int)this->camera.GetPosition().y);
@@ -102,6 +107,8 @@ void App::Update()
 
 void App::HandleInput()
 {
+	const sf::Input& input = this->window.GetInput();
+	sf::Vector2i mouse_pos(input.GetMouseX(), input.GetMouseY());
 	sf::Event event;
 	while(this->window.GetEvent(event))
 	{
@@ -122,9 +129,14 @@ void App::HandleInput()
 							0.f,
 							-0.05f * (float)event.MouseWheel.Delta * (this->camera.GetPosition().z - height)));
 		}
+
+		if(mouse_pos.x < (int)(this->minimap.GetSize()) && mouse_pos.y < (int)(this->minimap.GetSize()))
+		{
+			this->minimap.HandleInput(this->camera, event, mouse_pos);
+		}
 	}
 
-	const sf::Input& input = this->window.GetInput();
+
 	float height = this->camera.GetPosition().z - this->map.GetHeight(this->camera.GetPosition().x, this->camera.GetPosition().y);
 	float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
 	float ang = camera.GetRpy().z * 3.1416 / 180.0;
@@ -145,6 +157,15 @@ void App::HandleInput()
 	{
 		this->camera.Move(sf::Vector3f(-vel * cos(ang), vel * sin(ang), 0.f));
 	}
+	if(input.IsKeyDown(sf::Key::R))
+	{
+		this->camera.Move(sf::Vector3f(vel * sin(ang), vel * cos(ang), 0.0));
+	}
+	if(input.IsKeyDown(sf::Key::F))
+	{
+		this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
+	}
+
 	float rot = 20.0f * this->window.GetFrameTime();
 	if(input.IsKeyDown(sf::Key::Q) || input.IsKeyDown(sf::Key::Up))
 	{
@@ -169,6 +190,8 @@ void App::Draw()
 {
 	this->window.SetActive();
 	this->map.Draw(this->window, this->camera, this->resources);
+	this->window.PreserveOpenGLStates(true);
+	this->minimap.Draw(this->window, this->camera);
 	this->window.Display();
 }
 

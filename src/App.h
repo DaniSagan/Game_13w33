@@ -12,6 +12,7 @@
 #include <iostream>
 #include "Map.h"
 #include "Resources.h"
+#include "Minimap.h"
 
 namespace dfv
 {
@@ -29,12 +30,13 @@ public:
 	void Draw();
 
 private:
-	sf::Window window;
+	sf::RenderWindow window;
 	sf::Clock clock;
 	dfv::Camera camera;
 	dfv::Map map;
 	unsigned int frame;
 	dfv::Resources resources;
+	dfv::Minimap minimap;
 };
 
 } /* namespace dfv */

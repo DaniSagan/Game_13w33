@@ -646,4 +646,113 @@ bool Map::LoadBuildingMap(const std::string& filename)
 	}
 }
 
+void Map::GenerateMapImg(const unsigned int tile_size)
+{
+
+	this->map_img.Create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
+
+	for(unsigned int i = 0; i < this->size; i++)
+	{
+		for(unsigned int j = 0; j < this->size; j++)
+		{
+			if(this->lp_tiles[i][j]->IsRoad())
+			{
+				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
+			}
+			if(this->lp_tiles[i][j]->HasBuilding())
+			{
+				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size - 1, (j+1)*tile_size - 1), sf::Color(0, 0, 0));
+				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size+1, j*tile_size+1), sf::Vector2i((i+1)*tile_size - 2, (j+1)*tile_size - 2), this->lp_tiles[i][j]->GetBuildingColor());
+			}
+		}
+	}
+
+	this->map_img.SaveToFile("res/map/map_img.png");
+}
+
+bool Map::IsRoad(const sf::Vector2i& tile_pos) const
+{
+	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
+	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
+	{
+		return this->lp_tiles[tile_pos.x][tile_pos.y]->IsRoad();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Map::HasBuilding(const sf::Vector2i& tile_pos) const
+{
+	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
+	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
+	{
+		return this->lp_tiles[tile_pos.x][tile_pos.y]->HasBuilding();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+sf::Color Map::GetBuildingColor(const sf::Vector2i& tile_pos) const
+{
+	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
+	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
+	{
+		return this->lp_tiles[tile_pos.x][tile_pos.y]->GetBuildingColor();
+	}
+	else
+	{
+		return sf::Color(0, 0, 0);
+	}
+}
+
+bool Map::ChangeRoadType(const sf::Vector2i& tile_pos)
+{
+	if(this->IsRoad(tile_pos))
+	{
+		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadType();
+		if(road_type >= Road::count)
+		{
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadType(Road::straight);
+		}
+		else
+		{
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadType((Road::Type)(road_type + 1));
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Map::ChangeRoadOrientation(const sf::Vector2i& tile_pos)
+{
+	std::cout << "Changing road orientation" << std::endl;
+	if(this->IsRoad(tile_pos))
+	{
+		std::cout << "Is road" << std::endl;
+		const unsigned int road_orientation = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadOrientation();
+		if(road_orientation >= 4)
+		{
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadOrientation(0);
+			std::cout << "Road orient set to 0" << std::endl;
+		}
+		else
+		{
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadOrientation(road_orientation + 1);
+			std::cout << "Road orient set to " << road_orientation + 1 << std::endl;
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 } /* namespace dfv */

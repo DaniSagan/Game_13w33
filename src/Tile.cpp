@@ -163,6 +163,18 @@ void Tile::DrawBuilding(const bool draw_floors) const
 	}
 }
 
+sf::Color Tile::GetBuildingColor() const
+{
+	if(this->HasBuilding())
+	{
+		return this->lp_building->GetColor();
+	}
+	else
+	{
+		return sf::Color(0, 0, 0);
+	}
+}
+
 void Tile::SetAsRoad(const bool r)
 {
 	this->is_road = r;
@@ -190,6 +202,57 @@ void Tile::AddRoad(dfv::Road::Type type, unsigned int orientation)
 	this->is_road = true;
 	this->lp_road = new Road;
 	this->lp_road->Create(this->vertices, type, orientation);
+}
+
+Road::Type Tile::GetRoadType() const
+{
+	if(this->IsRoad())
+	{
+		return this->lp_road->GetType();
+	}
+	else
+	{
+		return Road::straight;
+	}
+
+}
+
+unsigned int Tile::GetRoadOrientation() const
+{
+	if(this->IsRoad())
+	{
+		return this->lp_road->GetOrientation();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+bool Tile::SetRoadType(Road::Type road_type)
+{
+	if(this->IsRoad())
+	{
+		this->lp_road->SetType(road_type);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Tile::SetRoadOrientation(unsigned int road_orientation)
+{
+	if(this->IsRoad())
+	{
+		this->lp_road->SetOrientation(road_orientation);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 } /* namespace dfv */
