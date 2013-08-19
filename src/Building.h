@@ -27,6 +27,12 @@ public:
 	void Draw(const bool draw_floors) const;
 	float GetHeight() const;
 
+	void DrawBox() const;
+	void DrawOutline() const;
+	void DrawFloors() const;
+
+	sf::Vector3f GetColor3f() const;
+
 private:
 	std::vector<sf::Vector3f> base_pos;
 	std::vector<sf::Vector3f> roof_pos;

@@ -42,6 +42,21 @@ public:
 	bool SetRoadType(Road::Type road_type);
 	bool SetRoadOrientation(unsigned int road_orientation);
 
+	sf::Vector3f GetVertex(const unsigned int index) const;
+	std::vector<sf::Vector3f> GetVertices() const;
+
+	void DrawBuildingBox() const;
+	void DrawBuildingOutline() const;
+	void DrawBuildingFloors() const;
+
+	sf::Vector3f GetColor(unsigned int index) const;
+	sf::Vector3f GetNormal(unsigned int index) const;
+	sf::Vector3f GetBuildingColor3f() const;
+
+	void SetVertex(const unsigned int index, const sf::Vector3f& vertex);
+	sf::Color GetColor() const;
+	void SetBuildingColor(const sf::Color& color);
+
 private:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;

@@ -255,6 +255,71 @@ bool Tile::SetRoadOrientation(unsigned int road_orientation)
 	}
 }
 
+sf::Vector3f Tile::GetVertex(const unsigned int index) const
+{
+	if(index < 4)
+	{
+		return this->vertices[index];
+	}
+	return this->vertices.back();
+}
+
+std::vector<sf::Vector3f> Tile::GetVertices() const
+{
+	std::vector<sf::Vector3f> res;
+	res.resize(4);
+	res[0] = this->vertices[0];
+	res[1] = this->vertices[1];
+	res[2] = this->vertices[2];
+	res[3] = this->vertices[3];
+	return res;
+}
+
+void Tile::DrawBuildingBox() const
+{
+	this->lp_building->DrawBox();
+}
+
+void Tile::DrawBuildingOutline() const
+{
+	this->lp_building->DrawOutline();
+}
+
+void Tile::DrawBuildingFloors() const
+{
+	this->lp_building->DrawFloors();
+}
+
+sf::Vector3f Tile::GetColor(unsigned int index) const
+{
+	return this->colors[index];
+}
+
+sf::Vector3f Tile::GetNormal(unsigned int index) const
+{
+	return this->normals[index];
+}
+
+sf::Vector3f Tile::GetBuildingColor3f() const
+{
+	return this->lp_building->GetColor3f();
+}
+
+void Tile::SetVertex(const unsigned int index, const sf::Vector3f& vertex)
+{
+	this->vertices[index] = vertex;
+}
+
+sf::Color Tile::GetColor() const
+{
+	return sf::Color(this->color.x * 255.f, this->color.y * 255.f, this->color.z * 255.f);
+}
+
+void Tile::SetBuildingColor(const sf::Color& color)
+{
+	this->lp_building->SetColor(color);
+}
+
 } /* namespace dfv */
 
 

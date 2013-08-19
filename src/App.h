@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 #include "Map.h"
 #include "Resources.h"
 #include "Minimap.h"
@@ -28,6 +29,7 @@ public:
 	void Update();
 	void HandleInput();
 	void Draw();
+	void InitOpenGL();
 
 private:
 	sf::RenderWindow window;
@@ -37,6 +39,10 @@ private:
 	unsigned int frame;
 	dfv::Resources resources;
 	dfv::Minimap minimap;
+	sf::Vector3f map_pos;
+	sf::Vector2i mouse_pos;
+
+	bool walking;
 };
 
 } /* namespace dfv */

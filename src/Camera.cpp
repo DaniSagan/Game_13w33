@@ -55,4 +55,13 @@ void Camera::Rotate(const sf::Vector3f& v)
 	this->rpy.z += v.z;
 }
 
+unsigned int Camera::GetQuadrant()
+{
+	if(this->GetRpy().z >= 315.f || this->GetRpy().z < 45.f) return 1;
+	if(this->GetRpy().z >= 45.f && this->GetRpy().z < 135.f) return 0;
+	if(this->GetRpy().z >= 135.f && this->GetRpy().z < 225.f) return 3;
+	if(this->GetRpy().z >= 225.f && this->GetRpy().z < 315.f) return 2;
+	return 0;
+}
+
 } /* namespace dfv */

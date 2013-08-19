@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "Tile.h"
 #include "Resources.h"
+#include "Sky.h"
 
 
 namespace dfv
@@ -45,11 +46,25 @@ public:
 	bool ChangeRoadType(const sf::Vector2i& tile_pos);
 	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
 
+	sf::Vector3f GetMapPosFromMouse(sf::Vector2i mouse_pos);
+	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::RenderWindow& window);
+	std::vector<sf::Vector3f> GetTileVertices(sf::Vector2i pos);
+
+	void DrawTiles(sf::IntRect rect, Camera& camera, Resources& resources) const;
+	void DrawBuildingBoxes(sf::IntRect rect) const;
+	void DrawBuildingOutlines(sf::IntRect rect) const;
+	void DrawBuildingFloors(sf::IntRect rect) const;
+
+	bool SaveAsMapFormat(std::string filename);
+	bool LoadFromMapFormat(std::string filename);
+	float GetHeight(const sf::Vector2f& pos) const;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;
 	std::vector<std::vector<dfv::Tile*> > lp_tiles;
 	sf::Image map_img;
+	dfv::Sky sky;
 	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 

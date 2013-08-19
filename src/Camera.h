@@ -25,6 +25,7 @@ public:
 	const sf::Vector3f& GetRpy() const;
 	void SetRpy(const sf::Vector3f& rpy);
 	void Rotate(const sf::Vector3f& v);
+	unsigned int GetQuadrant();
 
 private:
 	sf::Vector3f position;

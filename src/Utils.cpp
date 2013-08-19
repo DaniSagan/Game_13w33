@@ -31,14 +31,17 @@ sf::Vector3f Utils::Diff(const sf::Vector3f& v1, const sf::Vector3f& v2)
 	return sf::Vector3f(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 }
 
-} /* namespace dfv */
+sf::Vector2f Utils::Diff(const sf::Vector2f& v1, const sf::Vector2f& v2)
+{
+	return sf::Vector2f(v1.x - v2.x, v1.y - v2.y);
+}
 
-void dfv::Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
+void Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
 		const sf::Vector2i& bottom_right, const sf::Color& color)
 {
 	unsigned int width = bottom_right.x - top_left.x + 1;
 	unsigned int height = bottom_right.y - top_left.y + 1;
-	const sf::Uint8* lp_pixels = img.GetPixelsPtr();
+	//const sf::Uint8* lp_pixels = img.GetPixelsPtr();
 	for(unsigned int i = 0; i < width; i++)
 	{
 		for(unsigned j = 0; j < height; j++)
@@ -47,3 +50,15 @@ void dfv::Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
 		}
 	}
 }
+
+float Utils::Length(const sf::Vector3f v)
+{
+	return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+}
+
+float Utils::Length(const sf::Vector2f v)
+{
+	return sqrt(v.x*v.x + v.y*v.y);
+}
+
+} /* namespace dfv */

@@ -112,7 +112,7 @@ std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, c
 	sf::Vector2i rel_pos = this->RealPosFromMapPos(mouse_pos, this->range);
 	sf::Vector2i abs_pos(camera.GetPosition().x - rel_pos.x, camera.GetPosition().y - rel_pos.y);
 
-	std::cout << "mouse_pos: " << abs_pos.x << ", " << abs_pos.y << std::endl;
+	//std::cout << "mouse_pos: " << abs_pos.x << ", " << abs_pos.y << std::endl;
 
 	std::string res;
 
