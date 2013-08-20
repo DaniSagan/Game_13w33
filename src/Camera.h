@@ -9,6 +9,7 @@
 #define CAMERA_H_
 
 #include <SFML/Graphics.hpp>
+#include "Utils.h"
 
 namespace dfv
 {
@@ -19,13 +20,16 @@ public:
 	Camera();
 	virtual ~Camera();
 
-	const sf::Vector3f& GetPosition() const;
+	sf::Vector3f GetPosition() const;
+	sf::Vector2f GetPosition2d() const;
 	void SetPosition(const sf::Vector3f& position);
 	void Move(const sf::Vector3f& v);
 	const sf::Vector3f& GetRpy() const;
 	void SetRpy(const sf::Vector3f& rpy);
 	void Rotate(const sf::Vector3f& v);
-	unsigned int GetQuadrant();
+	unsigned int GetQuadrant() const;
+	void SetView(const sf::RenderWindow& window) const;
+	sf::IntRect GetRectFromView(const sf::IntRect& map_rect) const;
 
 private:
 	sf::Vector3f position;

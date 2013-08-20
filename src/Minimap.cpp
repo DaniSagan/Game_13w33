@@ -39,8 +39,10 @@ void Minimap::Create(const unsigned int size)
 void Minimap::GenerateFromMap(Map* lp_map, const Camera& camera)
 {
 	this->lp_map = lp_map;
-	sf::Vector2i pos(camera.GetPosition().x, camera.GetPosition().y);
-	this->range = 4 + 2* camera.GetPosition().z;
+	sf::Vector2f pos(camera.GetPosition().x, camera.GetPosition().y);
+	float map_height = lp_map->GetHeight(pos);
+	float height = camera.GetPosition().z - map_height;
+	this->range = 16 + 2* height;
 	for(unsigned int i = 0; i < this->size; i++)
 	{
 		for(unsigned int j = 0; j < this->size; j++)

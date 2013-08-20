@@ -61,4 +61,37 @@ float Utils::Length(const sf::Vector2f v)
 	return sqrt(v.x*v.x + v.y*v.y);
 }
 
+void Utils::TrimRect(sf::IntRect& rect, const sf::IntRect& limits)
+{
+	if(rect.Left < limits.Left) rect.Left = limits.Left;
+	if(rect.Right > limits.Right) rect.Right = limits.Right;
+	if(rect.Top > limits.Top) rect.Top = limits.Top;
+	if(rect.Bottom < limits.Bottom) rect.Bottom = limits.Bottom;
+}
+
+void Utils::TrimRect(sf::IntRect& rect, int left, int right, int top,
+		int bottom)
+{
+	if(rect.Left < left) rect.Left = left;
+	if(rect.Right > right) rect.Right = right;
+	if(rect.Top > top) rect.Top = top;
+	if(rect.Bottom < bottom) rect.Bottom = bottom;
+}
+
+sf::IntRect Utils::CreateRect(const sf::Vector2i& position, int radius)
+{
+	sf::IntRect rect;
+	rect.Left = position.x - radius;
+	rect.Right = position.x + radius;
+	rect.Bottom = position.y - radius;
+	rect.Top = position.y + radius;
+
+	return rect;
+}
+
+sf::Vector2i Utils::ToVector2i(const sf::Vector2f& v)
+{
+	return sf::Vector2i(floor(v.x), floor(v.y));
+}
+
 } /* namespace dfv */

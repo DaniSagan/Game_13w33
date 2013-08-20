@@ -9,16 +9,18 @@
 #define APP_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <iostream>
 #include <string>
 #include "Map.h"
 #include "Resources.h"
 #include "Minimap.h"
+#include "gui/Button.h"
 
 namespace dfv
 {
 
-class App
+class App : public sf::Thread
 {
 public:
 	App();
@@ -41,6 +43,8 @@ private:
 	dfv::Minimap minimap;
 	sf::Vector3f map_pos;
 	sf::Vector2i mouse_pos;
+
+	dfv::Button button;
 
 	bool walking;
 };

@@ -31,24 +31,19 @@ void App::Initialize()
 	this->window.SetFramerateLimit(60);
 	this->InitOpenGL();
 
-	//this->map.CreateRandom(400);
-
-
-	//this->map.LoadHeightMap("res/map/sinheights.hm");
-	//this->map.LoadBuildingMap("res/map/sinbuildings.png");
 	this->map.LoadFromMapFormat("res/map/world1.map");
-	//this->map.CreateFromFile("res/map/asturias_leon.png", 50, 5.f);
 	this->camera.SetPosition(sf::Vector3f(this->map.GetSize() / 2, this->map.GetSize() / 2, 5.f));
 	this->resources.Load();
 
-	// save the map to a file
-	//this->map.SaveHeightMap("res/map/sinheights.hm");
-	//this->map.SaveBuildingMap("res/map/sinbuildings.png");
-	//this->map.GenerateMapImg(16);
 	this->minimap.Create(256);
 	this->minimap.GenerateFromMap(&(this->map), this->camera);
 	//this->map.SaveAsMapFormat("res/map/world1.map");
-	//this->map.LoadFromMapFormat("res/map/world1.map");
+
+	this->button.SetSize(sf::Vector2i(32, 32));
+	this->button.SetPosition(sf::Vector2i(10, 300));
+	this->button.SetImage(this->resources.img_roads[0]);
+	this->button.SetCommand(std::string("road"));
+
 }
 
 void App::Run()
@@ -59,6 +54,7 @@ void App::Run()
 		this->Draw();
 		this->HandleInput();
 	}
+	this->map.SaveAsMapFormat("res/map/world1.map");
 }
 
 void App::Update()
@@ -67,10 +63,10 @@ void App::Update()
 	if(frame % 15 == 0)
 	{
 		//std::cout << 1.0 / this->window.GetFrameTime() << " FPS" << std::endl;
-		this->minimap.GenerateFromMap(&(this->map), this->camera);
+		//this->minimap.GenerateFromMap(&(this->map), this->camera);
 	}
 
-	float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
+	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 
 	if(camera.GetRpy().z < 0.f)
 	{
@@ -80,6 +76,8 @@ void App::Update()
 	{
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
+
+	std::cout << "FPS: " << 1.0 / this->window.GetFrameTime() << std::endl;
 
 	//std::cout << "world pos: " << this->map_pos.x << ", " << this->map_pos.y << ", " << this->map_pos.z << std::endl;
 }
@@ -121,6 +119,16 @@ void App::HandleInput()
 		if(this->mouse_pos.x < (int)(this->minimap.GetSize()) && this->mouse_pos.y < (int)(this->minimap.GetSize()))
 		{
 			this->minimap.HandleInput(this->camera, event, mouse_pos);
+		}
+	}
+
+	std::vector<std::string> command_list;
+	this->button.HandleInput(command_list, event);
+	for(unsigned int i = 0; i < command_list.size(); i++)
+	{
+		if(command_list[i] == std::string("road"))
+		{
+			std::cout << "Hello road!" << std::endl;
 		}
 	}
 
@@ -175,14 +183,10 @@ void App::HandleInput()
 	map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	height = this->camera.GetPosition().z - map_height;
 
-	std::cout << "map_height: " << map_height << std::endl;
-	std::cout << "height: " << height << std::endl;
-	std::cout << "---" << std::endl;
-
 	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	if(this->walking)
 	{
-		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.04f + map_height));
+		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.04f + map_height + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
 	}
 	else
 	{
@@ -198,81 +202,27 @@ void App::Draw()
 {
 	this->window.PreserveOpenGLStates(false);
 	this->window.SetActive();
-	//gluPerspective(55.f, (float)this->window.GetWidth() / (float)this->window.GetHeight(), 0.01f, 2000.f);
-	glViewport(0, 0, this->window.GetWidth(), this->window.GetHeight());
+	this->camera.SetView(this->window);
 
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	this->map.Draw(this->window, this->camera, this->resources);
-	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+	this->map.DrawSky();
+	this->map.SetLight(sf::Vector3f(400.f, -200.f, 400.f));
 
-	const unsigned int quadrant = (int)this->camera.GetQuadrant();
-	float pos_x = this->map_pos.x;
-	if(quadrant == 0) pos_x += 0.03f;
-	if(quadrant == 1) pos_x += 0.03f;
-	if(quadrant == 2 && pos_x < this->window.GetWidth() / 2) pos_x -= 0.03f;
-	if(quadrant == 2 && pos_x >= this->window.GetWidth() / 2) pos_x += 0.03f;
-	if(quadrant == 3 && pos_x < this->window.GetWidth() / 2) pos_x -= 0.03f;
-	if(quadrant == 3 && pos_x >= this->window.GetWidth() / 2) pos_x -= 0.03f;
-	float pos_y = this->map_pos.y;
-	if(quadrant == 0) pos_y += 0.03f;
-	if(quadrant == 1) pos_y += 0.03f;
-	if(quadrant == 2) pos_y -= 0.03f;
-	if(quadrant == 3) pos_y -= 0.03f;
-	pos_x = pos_x >= (int)this->map.GetSize()? (int)this->map.GetSize() - 1: pos_x;
-	pos_x = pos_x < 0 ? 0 : pos_x;
-	pos_y = pos_y >= (int)this->map.GetSize()? (int)this->map.GetSize() - 1: pos_y;
-	pos_y = pos_y < 0 ? 0 : pos_y;
-	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(floor(pos_x), floor(pos_y)));
-	std::vector<sf::Vector3f> view_vertices;
-	view_vertices.resize(4);
-	view_vertices[0] = this->map.GetViewPos(tile_vertices[0], this->window);
-	view_vertices[1] = this->map.GetViewPos(tile_vertices[1], this->window);
-	view_vertices[2] = this->map.GetViewPos(tile_vertices[2], this->window);
-	view_vertices[3] = this->map.GetViewPos(tile_vertices[3], this->window);
-
-	this->window.PreserveOpenGLStates(true);
-	this->minimap.Draw(this->window, this->camera);
-
-	sf::String str;
-	std::stringstream ss;
-	ss << "FPS: " << 1.0 / this->window.GetFrameTime();
-	str.SetText(ss.str());
-	str.SetPosition(270, 0);
-	str.SetSize(12);
-	this->window.Draw(str);
-
-	ss.str(std::string(""));
-	ss << "Map pos: " << this->map_pos.x << ", " << this->map_pos.y << ", " << this->map_pos.z;
-	str.SetText(ss.str());
-	str.SetPosition(270, 15);
-	this->window.Draw(str);
-
-	ss.str(std::string(""));
-	ss << "Window size: " << this->window.GetWidth() << " x " << this->window.GetHeight();
-	str.SetText(ss.str());
-	str.SetPosition(270, 30);
-	this->window.Draw(str);
-
-	ss.str(std::string(""));
-	ss << "Quadrant: " << this->camera.GetQuadrant();
-	str.SetText(ss.str());
-	str.SetPosition(270, 45);
-	this->window.Draw(str);
-
-
-	if(!this->walking)
+	sf::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
+	if(this->camera.GetRpy().x > -120.f)
 	{
-		sf::Shape l = sf::Shape::Line(view_vertices[0].x, view_vertices[0].y, view_vertices[1].x, view_vertices[1].y, 2.0, sf::Color::Red);
-		this->window.Draw(l);
-		l = sf::Shape::Line(view_vertices[1].x, view_vertices[1].y, view_vertices[2].x, view_vertices[2].y, 2.0, sf::Color::Red);
-		this->window.Draw(l);
-		l = sf::Shape::Line(view_vertices[2].x, view_vertices[2].y, view_vertices[3].x, view_vertices[3].y, 2.0, sf::Color::Red);
-		this->window.Draw(l);
-		l = sf::Shape::Line(view_vertices[3].x, view_vertices[3].y, view_vertices[0].x, view_vertices[0].y, 2.0, sf::Color::Red);
-		this->window.Draw(l);
+		this->map.DrawTiles(view_rect, this->camera, this->resources);
 	}
 
+	this->map.DrawBuildingBoxes(view_rect);
 
+	sf::IntRect outlines_rect = dfv::Utils::CreateRect(
+			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
+			30);
+
+	dfv::Utils::TrimRect(outlines_rect, view_rect);
+
+	this->map.DrawBuildingOutlines(outlines_rect);
+	this->map.DrawBuildingFloors(outlines_rect);
 
 	this->window.Display();
 }

@@ -59,6 +59,11 @@ public:
 	bool LoadFromMapFormat(std::string filename);
 	float GetHeight(const sf::Vector2f& pos) const;
 
+	sf::IntRect GetRect() const;
+
+	void DrawSky() const;
+	void SetLight(const sf::Vector3f& position) const;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

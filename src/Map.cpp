@@ -858,7 +858,10 @@ void Map::DrawBuildingBoxes(sf::IntRect rect) const
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
 		{
-			this->lp_tiles[i][j]->DrawBuildingBox();
+			if(this->lp_tiles[i][j]->HasBuilding())
+			{
+				this->lp_tiles[i][j]->DrawBuildingBox();
+			}
 		}
 	}
 }
@@ -870,11 +873,16 @@ void Map::DrawBuildingOutlines(sf::IntRect rect) const
 	if(rect.Bottom < 0) rect.Bottom = 0;
 	if(rect.Top >= (int)this->GetSize()) rect.Top = this->GetSize() - 1;
 
+	glColor3f(0.1, 0.1, 0.1);
+
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
 		{
-			this->lp_tiles[i][j]->DrawBuildingOutline();
+			if(this->lp_tiles[i][j]->HasBuilding())
+			{
+				this->lp_tiles[i][j]->DrawBuildingOutline();
+			}
 		}
 	}
 }
@@ -886,11 +894,17 @@ void Map::DrawBuildingFloors(sf::IntRect rect) const
 	if(rect.Bottom < 0) rect.Bottom = 0;
 	if(rect.Top >= (int)this->GetSize()) rect.Top = this->GetSize() - 1;
 
+	glColor3f(0.1, 0.1, 0.1);
+
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
 		{
-			this->lp_tiles[i][j]->DrawBuildingFloors();
+
+			if(this->lp_tiles[i][j]->HasBuilding())
+			{
+				this->lp_tiles[i][j]->DrawBuildingFloors();
+			}
 		}
 	}
 }
@@ -989,8 +1003,8 @@ bool Map::LoadFromMapFormat(std::string filename)
 	{
 		std::cout << "Map file open. Reading data..." << std::endl;
 
-		float read_value_f;
-		unsigned char read_value_uc;
+		//float read_value_f;
+		//unsigned char read_value_uc;
 		unsigned int read_value_ui;
 
 		file.read((char*)&read_value_ui, sizeof(unsigned int));
@@ -1080,6 +1094,27 @@ float Map::GetHeight(const sf::Vector2f& pos) const
 		std::cout << "test" << std::endl;
 		return 0.f;
 	}
+}
+
+sf::IntRect Map::GetRect() const
+{
+	sf::IntRect rect;
+	rect.Left = 0;
+	rect.Right = this->size - 1;
+	rect.Top = this->size - 1;
+	rect.Bottom = 0;
+	return rect;
+}
+
+void Map::DrawSky() const
+{
+	this->sky.Draw();
+}
+
+void Map::SetLight(const sf::Vector3f& position) const
+{
+	GLfloat light_position[] = { position.x, position.y, position.z, 0.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 
 } /* namespace dfv */

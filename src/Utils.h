@@ -29,6 +29,10 @@ public:
 			const sf::Color& color);
 	static float Length(const sf::Vector3f v);
 	static float Length(const sf::Vector2f v);
+	static void TrimRect(sf::IntRect& rect, int left, int right, int top, int bottom);
+	static void TrimRect(sf::IntRect& rect, const sf::IntRect& limits);
+	static sf::IntRect CreateRect(const sf::Vector2i& position, int radius);
+	static sf::Vector2i ToVector2i(const sf::Vector2f& v);
 };
 
 } /* namespace dfv */
