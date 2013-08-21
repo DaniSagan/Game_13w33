@@ -11,7 +11,8 @@ namespace dfv
 {
 
 Map::Map():
-		size(0)
+		size(0),
+		building_list(0)
 {
 	// TODO Auto-generated constructor stub
 
@@ -743,7 +744,7 @@ bool Map::ChangeRoadType(const sf::Vector2i& tile_pos)
 	if(this->IsRoad(tile_pos))
 	{
 		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadType();
-		if(road_type >= Road::count)
+		if(road_type >= Road::count - 1)
 		{
 			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadType(Road::straight);
 		}
@@ -831,7 +832,7 @@ std::vector<sf::Vector3f> Map::GetTileVertices(sf::Vector2i pos)
 	return this->lp_tiles[pos.x][pos.y]->GetVertices();
 }
 
-void Map::DrawTiles(sf::IntRect rect, Camera& camera, Resources& resources) const
+void Map::DrawTiles(sf::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -1115,6 +1116,46 @@ void Map::SetLight(const sf::Vector3f& position) const
 {
 	GLfloat light_position[] = { position.x, position.y, position.z, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+}
+
+bool Map::AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation)
+{
+	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
+			tile_pos.y >= 0 && tile_pos.y < (int)this->size)
+	{
+		this->lp_tiles[tile_pos.x][tile_pos.y]->AddRoad(type, orientation);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Map::GenerateBuildingList()
+{
+	this->building_list = glGenLists(1);
+	glNewList(this->building_list, GL_COMPILE);
+	this->DrawBuildingBoxes(this->GetRect());
+	glEndList();
+}
+
+void Map::CallBuildingList() const
+{
+	glCallList(this->building_list);
+}
+
+void Map::GenerateTileList(const Camera& camera, const Resources& resources)
+{
+	this->tile_list = glGenLists(1);
+	glNewList(this->tile_list, GL_COMPILE);
+	this->DrawTiles(this->GetRect(), camera, resources);
+	glEndList();
+}
+
+void Map::CallTileList() const
+{
+	glCallList(this->tile_list);
 }
 
 } /* namespace dfv */

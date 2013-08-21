@@ -16,6 +16,7 @@
 #include "Resources.h"
 #include "Minimap.h"
 #include "gui/Button.h"
+#include "gui/Gui.h"
 
 namespace dfv
 {
@@ -33,6 +34,8 @@ public:
 	void Draw();
 	void InitOpenGL();
 
+	bool ExecuteCommand(std::string cmd);
+
 private:
 	sf::RenderWindow window;
 	sf::Clock clock;
@@ -45,6 +48,7 @@ private:
 	sf::Vector2i mouse_pos;
 
 	dfv::Button button;
+	dfv::Gui gui;
 
 	bool walking;
 };

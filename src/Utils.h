@@ -33,6 +33,11 @@ public:
 	static void TrimRect(sf::IntRect& rect, const sf::IntRect& limits);
 	static sf::IntRect CreateRect(const sf::Vector2i& position, int radius);
 	static sf::Vector2i ToVector2i(const sf::Vector2f& v);
+	static sf::Vector2f ToVector2f(const sf::Vector2i& v);
+	static sf::Vector2f GetVector2d(const sf::Vector3f& v);
+	static std::vector<std::string> StringTokenize(
+			const std::string& str,
+			const std::string& delimiters);
 };
 
 } /* namespace dfv */

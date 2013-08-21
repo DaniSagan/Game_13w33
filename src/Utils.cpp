@@ -94,4 +94,40 @@ sf::Vector2i Utils::ToVector2i(const sf::Vector2f& v)
 	return sf::Vector2i(floor(v.x), floor(v.y));
 }
 
+sf::Vector2f Utils::ToVector2f(const sf::Vector2i& v)
+{
+	return sf::Vector2f(v.x, v.y);
+}
+
+sf::Vector2f Utils::GetVector2d(const sf::Vector3f& v)
+{
+	return sf::Vector2f(v.x, v.y);
+}
+
+std::vector<std::string> Utils::StringTokenize(const std::string& str,
+		const std::string& delimiters)
+{
+	std::vector<std::string> tokens;
+
+	// skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+
+	// find first "non-delimiter".
+	std::string::size_type pos = str.find_first_of(delimiters, lastPos);
+
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{
+		// found a token, add it to the vector.
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+
+		// skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+
+		// find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+
+	return tokens;
+}
+
 } /* namespace dfv */

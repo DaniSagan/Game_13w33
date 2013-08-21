@@ -44,6 +44,9 @@ void App::Initialize()
 	this->button.SetImage(this->resources.img_roads[0]);
 	this->button.SetCommand(std::string("road"));
 
+	this->map.GenerateTileList(this->camera, this->resources);
+	this->map.GenerateBuildingList();
+
 }
 
 void App::Run()
@@ -77,8 +80,25 @@ void App::Update()
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
 
-	std::cout << "FPS: " << 1.0 / this->window.GetFrameTime() << std::endl;
+	this->gui.SetFps(1.0 / this->window.GetFrameTime());
+	this->gui.SetQuadrant(this->camera.GetQuadrant());
 
+	// window vertices of selected tile;
+	sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
+
+	if(tile_pos.x < 0) tile_pos.x = 0;
+	if(tile_pos.x >= (int)this->map.GetSize()) tile_pos.x = this->map.GetSize() - 1;
+	if(tile_pos.y < 0) tile_pos.y = 0;
+	if(tile_pos.y >= (int)this->map.GetSize()) tile_pos.y = this->map.GetSize() - 1;
+
+	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(tile_pos);
+	std::vector<sf::Vector2f> sel_vertices(4);
+	sel_vertices[0] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[0], this->window));
+	sel_vertices[1] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[1], this->window));
+	sel_vertices[2] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[2], this->window));
+	sel_vertices[3] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[3], this->window));
+
+	this->gui.SetSelectedVertices(sel_vertices);
 	//std::cout << "world pos: " << this->map_pos.x << ", " << this->map_pos.y << ", " << this->map_pos.z << std::endl;
 }
 
@@ -97,6 +117,8 @@ void App::HandleInput()
 		{
 			this->window.Create(sf::VideoMode(event.Size.Width, event.Size.Height), "Saganopolis");
 			this->InitOpenGL();
+			this->map.GenerateTileList(this->camera, this->resources);
+			this->map.GenerateBuildingList();
 		}
 		if(event.Type == sf::Event::KeyPressed)
 		{
@@ -122,14 +144,10 @@ void App::HandleInput()
 		}
 	}
 
-	std::vector<std::string> command_list;
-	this->button.HandleInput(command_list, event);
+	std::vector<std::string> command_list = this->gui.HandleInput(event);
 	for(unsigned int i = 0; i < command_list.size(); i++)
 	{
-		if(command_list[i] == std::string("road"))
-		{
-			std::cout << "Hello road!" << std::endl;
-		}
+		this->ExecuteCommand(command_list[i]);
 	}
 
 	float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
@@ -210,10 +228,9 @@ void App::Draw()
 	sf::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
 	if(this->camera.GetRpy().x > -120.f)
 	{
-		this->map.DrawTiles(view_rect, this->camera, this->resources);
+		//this->map.DrawTiles(view_rect, this->camera, this->resources);
+		this->map.CallTileList();
 	}
-
-	this->map.DrawBuildingBoxes(view_rect);
 
 	sf::IntRect outlines_rect = dfv::Utils::CreateRect(
 			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
@@ -221,8 +238,17 @@ void App::Draw()
 
 	dfv::Utils::TrimRect(outlines_rect, view_rect);
 
+	glDisable(GL_CULL_FACE);
 	this->map.DrawBuildingOutlines(outlines_rect);
+	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+	this->gui.SetMapPos(this->map_pos);
 	this->map.DrawBuildingFloors(outlines_rect);
+	glEnable(GL_CULL_FACE);
+	//this->map.DrawBuildingBoxes(view_rect);
+	this->map.CallBuildingList();
+
+	this->window.PreserveOpenGLStates(true);
+	this->gui.Draw(this->window);
 
 	this->window.Display();
 }
@@ -255,6 +281,50 @@ void App::InitOpenGL()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
+}
+
+bool App::ExecuteCommand(std::string cmd)
+{
+	std::vector<std::string> tokens = dfv::Utils::StringTokenize(cmd, " ");
+
+	if(tokens.size() > 0)
+	{
+		if(tokens[0] == std::string("build_road"))
+		{
+			if(tokens.size() >= 3)
+			{
+				unsigned int posx = strtol(tokens[1].c_str(), NULL, 10);
+				unsigned int posy = strtol(tokens[2].c_str(), NULL, 10);
+				sf::Vector2i tile_pos(posx, posy);
+
+				if(this->map.IsRoad(tile_pos))
+				{
+					return this->map.ChangeRoadType(tile_pos);
+				}
+				else if(!this->map.HasBuilding(tile_pos))
+				{
+					return this->map.AddRoad(tile_pos, Road::straight, 0);
+				}
+			}
+		}
+
+		if(tokens[0] == std::string("rotate_road"))
+		{
+			if(tokens.size() >= 3)
+			{
+				unsigned int posx = strtol(tokens[1].c_str(), NULL, 10);
+				unsigned int posy = strtol(tokens[2].c_str(), NULL, 10);
+				sf::Vector2i tile_pos(posx, posy);
+
+				if(this->map.IsRoad(tile_pos))
+				{
+					return this->map.ChangeRoadOrientation(tile_pos);
+				}
+			}
+		}
+	}
+	return false;
 }
 
 } /* namespace dfv */

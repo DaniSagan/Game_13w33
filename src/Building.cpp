@@ -231,6 +231,11 @@ void Building::DrawOutline() const
 	glVertex3f(this->floor_pos[3].x, this->floor_pos[3].y, this->floor_heights.back());
 	glVertex3f(this->floor_pos[1].x, this->floor_pos[1].y, this->floor_heights.back());
 
+	glVertex3f(this->base_pos[0].x, this->base_pos[0].y, this->base_pos[0].z);
+	glVertex3f(this->base_pos[1].x, this->base_pos[1].y, this->base_pos[1].z);
+	glVertex3f(this->base_pos[2].x, this->base_pos[2].y, this->base_pos[2].z);
+	glVertex3f(this->base_pos[3].x, this->base_pos[3].y, this->base_pos[3].z);
+
 	glEnd();
 }
 

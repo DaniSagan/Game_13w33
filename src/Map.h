@@ -50,7 +50,7 @@ public:
 	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::RenderWindow& window);
 	std::vector<sf::Vector3f> GetTileVertices(sf::Vector2i pos);
 
-	void DrawTiles(sf::IntRect rect, Camera& camera, Resources& resources) const;
+	void DrawTiles(sf::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void DrawBuildingBoxes(sf::IntRect rect) const;
 	void DrawBuildingOutlines(sf::IntRect rect) const;
 	void DrawBuildingFloors(sf::IntRect rect) const;
@@ -63,6 +63,13 @@ public:
 
 	void DrawSky() const;
 	void SetLight(const sf::Vector3f& position) const;
+	bool AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation);
+
+	void GenerateBuildingList();
+	void CallBuildingList() const;
+
+	void GenerateTileList(const Camera& camera, const Resources& resources);
+	void CallTileList() const;
 
 private:
 	unsigned int size;
@@ -70,6 +77,8 @@ private:
 	std::vector<std::vector<dfv::Tile*> > lp_tiles;
 	sf::Image map_img;
 	dfv::Sky sky;
+	GLuint building_list;
+	GLuint tile_list;
 	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 
