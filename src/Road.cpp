@@ -97,7 +97,7 @@ void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 		{
 			glTexCoord2d(this->tex_coords[i].x, this->tex_coords[i].y);
 			glNormal3f(this->normals[i].x, this->normals[i].y, this->normals[i].z);
-			glVertex3f(this->vertices[i].x, this->vertices[i].y, this->vertices[i].z);
+			glVertex3f(this->vertices[i].x, this->vertices[i].y, this->vertices[i].z + 0.01f);
 		}
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);

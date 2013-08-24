@@ -10,7 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <sstream>
-#include "../Minimap.h"
+#include "Minimap.h"
 
 namespace dfv
 {
@@ -21,13 +21,14 @@ public:
 	Gui();
 	virtual ~Gui();
 
-	void Draw(sf::RenderWindow& window) const;
+	void Draw(sf::RenderWindow& window, const Camera& camera) const;
 	void SetFps(float fps);
 	void SetQuadrant(unsigned int quadrant);
 	void SetMapPos(const sf::Vector3f& mapPos);
-	void SetSelectedVertices(const std::vector<sf::Vector2f>& selected_vertices);
+	void SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_vertices);
 
 	std::vector<std::string> HandleInput(const sf::Event& event);
+	void Update(const Map& map, const sf::Vector2f& position);
 
 private:
 
@@ -35,7 +36,8 @@ private:
 	unsigned int quadrant;
 	Minimap minimap;
 	sf::Vector3f map_pos;
-	std::vector<sf::Vector2f> selected_vertices;
+	std::vector<sf::Vector2f> selected_tile_vertices;
+	sf::IntRect selected_tiles;
 };
 
 } /* namespace dfv */

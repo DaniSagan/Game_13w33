@@ -40,6 +40,7 @@ void Building::Create(const std::vector<sf::Vector3f>& base_pos, float height)
 			max_height = base_pos[i].z;
 		}
 	}
+	max_height += 0.1f;
 
 	this->roof_pos.resize(4);
 	for(unsigned int i = 0; i < 4; i++)
@@ -171,7 +172,7 @@ float Building::GetHeight() const
 
 void Building::DrawBox() const
 {
-	glBegin(GL_QUADS);
+	//glBegin(GL_QUADS);
 
 	glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
 	glNormal3f(0.0, 0.0, 1.0);
@@ -212,7 +213,7 @@ void Building::DrawBox() const
 	glVertex3f(this->roof_pos[0].x, this->roof_pos[0].y, this->roof_pos[0].z);
 	glVertex3f(this->roof_pos[3].x, this->roof_pos[3].y, this->roof_pos[3].z);
 
-	glEnd();
+	//glEnd();
 }
 
 void Building::DrawOutline() const

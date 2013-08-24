@@ -29,14 +29,15 @@ void App::Initialize()
 
 	this->window.Create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis");
 	this->window.SetFramerateLimit(60);
+	this->window.UseVerticalSync(true);
 	this->InitOpenGL();
 
 	this->map.LoadFromMapFormat("res/map/world1.map");
 	this->camera.SetPosition(sf::Vector3f(this->map.GetSize() / 2, this->map.GetSize() / 2, 5.f));
 	this->resources.Load();
 
-	this->minimap.Create(256);
-	this->minimap.GenerateFromMap(&(this->map), this->camera);
+	//this->minimap.Create(256);
+	//this->minimap.GenerateFromMap(&(this->map), this->camera);
 	//this->map.SaveAsMapFormat("res/map/world1.map");
 
 	this->button.SetSize(sf::Vector2i(32, 32));
@@ -82,6 +83,7 @@ void App::Update()
 
 	this->gui.SetFps(1.0 / this->window.GetFrameTime());
 	this->gui.SetQuadrant(this->camera.GetQuadrant());
+	this->gui.Update(this->map, this->camera.GetPosition2d());
 
 	// window vertices of selected tile;
 	sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
@@ -98,7 +100,7 @@ void App::Update()
 	sel_vertices[2] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[2], this->window));
 	sel_vertices[3] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[3], this->window));
 
-	this->gui.SetSelectedVertices(sel_vertices);
+	this->gui.SetSelectedTileVertices(sel_vertices);
 	//std::cout << "world pos: " << this->map_pos.x << ", " << this->map_pos.y << ", " << this->map_pos.z << std::endl;
 }
 
@@ -116,6 +118,7 @@ void App::HandleInput()
 		if(event.Type == sf::Event::Resized)
 		{
 			this->window.Create(sf::VideoMode(event.Size.Width, event.Size.Height), "Saganopolis");
+			this->window.UseVerticalSync(true);
 			this->InitOpenGL();
 			this->map.GenerateTileList(this->camera, this->resources);
 			this->map.GenerateBuildingList();
@@ -138,10 +141,10 @@ void App::HandleInput()
 							-0.02f * (float)event.MouseWheel.Delta * (this->camera.GetPosition().z - height)));
 		}
 
-		if(this->mouse_pos.x < (int)(this->minimap.GetSize()) && this->mouse_pos.y < (int)(this->minimap.GetSize()))
+		/*if(this->mouse_pos.x < (int)(this->minimap.GetSize()) && this->mouse_pos.y < (int)(this->minimap.GetSize()))
 		{
 			this->minimap.HandleInput(this->camera, event, mouse_pos);
-		}
+		}*/
 	}
 
 	std::vector<std::string> command_list = this->gui.HandleInput(event);
@@ -204,7 +207,7 @@ void App::HandleInput()
 	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	if(this->walking)
 	{
-		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.04f + map_height + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
+		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.05f + map_height + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
 	}
 	else
 	{
@@ -247,8 +250,16 @@ void App::Draw()
 	//this->map.DrawBuildingBoxes(view_rect);
 	this->map.CallBuildingList();
 
+	sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
+	sf::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
+	dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
+
+	//std::cout << "road_rect: " << dfv::Utils::ToString(road_rect) << std::endl;
+
+	this->map.DrawRoads(road_rect, this->camera, this->resources);
+
 	this->window.PreserveOpenGLStates(true);
-	this->gui.Draw(this->window);
+	this->gui.Draw(this->window, this->camera);
 
 	this->window.Display();
 }

@@ -71,6 +71,8 @@ public:
 	void GenerateTileList(const Camera& camera, const Resources& resources);
 	void CallTileList() const;
 
+	void DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& resources) const;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;
@@ -79,6 +81,9 @@ private:
 	dfv::Sky sky;
 	GLuint building_list;
 	GLuint tile_list;
+	unsigned int population;
+
+	//sf::IntRect selected_tiles;
 	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 

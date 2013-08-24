@@ -56,6 +56,7 @@ public:
 	void SetVertex(const unsigned int index, const sf::Vector3f& vertex);
 	sf::Color GetColor() const;
 	void SetBuildingColor(const sf::Color& color);
+	void DrawRoad(const Camera& camera, const Resources& resources) const;
 
 private:
 	std::vector<sf::Vector3f> vertices;

@@ -12,7 +12,9 @@ namespace dfv
 
 Map::Map():
 		size(0),
-		building_list(0)
+		building_list(0),
+		tile_list(0),
+		population(0)
 {
 	// TODO Auto-generated constructor stub
 
@@ -855,6 +857,8 @@ void Map::DrawBuildingBoxes(sf::IntRect rect) const
 	if(rect.Bottom < 0) rect.Bottom = 0;
 	if(rect.Top >= (int)this->GetSize()) rect.Top = this->GetSize() - 1;
 
+	glBegin(GL_QUADS);
+
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
@@ -865,6 +869,8 @@ void Map::DrawBuildingBoxes(sf::IntRect rect) const
 			}
 		}
 	}
+
+	glEnd();
 }
 
 void Map::DrawBuildingOutlines(sf::IntRect rect) const
@@ -1053,6 +1059,8 @@ bool Map::LoadFromMapFormat(std::string filename)
 					float building_height_t;
 					file.read((char*)&building_height_t, sizeof(float));
 
+					this->population += building_height_t * 12 * 8;
+
 					sf::Color t_color;
 					file.read((char*)&t_color.r, sizeof(unsigned char));
 					file.read((char*)&t_color.g, sizeof(unsigned char));
@@ -1063,6 +1071,8 @@ bool Map::LoadFromMapFormat(std::string filename)
 				}
 			}
 		}
+
+		std::cout << "Map loaded. Population: " << this->population << std::endl;
 
 		return true;
 	}
@@ -1156,6 +1166,23 @@ void Map::GenerateTileList(const Camera& camera, const Resources& resources)
 void Map::CallTileList() const
 {
 	glCallList(this->tile_list);
+}
+
+void Map::DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& resources) const
+{
+
+	dfv::Utils::TrimRect(rect, this->GetRect());
+	for(int i = rect.Left; i < rect.Right; i++)
+	{
+		for(int j = rect.Bottom; j < rect.Top; j++)
+		{
+			if(this->lp_tiles[i][j]->IsRoad())
+			{
+				//std::cout << "Hello" << std::endl;
+				this->lp_tiles[i][j]->DrawRoad(camera, resources);
+			}
+		}
+	}
 }
 
 } /* namespace dfv */

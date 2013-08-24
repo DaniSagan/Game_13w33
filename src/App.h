@@ -14,7 +14,7 @@
 #include <string>
 #include "Map.h"
 #include "Resources.h"
-#include "Minimap.h"
+//#include "Minimap.h"
 #include "gui/Button.h"
 #include "gui/Gui.h"
 
@@ -43,7 +43,7 @@ private:
 	dfv::Map map;
 	unsigned int frame;
 	dfv::Resources resources;
-	dfv::Minimap minimap;
+	//dfv::Minimap minimap;
 	sf::Vector3f map_pos;
 	sf::Vector2i mouse_pos;
 

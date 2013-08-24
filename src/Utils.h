@@ -9,6 +9,8 @@
 #define UTILS_H_
 
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <sstream>
 
 namespace dfv
 {
@@ -38,6 +40,7 @@ public:
 	static std::vector<std::string> StringTokenize(
 			const std::string& str,
 			const std::string& delimiters);
+	static std::string ToString(const sf::IntRect& rect);
 };
 
 } /* namespace dfv */

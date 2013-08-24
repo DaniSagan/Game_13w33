@@ -130,4 +130,14 @@ std::vector<std::string> Utils::StringTokenize(const std::string& str,
 	return tokens;
 }
 
+std::string Utils::ToString(const sf::IntRect& rect)
+{
+	std::stringstream ss;
+	ss << "L:" << rect.Left << ", ";
+	ss << "R:" << rect.Right << ", ";
+	ss << "B:" << rect.Bottom << ", ";
+	ss << "T:" << rect.Top;
+	return ss.str();
+}
+
 } /* namespace dfv */

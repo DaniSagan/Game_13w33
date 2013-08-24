@@ -87,9 +87,9 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 {
 	if(this->HasBuilding() == false)
 	{
-		sf::Vector3f position = camera.GetPosition();
-		if(this->IsRoad() && fabs(position.x - this->vertices[0].x) < 50 && fabs(position.y - this->vertices[0].y) < 50)
-		{
+		//sf::Vector3f position = camera.GetPosition();
+		//if(this->IsRoad() && fabs(position.x - this->vertices[0].x) < 50 && fabs(position.y - this->vertices[0].y) < 50)
+		//{
 			/*glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[0]);
 			glBegin(GL_QUADS);
 				//glTexCoord2d(0.0,0.0);
@@ -111,9 +111,9 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 				glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
 			glEnd();
 			glBindTexture(GL_TEXTURE_2D, 0);*/
-			this->lp_road->Draw(camera, resources);
-		}
-		else
+			//this->lp_road->Draw(camera, resources);
+		//}
+		//else
 		{
 			glBegin(GL_QUADS);
 				//glTexCoord2d(0.0,0.0);
@@ -320,6 +320,13 @@ void Tile::SetBuildingColor(const sf::Color& color)
 	this->lp_building->SetColor(color);
 }
 
+void Tile::DrawRoad(const Camera& camera, const Resources& resources) const
+{
+
+	if(this->IsRoad())
+	{
+		this->lp_road->Draw(camera, resources);
+	}
+}
+
 } /* namespace dfv */
-
-

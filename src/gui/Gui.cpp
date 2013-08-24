@@ -14,7 +14,7 @@ Gui::Gui():
 		fps(0),
 		quadrant(0)
 {
-	// TODO Auto-generated constructor stub
+	this->minimap.Create(256);
 
 }
 
@@ -23,7 +23,7 @@ Gui::~Gui()
 	// TODO Auto-generated destructor stub
 }
 
-void Gui::Draw(sf::RenderWindow& window) const
+void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 {
 	sf::String string;
 	string.SetSize(12.0);
@@ -41,25 +41,27 @@ void Gui::Draw(sf::RenderWindow& window) const
 	window.Draw(string);
 
 	sf::Shape shape = sf::Shape::Line(
-			this->selected_vertices[0],
-			this->selected_vertices[1],
+			this->selected_tile_vertices[0],
+			this->selected_tile_vertices[1],
 			2.0, sf::Color(255, 0, 0));
 	window.Draw(shape);
 	shape = sf::Shape::Line(
-			this->selected_vertices[1],
-			this->selected_vertices[2],
+			this->selected_tile_vertices[1],
+			this->selected_tile_vertices[2],
 			2.0, sf::Color(255, 0, 0));
 	window.Draw(shape);
 	shape = sf::Shape::Line(
-			this->selected_vertices[2],
-			this->selected_vertices[3],
+			this->selected_tile_vertices[2],
+			this->selected_tile_vertices[3],
 			2.0, sf::Color(255, 0, 0));
 	window.Draw(shape);
 	shape = sf::Shape::Line(
-			this->selected_vertices[3],
-			this->selected_vertices[0],
+			this->selected_tile_vertices[3],
+			this->selected_tile_vertices[0],
 			2.0, sf::Color(255, 0, 0));
 	window.Draw(shape);
+
+	this->minimap.Draw(window, camera);
 }
 
 void Gui::SetFps(float fps)
@@ -77,9 +79,9 @@ void Gui::SetMapPos(const sf::Vector3f& map_pos)
 	this->map_pos = map_pos;
 }
 
-void Gui::SetSelectedVertices(const std::vector<sf::Vector2f>& selected_vertices)
+void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile_vertices)
 {
-	this->selected_vertices = selected_vertices;
+	this->selected_tile_vertices = selected_tile_vertices;
 }
 
 std::vector<std::string> Gui::HandleInput(const sf::Event& event)
@@ -102,6 +104,11 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 	}
 
 	return commands;
+}
+
+void Gui::Update(const Map& map, const sf::Vector2f& position)
+{
+	this->minimap.GenerateFromMap(map, position, 64);
 }
 
 } /* namespace dfv */
