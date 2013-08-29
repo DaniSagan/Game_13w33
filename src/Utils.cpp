@@ -140,4 +140,10 @@ std::string Utils::ToString(const sf::IntRect& rect)
 	return ss.str();
 }
 
+bool Utils::RectContains(const sf::IntRect& rect, const sf::Vector2i& pos)
+{
+	return pos.x >= rect.Left && pos.x <= rect.Right &&
+			pos.y >= rect.Bottom && pos.y <= rect.Top;
+}
+
 } /* namespace dfv */

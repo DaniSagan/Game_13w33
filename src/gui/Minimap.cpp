@@ -143,7 +143,7 @@ void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
 	sf::Sprite sprite;
 	sprite.SetImage(this->img);
 	sprite.SetPosition(
-			window.GetWidth() - this->img.GetWidth(),
+			0,
 			window.GetHeight() - this->img.GetHeight());
 	window.Draw(sprite);
 
@@ -153,7 +153,7 @@ void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
 	shape.AddPoint(this->size / 2.0 - 3.0*sin(ang), this->size / 2.0 - 3.0*cos(ang), sf::Color::Red);
 	shape.AddPoint(this->size / 2.0 + 3.0*sin(ang), this->size / 2.0 + 3.0*cos(ang), sf::Color::Red);
 	shape.SetPosition(
-			window.GetWidth() - this->img.GetWidth() + (this->img.GetWidth() / this->range / 2),
+			this->img.GetWidth() / this->range / 2,
 			window.GetHeight() - this->img.GetHeight() + (this->img.GetHeight() / this->range / 2));
 	window.Draw(shape);
 }

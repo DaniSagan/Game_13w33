@@ -12,7 +12,9 @@ namespace dfv
 
 App::App():
 		frame(0),
-		walking(false)
+		walking(false),
+		road_id(0),
+		road_orientation(0)
 {
 	this->Initialize();
 	this->Run();
@@ -221,7 +223,7 @@ void App::HandleInput()
 
 void App::Draw()
 {
-	this->window.PreserveOpenGLStates(false);
+	//this->window.PreserveOpenGLStates(false);
 	this->window.SetActive();
 	this->camera.SetView(this->window);
 
@@ -311,16 +313,21 @@ bool App::ExecuteCommand(std::string cmd)
 
 				if(this->map.IsRoad(tile_pos))
 				{
-					return this->map.ChangeRoadType(tile_pos);
+					//return this->map.ChangeRoadType(tile_pos);
+					std::cout << "Setting road to id " << this->road_id << " orientation: "
+							<< this->road_orientation << std::endl;
+					return this->map.SetRoadId(tile_pos, this->road_id) &&
+						this->map.SetRoadOrientation(tile_pos, this->road_orientation);
 				}
 				else if(!this->map.HasBuilding(tile_pos))
 				{
+					std::cout << "Tile has a building. Cannot build road here." << std::endl;
 					return this->map.AddRoad(tile_pos, Road::straight, 0);
 				}
 			}
 		}
 
-		if(tokens[0] == std::string("rotate_road"))
+		else if(tokens[0] == std::string("rotate_road"))
 		{
 			if(tokens.size() >= 3)
 			{
@@ -331,6 +338,24 @@ bool App::ExecuteCommand(std::string cmd)
 				if(this->map.IsRoad(tile_pos))
 				{
 					return this->map.ChangeRoadOrientation(tile_pos);
+				}
+			}
+		}
+
+		else if(tokens[0] == std::string("copy_road"))
+		{
+			if(tokens.size() >= 3)
+			{
+				unsigned int posx = strtol(tokens[1].c_str(), NULL, 10);
+				unsigned int posy = strtol(tokens[2].c_str(), NULL, 10);
+				sf::Vector2i tile_pos(posx, posy);
+
+				if(this->map.IsRoad(tile_pos))
+				{
+					this->road_id = this->map.GetRoadId(tile_pos);
+					this->road_orientation = this->map.GetRoadOrientation(tile_pos);
+					std::cout << "Copied road at pos " << posx << "," << posy << std::endl;
+					return true;
 				}
 			}
 		}

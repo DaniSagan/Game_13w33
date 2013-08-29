@@ -1,0 +1,47 @@
+OLD MAP FORMAT
+==============
+
+map_size
+tiles[][]
+{
+	heights[4]
+	color[3]
+	is_road
+	{
+		road_id
+		road_orientation	
+	}
+	has_building
+	{
+		building_height
+		building_color[3]
+	}
+	
+}
+
+
+NEW MAP FORMAT
+==============
+
+map_width
+map_height
+
+tiles[][]
+{
+	heights[4]
+	color[3]
+	id
+	  // 0: null
+	{ // 1: road
+		road_id
+		road_orientation
+	}
+	{ // 2: building
+		height
+		color[3]
+	}
+	{ // 3: tree
+		height
+	}
+}
+	

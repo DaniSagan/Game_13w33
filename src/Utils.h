@@ -41,6 +41,7 @@ public:
 			const std::string& str,
 			const std::string& delimiters);
 	static std::string ToString(const sf::IntRect& rect);
+	static bool RectContains(const sf::IntRect& rect, const sf::Vector2i& pos);
 };
 
 } /* namespace dfv */

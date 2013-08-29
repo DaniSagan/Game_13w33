@@ -204,11 +204,11 @@ void Tile::AddRoad(dfv::Road::Type type, unsigned int orientation)
 	this->lp_road->Create(this->vertices, type, orientation);
 }
 
-Road::Type Tile::GetRoadType() const
+unsigned int Tile::GetRoadId() const
 {
 	if(this->IsRoad())
 	{
-		return this->lp_road->GetType();
+		return this->lp_road->GetId();
 	}
 	else
 	{
@@ -229,11 +229,11 @@ unsigned int Tile::GetRoadOrientation() const
 	}
 }
 
-bool Tile::SetRoadType(Road::Type road_type)
+bool Tile::SetRoadId(unsigned int road_id)
 {
 	if(this->IsRoad())
 	{
-		this->lp_road->SetType(road_type);
+		this->lp_road->SetId(road_id);
 		return true;
 	}
 	else

@@ -26,6 +26,15 @@ public:
 	Tile();
 	virtual ~Tile();
 
+	enum Type
+	{
+		grass,
+		road,
+		building,
+		tree,
+		count
+	};
+
 	void Create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
 	void SetColor(sf::Color color);
 	void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
@@ -37,9 +46,9 @@ public:
 	bool IsRoad() const;
 	float GetBuildingHeight() const;
 	void AddRoad(dfv::Road::Type type, unsigned int orientation);
-	Road::Type GetRoadType() const;
+	unsigned int GetRoadId() const;
 	unsigned int GetRoadOrientation() const;
-	bool SetRoadType(Road::Type road_type);
+	bool SetRoadId(unsigned int road_id);
 	bool SetRoadOrientation(unsigned int road_orientation);
 
 	sf::Vector3f GetVertex(const unsigned int index) const;

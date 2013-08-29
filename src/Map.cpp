@@ -745,14 +745,14 @@ bool Map::ChangeRoadType(const sf::Vector2i& tile_pos)
 {
 	if(this->IsRoad(tile_pos))
 	{
-		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadType();
+		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadId();
 		if(road_type >= Road::count - 1)
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadType(Road::straight);
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadId(Road::straight);
 		}
 		else
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadType((Road::Type)(road_type + 1));
+			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadId((Road::Type)(road_type + 1));
 		}
 		return true;
 	}
@@ -950,7 +950,7 @@ bool Map::SaveAsMapFormat(std::string filename)
 				{
 					temp = 2;
 					file.write((char*)&(temp), sizeof(unsigned int));
-					unsigned int road_type = this->lp_tiles[i][j]->GetRoadType();
+					unsigned int road_type = this->lp_tiles[i][j]->GetRoadId();
 					unsigned int road_orientation = this->lp_tiles[i][j]->GetRoadOrientation();
 
 					// road type
@@ -1183,6 +1183,89 @@ void Map::DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& res
 			}
 		}
 	}
+}
+
+unsigned int Map::GetRoadId(const sf::Vector2i& pos) const
+{
+	return this->lp_tiles[pos.x][pos.y]->GetRoadId();
+}
+
+unsigned int Map::GetRoadOrientation(const sf::Vector2i& pos) const
+{
+	return this->lp_tiles[pos.x][pos.y]->GetRoadOrientation();
+}
+
+bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
+{
+	sf::IntRect rect = this->GetRect();
+	if(dfv::Utils::RectContains(rect, pos))
+	{
+		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
+{
+	sf::IntRect rect = this->GetRect();
+	if(dfv::Utils::RectContains(rect, pos))
+	{
+		return this->lp_tiles[pos.x][pos.y]->SetRoadOrientation(orientation);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Map::SaveAsSgmFormat(const std::string& filename) const
+{
+	std::ofstream file;
+	file.open(filename.c_str(), std::ios::out | std::ios::binary);
+	if(file.is_open())
+	{
+		// map dimensions
+		unsigned int width = this->size;
+		unsigned int height = this->size;
+		file.write((char*)&(width), sizeof(unsigned int));
+		file.write((char*)&(height), sizeof(unsigned int));
+
+		// tiles
+		for(unsigned int i = 0; i < width; i++)
+		{
+			for(unsigned int j = 0; j < height; j++)
+			{
+				// tile heights
+				std::vector<sf::Vector3f> tile_vertices = this->lp_tiles[i][j]->GetVertices();
+				std::vector<float> tile_heights(4);
+				for(unsigned int k = 0; k < 4; k++)
+				{
+					tile_heights[k] = tile_vertices[k].z;
+					file.write((char*)&(tile_heights[k]), sizeof(float));
+				}
+
+				// tile color
+				sf::Color tile_color = this->lp_tiles[i][j]->GetColor();
+				unsigned char color_r = tile_color.r;
+				unsigned char color_g = tile_color.g;
+				unsigned char color_b = tile_color.b;
+				file.write((char*)&(color_r), sizeof(unsigned char));
+				file.write((char*)&(color_g), sizeof(unsigned char));
+				file.write((char*)&(color_b), sizeof(unsigned char));
+			}
+		}
+
+		return true;
+	}
+	return false;
+}
+
+bool Map::LoadFromSgmFormat(const std::string& filename)
+{
+	return false;
 }
 
 } /* namespace dfv */

@@ -9,8 +9,11 @@
 #define GUI_H_
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <sstream>
+#include <list>
 #include "Minimap.h"
+#include "Button.h"
 
 namespace dfv
 {
@@ -20,6 +23,14 @@ class Gui
 public:
 	Gui();
 	virtual ~Gui();
+
+	enum Tool
+	{
+		none = 0,
+		road,
+		select,
+		copy
+	};
 
 	void Draw(sf::RenderWindow& window, const Camera& camera) const;
 	void SetFps(float fps);
@@ -38,6 +49,13 @@ private:
 	sf::Vector3f map_pos;
 	std::vector<sf::Vector2f> selected_tile_vertices;
 	sf::IntRect selected_tiles;
+
+	Tool selected_tool;
+	std::list<Button> button_list;
+	sf::Image toolbar_img;
+
+	//unsigned int copy_road_id;
+	//unsigned int copy_road_orientation;
 };
 
 } /* namespace dfv */

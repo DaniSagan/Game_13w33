@@ -72,7 +72,13 @@ public:
 	void CallTileList() const;
 
 	void DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& resources) const;
+	unsigned int GetRoadId(const sf::Vector2i& pos) const;
+	unsigned int GetRoadOrientation(const sf::Vector2i& pos) const;
+	bool SetRoadId(const sf::Vector2i& pos, unsigned int id);
+	bool SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation);
 
+	bool SaveAsSgmFormat(const std::string& filename) const;
+	bool LoadFromSgmFormat(const std::string& filename);
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

@@ -38,13 +38,14 @@ public:
 
 	void Create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
 	void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-	void SetType(Type type);
+	void SetId(unsigned int id);
 	void SetOrientation(unsigned int orientation);
 	unsigned int GetOrientation() const;
-	Type GetType() const;
+	unsigned int GetId() const;
 
 private:
-	Type type;
+	//Type id;
+	unsigned int id;
 	unsigned int orientation;
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;

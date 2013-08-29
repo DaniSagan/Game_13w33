@@ -11,7 +11,7 @@ namespace dfv
 {
 
 Road::Road():
-		type(straight),
+		id(straight),
 		orientation(0)
 {
 	// TODO Auto-generated constructor stub
@@ -48,7 +48,7 @@ void Road::Create(const std::vector<sf::Vector3f>& vertices, Type type,
 				dfv::Utils::Diff(this->vertices[0], this->vertices[3]),
 				dfv::Utils::Diff(this->vertices[2], this->vertices[3]));
 
-		this->type = type;
+		this->id = type;
 		this->orientation = orientation;
 
 		this->tex_coords.resize(4);
@@ -89,7 +89,7 @@ void Road::Create(const std::vector<sf::Vector3f>& vertices, Type type,
 
 void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[this->type]);
+	glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[this->id]);
 	glBegin(GL_QUADS);
 		//glTexCoord2d(0.0,0.0);
 		glColor3f(1.f, 1.f, 1.f);
@@ -103,9 +103,9 @@ void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Road::SetType(Type type)
+void Road::SetId(unsigned int id)
 {
-	this->type = type;
+	this->id = id;
 }
 
 void Road::SetOrientation(unsigned int orientation)
@@ -146,9 +146,9 @@ unsigned int Road::GetOrientation() const
 	return this->orientation;
 }
 
-Road::Type Road::GetType() const
+unsigned int Road::GetId() const
 {
-	return this->type;
+	return this->id;
 }
 
 } /* namespace dfv */

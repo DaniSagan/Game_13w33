@@ -51,6 +51,8 @@ private:
 	dfv::Gui gui;
 
 	bool walking;
+	unsigned int road_id;
+	unsigned int road_orientation;
 };
 
 } /* namespace dfv */

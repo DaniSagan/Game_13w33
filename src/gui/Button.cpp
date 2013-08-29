@@ -79,4 +79,9 @@ bool Button::Contains(const sf::Vector2i& pos) const
 	return rect.Contains(pos.x, pos.y);
 }
 
+bool Button::LoadImage(const std::string& filename)
+{
+	return this->image.LoadFromFile(filename);
+}
+
 } /* namespace dfv */

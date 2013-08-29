@@ -12,10 +12,35 @@ namespace dfv
 
 Gui::Gui():
 		fps(0),
-		quadrant(0)
+		quadrant(0),
+		selected_tool(none)
+		//copy_road_id(0),
+		//copy_road_orientation(0)
 {
 	this->minimap.Create(256);
 
+	Button b1;
+	b1.LoadImage("res/gui/button_road.png");
+	b1.SetSize(sf::Vector2i(32, 32));
+	b1.SetPosition(sf::Vector2i(0, 0));
+	b1.SetCommand(std::string("button_road_cmd"));
+	this->button_list.push_back(b1);
+
+	Button b2;
+	b2.LoadImage("res/gui/button_select.png");
+	b2.SetSize(sf::Vector2i(32, 32));
+	b2.SetPosition(sf::Vector2i(0, 32));
+	b2.SetCommand(std::string("button_select_cmd"));
+	this->button_list.push_back(b2);
+
+	Button b3;
+	b3.LoadImage("res/gui/button_copy.png");
+	b3.SetSize(sf::Vector2i(32, 32));
+	b3.SetPosition(sf::Vector2i(0, 64));
+	b3.SetCommand(std::string("button_copy_cmd"));
+	this->button_list.push_back(b3);
+
+	//this->toolbar_img = sf::Image()
 }
 
 Gui::~Gui()
@@ -40,7 +65,7 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	string.SetPosition(300, 20);
 	window.Draw(string);
 
-	sf::Shape shape = sf::Shape::Line(
+	/*sf::Shape shape = sf::Shape::Line(
 			this->selected_tile_vertices[0],
 			this->selected_tile_vertices[1],
 			2.0, sf::Color(255, 0, 0));
@@ -59,9 +84,30 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 			this->selected_tile_vertices[3],
 			this->selected_tile_vertices[0],
 			2.0, sf::Color(255, 0, 0));
-	window.Draw(shape);
+	window.Draw(shape);*/
+
+	// toolbar
+
 
 	this->minimap.Draw(window, camera);
+
+	/*sf::Image toolbar_img(42, window.GetHeight() - this->minimap.GetSize() + 1, sf::Color(200, 200, 200, 150));
+	window.Draw(sf::Sprite(toolbar_img));*/
+
+	std::list<Button>::const_iterator it;
+	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
+	{
+		it->Draw(window);
+	}
+
+
+	/*sf::Shape toolbar_rect;
+	toolbar_rect = sf::Shape::Line(
+			200, 200,
+			//window.GetWidth() - this->minimap.GetSize(), 42,
+			500, 500, 1.0,
+			sf::Color(0, 0, 0));
+	window.Draw(toolbar_rect);*/
 }
 
 void Gui::SetFps(float fps)
@@ -86,21 +132,98 @@ void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile
 
 std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 {
-	std::vector<std::string> commands;
-	std::stringstream ss;
+	std::vector<std::string> button_commands;
+	//std::stringstream ss;
 
+	/*
+	// if left click
 	if(event.Type == sf::Event::MouseButtonPressed &&
 			event.MouseButton.Button == sf::Mouse::Left)
 	{
+		// command : build_road <x> <y>
 		ss << "build_road " << floor(this->map_pos.x) << " " << this->map_pos.y;
 		commands.push_back(ss.str());
 	}
 
+	// if right click
 	if(event.Type == sf::Event::MouseButtonPressed &&
 				event.MouseButton.Button == sf::Mouse::Right)
 	{
+		// command : rotate_road <x> <y>
 		ss << "rotate_road " << floor(this->map_pos.x) << " " << this->map_pos.y;
 		commands.push_back(ss.str());
+	}*/
+
+	std::list<Button>::iterator it;
+	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
+	{
+		it->HandleInput(button_commands, event);
+	}
+
+	std::vector<std::string> commands;
+	if(button_commands.size() == 0)
+	{
+		std::stringstream ss;
+		if(this->selected_tool == road)
+		{
+			// if left click
+			if(event.Type == sf::Event::MouseButtonPressed &&
+					event.MouseButton.Button == sf::Mouse::Left)
+			{
+				// command : build_road <x> <y>
+				ss << "build_road " << floor(this->map_pos.x) << " " << floor(this->map_pos.y);
+				std::cout << "Command: " << ss.str() << std::endl;
+				commands.push_back(ss.str());
+			}
+
+			// if right click
+			if(event.Type == sf::Event::MouseButtonPressed &&
+						event.MouseButton.Button == sf::Mouse::Right)
+			{
+				// command : rotate_road <x> <y>
+				ss << "rotate_road " << floor(this->map_pos.x) << " " << floor(this->map_pos.y);
+				std::cout << "Command: " << ss.str() << std::endl;
+				commands.push_back(ss.str());
+			}
+		}
+		else if(this->selected_tool == select)
+		{
+
+		}
+		else if(this->selected_tool == copy)
+		{
+			// if left click
+			if(event.Type == sf::Event::MouseButtonPressed &&
+					event.MouseButton.Button == sf::Mouse::Left)
+			{
+				// command : copy_road <x> <y>
+
+				ss << "copy_road " << floor(this->map_pos.x) << " " << floor(this->map_pos.y);
+				std::cout << "Command: " << ss.str() << std::endl;
+				commands.push_back(ss.str());
+			}
+		}
+	}
+	else
+	{
+		for(unsigned int i = 0; i < button_commands.size(); i++)
+		{
+			if(button_commands[i] == "button_road_cmd")
+			{
+				this->selected_tool = road;
+				std::cout << "Selected road tool" << std::endl;
+			}
+			else if(button_commands[i] == "button_select_cmd")
+			{
+				this->selected_tool = select;
+				std::cout << "Selected select tool" << std::endl;
+			}
+			else if(button_commands[i] == "button_copy_cmd")
+			{
+				this->selected_tool = copy;
+				std::cout << "Selected copy tool" << std::endl;
+			}
+		}
 	}
 
 	return commands;

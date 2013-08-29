@@ -27,6 +27,7 @@ public:
 	void Draw(sf::RenderWindow& window) const;
 	void HandleInput(std::vector<std::string>& command_list, const sf::Event& event);
 	bool Contains(const sf::Vector2i& pos) const;
+	bool LoadImage(const std::string& filename);
 
 private:
 	sf::Vector2i size;
