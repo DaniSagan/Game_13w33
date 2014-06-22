@@ -12,6 +12,7 @@
 #include <SFML/System.hpp>
 #include <iostream>
 #include <string>
+#include <cmath>
 #include "Map.h"
 #include "Resources.h"
 //#include "Minimap.h"
@@ -21,7 +22,7 @@
 namespace dfv
 {
 
-class App : public sf::Thread
+class App
 {
 public:
 	App();
@@ -37,6 +38,7 @@ public:
 	bool ExecuteCommand(std::string cmd);
 
 private:
+	//sf::RenderWindow window;
 	sf::RenderWindow window;
 	sf::Clock clock;
 	dfv::Camera camera;
@@ -53,6 +55,9 @@ private:
 	bool walking;
 	unsigned int road_id;
 	unsigned int road_orientation;
+
+	//sf::Clock clock;
+	float frame_time;
 };
 
 } /* namespace dfv */

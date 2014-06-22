@@ -69,13 +69,13 @@ sf::Vector2f Camera::GetPosition2d() const
 	return sf::Vector2f(this->position.x, this->position.y);
 }
 
-void Camera::SetView(const sf::RenderWindow& window) const
+void Camera::SetView(const sf::Window& window) const
 {
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, window.GetWidth(), window.GetHeight());
+	glViewport(0, 0, window.getSize().x, window.getSize().y);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(55.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 2000.0f);
+	gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -86,9 +86,9 @@ void Camera::SetView(const sf::RenderWindow& window) const
 
 }
 
-sf::IntRect Camera::GetRectFromView(const sf::IntRect& map_rect) const
+dfv::IntRect Camera::GetRectFromView(const dfv::IntRect& map_rect) const
 {
-	sf::IntRect view_rect(0, 0, 0, 0);
+	dfv::IntRect view_rect(0, 0, 0, 0);
 
 	// If looking down return the entire map
 

@@ -51,7 +51,7 @@ bool Resources::Load()
 	{
 		std::stringstream ss;
 		ss << "res/road/r" << i << ".png";
-		if(!this->img_roads[i].LoadFromFile(ss.str()))
+		if(!this->img_roads[i].loadFromFile(ss.str()))
 		{
 			std::cout << "ERROR: Texture not found" << std::endl;
 			return false;
@@ -69,9 +69,9 @@ bool Resources::Load()
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, GL_RGBA,
-			this->img_roads[i].GetWidth(), this->img_roads[i].GetHeight(),
+			this->img_roads[i].getSize().x, this->img_roads[i].getSize().y,
 			0,
-			GL_RGBA, GL_UNSIGNED_BYTE, this->img_roads[i].GetPixelsPtr()
+			GL_RGBA, GL_UNSIGNED_BYTE, this->img_roads[i].getPixelsPtr()
 		);
 	}
 

@@ -13,12 +13,21 @@ namespace dfv
 Button::Button():
 		size(sf::Vector2i(32, 32)),
 		position(sf::Vector2i(0, 0)),
-		command(std::string("button")),
-		image(sf::Image(32, 32, 0))
+		command(std::string("button"))
 {
 	// TODO Auto-generated constructor stub
 
 }
+
+Button::Button(const std::string& image_file, const sf::Vector2f& position)
+{
+	this->image.loadFromFile(image_file);
+	this->texture.loadFromFile(image_file);
+	this->position = position;
+	//this->sprite.setTexture(this->texture, true);
+	//this->sprite.setPosition(position);
+}
+
 
 Button::~Button()
 {
@@ -32,12 +41,15 @@ void Button::SetSize(const sf::Vector2i& size)
 
 void Button::SetPosition(const sf::Vector2i& position)
 {
-	this->position = position;
+	//this->position = position;
 }
 
 void Button::SetImage(const sf::Image& image)
 {
-	this->image = image;
+	//this->image = image;
+	this->texture.loadFromImage(this->image);
+	//this->sprite.setTexture(texture, true);
+	//this->sprite.setPosition(this->position.x, this->position.y);
 }
 
 void Button::SetCommand(const std::string& command)
@@ -48,20 +60,24 @@ void Button::SetCommand(const std::string& command)
 void Button::Draw(sf::RenderWindow& window) const
 {
 	sf::Sprite sprite;
-	sprite.SetImage(this->image);
+	sprite.setTexture(this->texture);
+	sprite.setPosition(this->position);
+	//sf::Texture texture;
+	//texture.update(this->image);
+	//sprite.setTexture(texture);
 	//sprite.SetSubRect(sf::IntRect(0, 0, this->size.x, this->size.y));
-	sprite.Resize(this->size.x, this->size.y);
-	sprite.SetPosition(this->position.x, this->position.y);
+	//sprite.resize(this->size.x, this->size.y);
+	//sprite.setPosition(this->position.x, this->position.y);
 
-	window.Draw(sprite);
+	window.draw(sprite);
 }
 
 void Button::HandleInput(std::vector<std::string>& command_list, const sf::Event& event)
 {
-	if(event.Type == sf::Event::MouseButtonPressed &&
-			event.MouseButton.Button == sf::Mouse::Left)
+	if(event.type == sf::Event::MouseButtonPressed &&
+			event.mouseButton.button == sf::Mouse::Left)
 	{
-		if(this->Contains(sf::Vector2i(event.MouseButton.X, event.MouseButton.Y)))
+		if(this->Contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)))
 		{
 			command_list.push_back(this->command);
 		}
@@ -70,18 +86,23 @@ void Button::HandleInput(std::vector<std::string>& command_list, const sf::Event
 
 bool Button::Contains(const sf::Vector2i& pos) const
 {
-	sf::IntRect rect(
+	dfv::IntRect rect(
 			this->position.x,
 			this->position.y,
 			this->position.x + this->size.x,
 			this->position.y + this->size.y);
 
-	return rect.Contains(pos.x, pos.y);
+	return dfv::Utils::RectContains(rect, sf::Vector2i(pos.x, pos.y));
 }
 
 bool Button::LoadImage(const std::string& filename)
 {
-	return this->image.LoadFromFile(filename);
+	if(this->image.loadFromFile(filename) == false) return false;
+	else
+	{
+		this->SetImage(this->image);
+		return true;
+	}
 }
 
 } /* namespace dfv */

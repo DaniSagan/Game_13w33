@@ -14,7 +14,8 @@ App::App():
 		frame(0),
 		walking(false),
 		road_id(0),
-		road_orientation(0)
+		road_orientation(0),
+		frame_time(0)
 {
 	this->Initialize();
 	this->Run();
@@ -29,9 +30,11 @@ void App::Initialize()
 {
 	srand(0);
 
-	this->window.Create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis");
-	this->window.SetFramerateLimit(60);
-	this->window.UseVerticalSync(true);
+	this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
+	//this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis");
+	//this->window.setFramerateLimit(60);
+	this->window.setVerticalSyncEnabled(true);
+	//this->window.useVerticalSync(true);
 	this->InitOpenGL();
 
 	this->map.LoadFromMapFormat("res/map/world1.map");
@@ -42,10 +45,10 @@ void App::Initialize()
 	//this->minimap.GenerateFromMap(&(this->map), this->camera);
 	//this->map.SaveAsMapFormat("res/map/world1.map");
 
-	this->button.SetSize(sf::Vector2i(32, 32));
-	this->button.SetPosition(sf::Vector2i(10, 300));
-	this->button.SetImage(this->resources.img_roads[0]);
-	this->button.SetCommand(std::string("road"));
+	//this->button.SetSize(sf::Vector2i(32, 32));
+	//this->button.SetPosition(sf::Vector2i(10, 300));
+	//this->button.SetImage(this->resources.img_roads[0]);
+	//this->button.SetCommand(std::string("road"));
 
 	this->map.GenerateTileList(this->camera, this->resources);
 	this->map.GenerateBuildingList();
@@ -54,7 +57,7 @@ void App::Initialize()
 
 void App::Run()
 {
-	while(this->window.IsOpened())
+	while(this->window.isOpen())
 	{
 		this->Update();
 		this->Draw();
@@ -66,11 +69,11 @@ void App::Run()
 void App::Update()
 {
 	++this->frame;
-	if(frame % 15 == 0)
+	/*if(frame % 15 == 0)
 	{
 		//std::cout << 1.0 / this->window.GetFrameTime() << " FPS" << std::endl;
 		//this->minimap.GenerateFromMap(&(this->map), this->camera);
-	}
+	}*/
 
 	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 
@@ -83,7 +86,10 @@ void App::Update()
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
 
-	this->gui.SetFps(1.0 / this->window.GetFrameTime());
+	//this->gui.SetFps(1.0 / this->window.getFrameTime());
+
+	this->frame_time = this->clock.restart().asSeconds();
+	this->gui.SetFps(1.0 / this->frame_time);
 	this->gui.SetQuadrant(this->camera.GetQuadrant());
 	this->gui.Update(this->map, this->camera.GetPosition2d());
 
@@ -108,31 +114,32 @@ void App::Update()
 
 void App::HandleInput()
 {
-	const sf::Input& input = this->window.GetInput();
-	this->mouse_pos = sf::Vector2i(input.GetMouseX(), input.GetMouseY());
+	//const sf::Input& input = this->window.GetInput();
+	//this->mouse_pos = sf::Vector2i(input.GetMouseX(), input.GetMouseY());
+	this->mouse_pos = sf::Vector2i(sf::Mouse::getPosition(this->window));
 	sf::Event event;
-	while(this->window.GetEvent(event))
+	while(this->window.pollEvent(event))
 	{
-		if(event.Type == sf::Event::Closed)
+		if(event.type == sf::Event::Closed)
 		{
-			this->window.Close();
+			this->window.close();
 		}
-		if(event.Type == sf::Event::Resized)
+		/*if(event.type == sf::Event::Resized)
 		{
-			this->window.Create(sf::VideoMode(event.Size.Width, event.Size.Height), "Saganopolis");
-			this->window.UseVerticalSync(true);
+			this->window.create(sf::VideoMode(event.size.width, event.size.height), "Saganopolis");
+			//this->window.UseVerticalSync(true);
 			this->InitOpenGL();
 			this->map.GenerateTileList(this->camera, this->resources);
 			this->map.GenerateBuildingList();
-		}
-		if(event.Type == sf::Event::KeyPressed)
+		}*/
+		if(event.type == sf::Event::KeyPressed)
 		{
-			if(event.Key.Code == sf::Key::N)
+			if(event.key.code == sf::Keyboard::N)
 			{
 				this->walking = !this->walking;
 			}
 		}
-		if(event.Type == sf::Event::MouseWheelMoved)
+		if(event.type == sf::Event::MouseWheelMoved)
 		{
 			//float height = this->map.GetHeight((int)this->camera.GetPosition().x, (int)this->camera.GetPosition().y);
 			float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
@@ -140,7 +147,7 @@ void App::HandleInput()
 					sf::Vector3f(
 							0.f,
 							0.f,
-							-0.02f * (float)event.MouseWheel.Delta * (this->camera.GetPosition().z - height)));
+							-0.02f * (float)event.mouseWheel.delta * (this->camera.GetPosition().z - height)));
 		}
 
 		/*if(this->mouse_pos.x < (int)(this->minimap.GetSize()) && this->mouse_pos.y < (int)(this->minimap.GetSize()))
@@ -157,48 +164,51 @@ void App::HandleInput()
 
 	float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	float height = this->camera.GetPosition().z - map_height;
-	float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
+	//float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
+	float vel = this->frame_time * 0.1f * (16*height + 1.0);
 	float ang = camera.GetRpy().z * 3.1416 / 180.0;
 	float angx = camera.GetRpy().x * 3.1416 / 180.0;
-	if(input.IsKeyDown(sf::Key::W))
+
+	//if(input.IsKeyDown(sf::Key::W))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		this->camera.Move(sf::Vector3f(vel * sin(ang) * sin(-angx), vel * cos(ang) * sin(-angx), -vel * cos(angx)));
 	}
-	if(input.IsKeyDown(sf::Key::S))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
 		this->camera.Move(sf::Vector3f(-vel * sin(ang) * sin(-angx), -vel * cos(ang) * sin(-angx), vel * cos(angx)));
 	}
-	if(input.IsKeyDown(sf::Key::D))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		this->camera.Move(sf::Vector3f(vel * cos(ang), -vel * sin(ang), 0.f));
 	}
-	if(input.IsKeyDown(sf::Key::A))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
 		this->camera.Move(sf::Vector3f(-vel * cos(ang), vel * sin(ang), 0.f));
 	}
-	if(input.IsKeyDown(sf::Key::R))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
 		this->camera.Move(sf::Vector3f(vel * sin(ang), vel * cos(ang), 0.0));
 	}
-	if(input.IsKeyDown(sf::Key::F))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
 	{
 		this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
 	}
 
-	float rot = 20.0f * this->window.GetFrameTime();
-	if(input.IsKeyDown(sf::Key::Q) || input.IsKeyDown(sf::Key::Up))
+	float rot = 20.0f * this->frame_time;
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->camera.Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
 	}
-	if(input.IsKeyDown(sf::Key::Z) || input.IsKeyDown(sf::Key::Down))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
 		this->camera.Rotate(sf::Vector3f(rot/2.0, 0.f, 0.f));
 	}
-	if(input.IsKeyDown(sf::Key::Num1) || input.IsKeyDown(sf::Key::Left))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -rot));
 	}
-	if(input.IsKeyDown(sf::Key::Num3) || input.IsKeyDown(sf::Key::Right))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, rot));
 	}
@@ -223,26 +233,34 @@ void App::HandleInput()
 
 void App::Draw()
 {
+
 	//this->window.PreserveOpenGLStates(false);
-	this->window.SetActive();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	this->window.setActive();
 	this->camera.SetView(this->window);
 
 	this->map.DrawSky();
 	this->map.SetLight(sf::Vector3f(400.f, -200.f, 400.f));
 
-	sf::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
+	dfv::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
 	if(this->camera.GetRpy().x > -120.f)
 	{
 		//this->map.DrawTiles(view_rect, this->camera, this->resources);
 		this->map.CallTileList();
 	}
 
-	sf::IntRect outlines_rect = dfv::Utils::CreateRect(
+	sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
+	dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
+	dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
+	this->map.DrawRoads(road_rect, this->camera, this->resources);
+
+	dfv::IntRect outlines_rect = dfv::Utils::CreateRect(
 			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
 			30);
 
 	dfv::Utils::TrimRect(outlines_rect, view_rect);
 
+	this->map.CallBuildingList();
 	glDisable(GL_CULL_FACE);
 	this->map.DrawBuildingOutlines(outlines_rect);
 	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
@@ -250,20 +268,20 @@ void App::Draw()
 	this->map.DrawBuildingFloors(outlines_rect);
 	glEnable(GL_CULL_FACE);
 	//this->map.DrawBuildingBoxes(view_rect);
-	this->map.CallBuildingList();
 
-	sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
-	sf::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
-	dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
+
+
 
 	//std::cout << "road_rect: " << dfv::Utils::ToString(road_rect) << std::endl;
 
-	this->map.DrawRoads(road_rect, this->camera, this->resources);
 
-	this->window.PreserveOpenGLStates(true);
+
+	this->window.pushGLStates();
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->gui.Draw(this->window, this->camera);
+	this->window.popGLStates();
+	this->window.display();
 
-	this->window.Display();
 }
 
 void App::InitOpenGL()
@@ -274,7 +292,7 @@ void App::InitOpenGL()
 	glDepthMask(GL_TRUE);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(55.f, (float)this->window.GetWidth() / (float)this->window.GetHeight(), 0.01f, 2500.f);
+	gluPerspective(55.f, (float)this->window.getSize().x / (float)this->window.getSize().y, 0.01f, 2500.f);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);

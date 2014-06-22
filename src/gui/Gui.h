@@ -9,6 +9,7 @@
 #define GUI_H_
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <list>
@@ -53,6 +54,7 @@ private:
 	Tool selected_tool;
 	std::list<Button> button_list;
 	sf::Image toolbar_img;
+	sf::Font font;
 
 	//unsigned int copy_road_id;
 	//unsigned int copy_road_orientation;

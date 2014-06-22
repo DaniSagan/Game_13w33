@@ -27,7 +27,8 @@ Minimap::~Minimap()
 void Minimap::Create(const unsigned int size)
 {
 	this->size = size;
-	this->img.Create(size, size, sf::Color(200, 200, 200));
+	this->img.create(size, size, sf::Color(200, 200, 200));
+	this->texture.create(size, size);
 	this->lp_pixels = new sf::Uint8[size * size * 4];
 	for(unsigned int i = 0; i < size * size * 4; i++)
 	{
@@ -128,7 +129,8 @@ void Minimap::GenerateFromMap(const Map& map, const sf::Vector2f position, unsig
 		}
 	}
 
-	this->img.LoadFromPixels(this->size, this->size, this->lp_pixels);
+	this->img.create(this->size, this->size, this->lp_pixels);
+	this->texture.update(this->img);
 }
 
 sf::Vector2i Minimap::RealPosFromMapPos(sf::Vector2i map_pos, int range)
@@ -141,21 +143,25 @@ sf::Vector2i Minimap::RealPosFromMapPos(sf::Vector2i map_pos, int range)
 void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
 {
 	sf::Sprite sprite;
-	sprite.SetImage(this->img);
-	sprite.SetPosition(
-			0,
-			window.GetHeight() - this->img.GetHeight());
-	window.Draw(sprite);
+	//sf::Texture texture;
+	//this->texture.update(this->lp_pixels);
+	sprite.setTexture(this->texture);
+	sprite.setPosition(
+			0.0,
+			window.getSize().y - this->img.getSize().y);
+	window.draw(sprite);
 
-	sf::Shape shape;
+	sf::ConvexShape shape;
 	float ang = -(camera.GetRpy().z + 90.f) * 3.1416 / 180.0;
-	shape.AddPoint(this->size / 2.0 + 15.0*cos(ang), this->size / 2.0 - 15.0*sin(ang), sf::Color::Red);
-	shape.AddPoint(this->size / 2.0 - 3.0*sin(ang), this->size / 2.0 - 3.0*cos(ang), sf::Color::Red);
-	shape.AddPoint(this->size / 2.0 + 3.0*sin(ang), this->size / 2.0 + 3.0*cos(ang), sf::Color::Red);
-	shape.SetPosition(
-			this->img.GetWidth() / this->range / 2,
-			window.GetHeight() - this->img.GetHeight() + (this->img.GetHeight() / this->range / 2));
-	window.Draw(shape);
+	shape.setPointCount(3);
+	shape.setFillColor(sf::Color::Red);
+	shape.setPoint(0, sf::Vector2f(this->size / 2.0 + 15.0*cos(ang), this->size / 2.0 - 15.0*sin(ang)));
+	shape.setPoint(1, sf::Vector2f(this->size / 2.0 - 3.0*sin(ang), this->size / 2.0 - 3.0*cos(ang)));
+	shape.setPoint(2, sf::Vector2f(this->size / 2.0 + 3.0*sin(ang), this->size / 2.0 + 3.0*cos(ang)));
+	shape.setPosition(
+			this->img.getSize().x / this->range / 2,
+			window.getSize().y - this->img.getSize().y + (this->img.getSize().y / this->range / 2));
+	window.draw(shape);
 }
 
 std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos)
@@ -168,10 +174,10 @@ std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, c
 
 	std::string res;
 
-	if(event.Type == sf::Event::MouseButtonPressed)
+	if(event.type == sf::Event::MouseButtonPressed)
 	{
 		std::cout << "Mouse Button Pressed" << std::endl;
-		if(event.MouseButton.Button == sf::Mouse::Left)
+		if(event.mouseButton.button == sf::Mouse::Left)
 		{
 			/*if(this->lp_map->IsRoad(abs_pos))
 			{
@@ -179,7 +185,7 @@ std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, c
 				this->lp_map->ChangeRoadType(abs_pos);
 			}*/
 		}
-		if(event.MouseButton.Button == sf::Mouse::Right)
+		if(event.mouseButton.button == sf::Mouse::Right)
 		{
 			/*if(this->lp_map->IsRoad(abs_pos))
 			{

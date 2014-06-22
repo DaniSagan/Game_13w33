@@ -81,8 +81,8 @@ void Map::CreateFromFile(std::string filename, unsigned int water_level, float m
 
 
 	sf::Image heightmap;
-	heightmap.LoadFromFile(filename);
-	this->size = heightmap.GetHeight() - 1;
+	heightmap.loadFromFile(filename);
+	this->size = heightmap.getSize().y - 1;
 	this->heights.resize(this->size + 1);
 
 	for(unsigned int i = 0; i < this->size + 1; i++)
@@ -91,7 +91,7 @@ void Map::CreateFromFile(std::string filename, unsigned int water_level, float m
 		for(unsigned int j = 0; j < this->size + 1; j++)
 		{
 			// generate height map
-			sf::Color col = heightmap.GetPixel(i, this->size - j);
+			sf::Color col = heightmap.getPixel(i, this->size - j);
 			if(col.r <= water_level)
 			{
 				this->heights[i][j] = 0.99;
@@ -256,10 +256,10 @@ void Map::CreateRandom(const unsigned int size)
 
 void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	glViewport(0, 0, window.GetWidth(), window.GetHeight());
+	glViewport(0, 0, window.getSize().x, window.getSize().y);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(55.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 2000.0f);
+	gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -521,7 +521,7 @@ bool Map::LoadHeightMap(const std::string& filename)
 bool Map::SaveBuildingMap(const std::string& filename)
 {
 	sf::Image img;
-	img.Create(this->size, this->size, sf::Color(0, 0, 0));
+	img.create(this->size, this->size, sf::Color(0, 0, 0));
 
 	for(unsigned int i = 0; i < this->size; i++)
 	{
@@ -529,31 +529,31 @@ bool Map::SaveBuildingMap(const std::string& filename)
 		{
 			if(this->lp_tiles[i][j]->IsRoad())
 			{
-				img.SetPixel(i, this->size - j - 1, sf::Color(255, 0, 0));
+				img.setPixel(i, this->size - j - 1, sf::Color(255, 0, 0));
 			}
 			else if(this->lp_tiles[i][j]->HasBuilding())
 			{
 				float h = this->lp_tiles[i][j]->GetBuildingHeight();
 				unsigned char hh = (h > 255 * 8) ? 255 : h * 8;
-				img.SetPixel(i, this->size - j - 1, sf::Color(0, hh, 0));
+				img.setPixel(i, this->size - j - 1, sf::Color(0, hh, 0));
 			}
 		}
 	}
 
-	return img.SaveToFile(filename);
+	return img.saveToFile(filename);
 }
 
 bool Map::LoadBuildingMap(const std::string& filename)
 {
 	sf::Image img;
-	img.LoadFromFile(filename);
-	if(img.GetHeight() == this->size && img.GetWidth() == this->size)
+	img.loadFromFile(filename);
+	if(img.getSize().y == this->size && img.getSize().x == this->size)
 	{
 		for(unsigned int i = 0; i < this->size; i++)
 		{
 			for(unsigned int j = 0; j < this->size; j++)
 			{
-				sf::Color pix = img.GetPixel(i, this->size - j - 1);
+				sf::Color pix = img.getPixel(i, this->size - j - 1);
 				unsigned char gg = pix.g;
 				unsigned char rr = pix.r;
 				if(rr == 255)
@@ -681,7 +681,7 @@ bool Map::LoadBuildingMap(const std::string& filename)
 void Map::GenerateMapImg(const unsigned int tile_size)
 {
 
-	this->map_img.Create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
+	this->map_img.create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
 
 	for(unsigned int i = 0; i < this->size; i++)
 	{
@@ -699,7 +699,7 @@ void Map::GenerateMapImg(const unsigned int tile_size)
 		}
 	}
 
-	this->map_img.SaveToFile("res/map/map_img.png");
+	this->map_img.saveToFile("res/map/map_img.png");
 }
 
 bool Map::IsRoad(const sf::Vector2i& tile_pos) const
@@ -807,7 +807,7 @@ sf::Vector3f Map::GetMapPosFromMouse(sf::Vector2i mouse_pos)
 	return sf::Vector3f(pos_x, pos_y, pos_z);
 }
 
-sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::RenderWindow& window)
+sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window)
 {
 	GLint viewport[4];
 	GLdouble modelview[16];
@@ -834,7 +834,7 @@ std::vector<sf::Vector3f> Map::GetTileVertices(sf::Vector2i pos)
 	return this->lp_tiles[pos.x][pos.y]->GetVertices();
 }
 
-void Map::DrawTiles(sf::IntRect rect, const Camera& camera, const Resources& resources) const
+void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -850,7 +850,7 @@ void Map::DrawTiles(sf::IntRect rect, const Camera& camera, const Resources& res
 	}
 }
 
-void Map::DrawBuildingBoxes(sf::IntRect rect) const
+void Map::DrawBuildingBoxes(dfv::IntRect rect) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -873,7 +873,7 @@ void Map::DrawBuildingBoxes(sf::IntRect rect) const
 	glEnd();
 }
 
-void Map::DrawBuildingOutlines(sf::IntRect rect) const
+void Map::DrawBuildingOutlines(dfv::IntRect rect) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -894,7 +894,7 @@ void Map::DrawBuildingOutlines(sf::IntRect rect) const
 	}
 }
 
-void Map::DrawBuildingFloors(sf::IntRect rect) const
+void Map::DrawBuildingFloors(dfv::IntRect rect) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -1107,9 +1107,9 @@ float Map::GetHeight(const sf::Vector2f& pos) const
 	}
 }
 
-sf::IntRect Map::GetRect() const
+dfv::IntRect Map::GetRect() const
 {
-	sf::IntRect rect;
+	dfv::IntRect rect;
 	rect.Left = 0;
 	rect.Right = this->size - 1;
 	rect.Top = this->size - 1;
@@ -1144,10 +1144,12 @@ bool Map::AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 
 void Map::GenerateBuildingList()
 {
+	//glEnable(GL_DEPTH_TEST);
 	this->building_list = glGenLists(1);
 	glNewList(this->building_list, GL_COMPILE);
 	this->DrawBuildingBoxes(this->GetRect());
 	glEndList();
+	//glDisable(GL_DEPTH_TEST);
 }
 
 void Map::CallBuildingList() const
@@ -1168,7 +1170,7 @@ void Map::CallTileList() const
 	glCallList(this->tile_list);
 }
 
-void Map::DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& resources) const
+void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 
 	dfv::Utils::TrimRect(rect, this->GetRect());
@@ -1197,7 +1199,7 @@ unsigned int Map::GetRoadOrientation(const sf::Vector2i& pos) const
 
 bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 {
-	sf::IntRect rect = this->GetRect();
+	dfv::IntRect rect = this->GetRect();
 	if(dfv::Utils::RectContains(rect, pos))
 	{
 		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
@@ -1210,7 +1212,7 @@ bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 
 bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 {
-	sf::IntRect rect = this->GetRect();
+	dfv::IntRect rect = this->GetRect();
 	if(dfv::Utils::RectContains(rect, pos))
 	{
 		return this->lp_tiles[pos.x][pos.y]->SetRoadOrientation(orientation);

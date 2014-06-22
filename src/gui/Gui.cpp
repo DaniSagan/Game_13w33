@@ -18,27 +18,29 @@ Gui::Gui():
 		//copy_road_orientation(0)
 {
 	this->minimap.Create(256);
+	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
 
-	Button b1;
-	b1.LoadImage("res/gui/button_road.png");
-	b1.SetSize(sf::Vector2i(32, 32));
-	b1.SetPosition(sf::Vector2i(0, 0));
+	Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
+	//b1.LoadImage("res/gui/button_road.png");
+	//b1.SetSize(sf::Vector2i(32, 32));
+	//b1.SetPosition(sf::Vector2i(0, 0));
 	b1.SetCommand(std::string("button_road_cmd"));
 	this->button_list.push_back(b1);
 
-	Button b2;
-	b2.LoadImage("res/gui/button_select.png");
-	b2.SetSize(sf::Vector2i(32, 32));
-	b2.SetPosition(sf::Vector2i(0, 32));
+	Button b2("res/gui/button_select.png", sf::Vector2f(0, 32));
+	//b2.LoadImage("res/gui/button_select.png");
+	//b2.SetSize(sf::Vector2i(32, 32));
+	//b2.SetPosition(sf::Vector2i(0, 32));
 	b2.SetCommand(std::string("button_select_cmd"));
 	this->button_list.push_back(b2);
 
-	Button b3;
-	b3.LoadImage("res/gui/button_copy.png");
-	b3.SetSize(sf::Vector2i(32, 32));
-	b3.SetPosition(sf::Vector2i(0, 64));
+	Button b3("res/gui/button_copy.png", sf::Vector2f(0, 64));
+	//b3.LoadImage("res/gui/button_copy.png");
+	//b3.SetSize(sf::Vector2i(32, 32));
+	//b3.SetPosition(sf::Vector2i(0, 64));
 	b3.SetCommand(std::string("button_copy_cmd"));
 	this->button_list.push_back(b3);
+
 
 	//this->toolbar_img = sf::Image()
 }
@@ -50,20 +52,20 @@ Gui::~Gui()
 
 void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 {
-	sf::String string;
-	string.SetSize(12.0);
+	sf::Text text("", this->font);
 	std::stringstream ss;
 
-	ss << "FPS: " << this->fps;
-	string.SetText(ss.str());
-	string.SetPosition(300, 5);
-	window.Draw(string);
+	ss << "FPS: " << floor(this->fps);
+	text.setString(ss.str());
+	text.setCharacterSize(14.0);
+	text.setPosition(300, 5);
+	window.draw(text);
 
 	ss.str(std::string(""));
 	ss << "Map pos: " << this->map_pos.x << ", " << this->map_pos.y << "," << this->map_pos.z;
-	string.SetText(ss.str());
-	string.SetPosition(300, 20);
-	window.Draw(string);
+	text.setString(ss.str());
+	text.setPosition(300, 20);
+	window.draw(text);
 
 	/*sf::Shape shape = sf::Shape::Line(
 			this->selected_tile_vertices[0],
@@ -87,7 +89,6 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	window.Draw(shape);*/
 
 	// toolbar
-
 
 	this->minimap.Draw(window, camera);
 
@@ -167,8 +168,8 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 		if(this->selected_tool == road)
 		{
 			// if left click
-			if(event.Type == sf::Event::MouseButtonPressed &&
-					event.MouseButton.Button == sf::Mouse::Left)
+			if(event.type == sf::Event::MouseButtonPressed &&
+					event.mouseButton.button == sf::Mouse::Left)
 			{
 				// command : build_road <x> <y>
 				ss << "build_road " << floor(this->map_pos.x) << " " << floor(this->map_pos.y);
@@ -177,8 +178,8 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 			}
 
 			// if right click
-			if(event.Type == sf::Event::MouseButtonPressed &&
-						event.MouseButton.Button == sf::Mouse::Right)
+			if(event.type == sf::Event::MouseButtonPressed &&
+						event.mouseButton.button == sf::Mouse::Right)
 			{
 				// command : rotate_road <x> <y>
 				ss << "rotate_road " << floor(this->map_pos.x) << " " << floor(this->map_pos.y);
@@ -193,8 +194,8 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 		else if(this->selected_tool == copy)
 		{
 			// if left click
-			if(event.Type == sf::Event::MouseButtonPressed &&
-					event.MouseButton.Button == sf::Mouse::Left)
+			if(event.type == sf::Event::MouseButtonPressed &&
+					event.mouseButton.button == sf::Mouse::Left)
 			{
 				// command : copy_road <x> <y>
 

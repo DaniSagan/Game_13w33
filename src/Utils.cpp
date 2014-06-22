@@ -10,6 +10,22 @@
 namespace dfv
 {
 
+IntRect::IntRect()
+{
+	this->Left = 0;
+	this->Right = 0;
+	this->Top = 0;
+	this->Bottom = 0;
+}
+
+IntRect::IntRect(int left, int top, int right, int bottom)
+{
+	this->Left = left;
+	this->Right = right;
+	this->Top = top;
+	this->Bottom = bottom;
+}
+
 Utils::Utils()
 {
 	// TODO Auto-generated constructor stub
@@ -46,7 +62,7 @@ void Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
 	{
 		for(unsigned j = 0; j < height; j++)
 		{
-			img.SetPixel(top_left.y + j, top_left.x + i, color);
+			img.setPixel(top_left.y + j, top_left.x + i, color);
 		}
 	}
 }
@@ -61,7 +77,7 @@ float Utils::Length(const sf::Vector2f v)
 	return sqrt(v.x*v.x + v.y*v.y);
 }
 
-void Utils::TrimRect(sf::IntRect& rect, const sf::IntRect& limits)
+void Utils::TrimRect(IntRect& rect, const IntRect& limits)
 {
 	if(rect.Left < limits.Left) rect.Left = limits.Left;
 	if(rect.Right > limits.Right) rect.Right = limits.Right;
@@ -69,7 +85,7 @@ void Utils::TrimRect(sf::IntRect& rect, const sf::IntRect& limits)
 	if(rect.Bottom < limits.Bottom) rect.Bottom = limits.Bottom;
 }
 
-void Utils::TrimRect(sf::IntRect& rect, int left, int right, int top,
+void Utils::TrimRect(IntRect& rect, int left, int right, int top,
 		int bottom)
 {
 	if(rect.Left < left) rect.Left = left;
@@ -78,9 +94,9 @@ void Utils::TrimRect(sf::IntRect& rect, int left, int right, int top,
 	if(rect.Bottom < bottom) rect.Bottom = bottom;
 }
 
-sf::IntRect Utils::CreateRect(const sf::Vector2i& position, int radius)
+IntRect Utils::CreateRect(const sf::Vector2i& position, int radius)
 {
-	sf::IntRect rect;
+	IntRect rect;
 	rect.Left = position.x - radius;
 	rect.Right = position.x + radius;
 	rect.Bottom = position.y - radius;
@@ -130,7 +146,7 @@ std::vector<std::string> Utils::StringTokenize(const std::string& str,
 	return tokens;
 }
 
-std::string Utils::ToString(const sf::IntRect& rect)
+std::string Utils::ToString(const IntRect& rect)
 {
 	std::stringstream ss;
 	ss << "L:" << rect.Left << ", ";
@@ -140,10 +156,12 @@ std::string Utils::ToString(const sf::IntRect& rect)
 	return ss.str();
 }
 
-bool Utils::RectContains(const sf::IntRect& rect, const sf::Vector2i& pos)
+bool Utils::RectContains(const IntRect& rect, const sf::Vector2i& pos)
 {
 	return pos.x >= rect.Left && pos.x <= rect.Right &&
 			pos.y >= rect.Bottom && pos.y <= rect.Top;
 }
+
+
 
 } /* namespace dfv */

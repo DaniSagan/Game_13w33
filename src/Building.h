@@ -9,6 +9,7 @@
 #define BUILDING_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 #include <iostream>
 #include <vector>
 

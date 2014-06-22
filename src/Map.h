@@ -8,10 +8,12 @@
 #ifndef MAP_H_
 #define MAP_H_
 
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <SFML/OpenGL.hpp>
 #include "Camera.h"
 #include "Tile.h"
 #include "Resources.h"
@@ -47,19 +49,19 @@ public:
 	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
 
 	sf::Vector3f GetMapPosFromMouse(sf::Vector2i mouse_pos);
-	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::RenderWindow& window);
+	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window);
 	std::vector<sf::Vector3f> GetTileVertices(sf::Vector2i pos);
 
-	void DrawTiles(sf::IntRect rect, const Camera& camera, const Resources& resources) const;
-	void DrawBuildingBoxes(sf::IntRect rect) const;
-	void DrawBuildingOutlines(sf::IntRect rect) const;
-	void DrawBuildingFloors(sf::IntRect rect) const;
+	void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	void DrawBuildingBoxes(dfv::IntRect rect) const;
+	void DrawBuildingOutlines(dfv::IntRect rect) const;
+	void DrawBuildingFloors(dfv::IntRect rect) const;
 
 	bool SaveAsMapFormat(std::string filename);
 	bool LoadFromMapFormat(std::string filename);
 	float GetHeight(const sf::Vector2f& pos) const;
 
-	sf::IntRect GetRect() const;
+	dfv::IntRect GetRect() const;
 
 	void DrawSky() const;
 	void SetLight(const sf::Vector3f& position) const;
@@ -71,7 +73,7 @@ public:
 	void GenerateTileList(const Camera& camera, const Resources& resources);
 	void CallTileList() const;
 
-	void DrawRoads(sf::IntRect rect, const Camera& camera, const Resources& resources) const;
+	void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	unsigned int GetRoadId(const sf::Vector2i& pos) const;
 	unsigned int GetRoadOrientation(const sf::Vector2i& pos) const;
 	bool SetRoadId(const sf::Vector2i& pos, unsigned int id);
@@ -89,7 +91,7 @@ private:
 	GLuint tile_list;
 	unsigned int population;
 
-	//sf::IntRect selected_tiles;
+	//dfv::IntRect selected_tiles;
 	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 

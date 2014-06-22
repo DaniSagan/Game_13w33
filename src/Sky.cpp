@@ -25,24 +25,24 @@ Sky::~Sky()
 void Sky::Create(float size, std::string filename)
 {
 	this->size = size;
-	if(!this->sky_img.LoadFromFile(filename))
+	if(!this->sky_img.loadFromFile(filename))
 	{
 		std::cout << "Could not load sky image" << std::endl;
 	}
-	unsigned int img_size = this->sky_img.GetHeight() / 3;
+	unsigned int img_size = this->sky_img.getSize().y / 3;
 
 	this->images.resize(6);
 	for(unsigned int i = 0; i < 6; i++)
 	{
-		this->images[i].Create(img_size, img_size, sf::Color(0,0,0));
+		this->images[i].create(img_size, img_size, sf::Color(0,0,0));
 	}
 
-	this->images[0].Copy(this->sky_img, 0, 0, sf::IntRect(img_size, 0, 2*img_size, img_size), false);
-	this->images[1].Copy(this->sky_img, 0, 0, sf::IntRect(0, img_size, img_size, 2*img_size), false);
-	this->images[2].Copy(this->sky_img, 0, 0, sf::IntRect(img_size, img_size, 2*img_size, 2*img_size), false);
-	this->images[3].Copy(this->sky_img, 0, 0, sf::IntRect(2*img_size, img_size, 3*img_size, 2*img_size), false);
-	this->images[4].Copy(this->sky_img, 0, 0, sf::IntRect(3*img_size, img_size, 4*img_size, 2*img_size), false);
-	this->images[5].Copy(this->sky_img, 0, 0, sf::IntRect(img_size, 2 * img_size, 2*img_size, 3 * img_size), false);
+	this->images[0].copy(this->sky_img, 0, 0, sf::IntRect(img_size, 0, img_size, img_size), false);
+	this->images[1].copy(this->sky_img, 0, 0, sf::IntRect(0, img_size, img_size, img_size), false);
+	this->images[2].copy(this->sky_img, 0, 0, sf::IntRect(img_size, img_size, img_size, img_size), false);
+	this->images[3].copy(this->sky_img, 0, 0, sf::IntRect(2*img_size, img_size, img_size, img_size), false);
+	this->images[4].copy(this->sky_img, 0, 0, sf::IntRect(3*img_size, img_size, img_size, img_size), false);
+	this->images[5].copy(this->sky_img, 0, 0, sf::IntRect(img_size, 2 * img_size, img_size, img_size), false);
 
 	this->image_handles.resize(6);
 	for(unsigned int i = 0; i < 6; i++)
@@ -56,9 +56,9 @@ void Sky::Create(float size, std::string filename)
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, GL_RGBA,
-			this->images[i].GetWidth(), this->images[i].GetHeight(),
+			this->images[i].getSize().x, this->images[i].getSize().y,
 			0,
-			GL_RGBA, GL_UNSIGNED_BYTE, this->images[i].GetPixelsPtr()
+			GL_RGBA, GL_UNSIGNED_BYTE, this->images[i].getPixelsPtr()
 		);
 	}
 

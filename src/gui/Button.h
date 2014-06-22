@@ -9,6 +9,7 @@
 #define BUTTON_H_
 
 #include <SFML/Graphics.hpp>
+#include "../Utils.h"
 
 namespace dfv
 {
@@ -17,6 +18,7 @@ class Button
 {
 public:
 	Button();
+	Button(const std::string& image_file, const sf::Vector2f& position);
 	virtual ~Button();
 
 	void SetSize(const sf::Vector2i& size);
@@ -31,9 +33,11 @@ public:
 
 private:
 	sf::Vector2i size;
-	sf::Vector2i position;
+	sf::Vector2f position;
 	std::string command;
 	sf::Image image;
+	sf::Texture texture;
+	//sf::Sprite sprite;
 };
 
 } /* namespace dfv */

@@ -9,6 +9,8 @@
 #define CAMERA_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include <cmath>
 #include "Utils.h"
 
 namespace dfv
@@ -28,8 +30,9 @@ public:
 	void SetRpy(const sf::Vector3f& rpy);
 	void Rotate(const sf::Vector3f& v);
 	unsigned int GetQuadrant() const;
-	void SetView(const sf::RenderWindow& window) const;
-	sf::IntRect GetRectFromView(const sf::IntRect& map_rect) const;
+	void SetView(const sf::Window& window) const;
+	//sf::IntRect GetRectFromView(const sf::IntRect& map_rect) const;
+	dfv::IntRect GetRectFromView(const dfv::IntRect& map_rect) const;
 
 private:
 	sf::Vector3f position;

@@ -9,6 +9,7 @@
 #define MINIMAP_H_
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <string>
 #include "../Camera.h"
 #include "../Map.h"
@@ -35,6 +36,7 @@ private:
 	unsigned int size;
 	unsigned int range;
 	sf::Uint8* lp_pixels;
+	sf::Texture texture;
 	//dfv::Map* lp_map;
 };
 

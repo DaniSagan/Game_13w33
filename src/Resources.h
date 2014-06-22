@@ -9,6 +9,7 @@
 #define RESOURCES_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 #include <iostream>
 #include <sstream>
 
