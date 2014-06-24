@@ -255,6 +255,11 @@ bool Tile::SetRoadOrientation(unsigned int road_orientation)
 	}
 }
 
+void Tile::addProp(Prop* lp_prop)
+{
+	this->lp_prop = lp_prop;
+}
+
 sf::Vector3f Tile::GetVertex(const unsigned int index) const
 {
 	if(index < 4)
@@ -264,15 +269,16 @@ sf::Vector3f Tile::GetVertex(const unsigned int index) const
 	return this->vertices.back();
 }
 
-std::vector<sf::Vector3f> Tile::GetVertices() const
+const std::vector<sf::Vector3f> & Tile::GetVertices() const
 {
-	std::vector<sf::Vector3f> res;
+	/*std::vector<sf::Vector3f> res;
 	res.resize(4);
 	res[0] = this->vertices[0];
 	res[1] = this->vertices[1];
 	res[2] = this->vertices[2];
 	res[3] = this->vertices[3];
-	return res;
+	return res;*/
+	return this->vertices;
 }
 
 void Tile::DrawBuildingBox() const
@@ -322,11 +328,27 @@ void Tile::SetBuildingColor(const sf::Color& color)
 
 void Tile::DrawRoad(const Camera& camera, const Resources& resources) const
 {
-
 	if(this->IsRoad())
 	{
 		this->lp_road->Draw(camera, resources);
 	}
+}
+
+void Tile::DrawProp(const Camera& camera, const Resources& resources) const
+{
+	if(this->lp_prop != NULL)
+	{
+		this->lp_prop->Draw(camera, resources);
+	}
+}
+
+bool Tile::isWater() const
+{
+	float threshold = 1.1;
+	return (this->vertices[0].z < threshold ||
+			this->vertices[1].z < threshold ||
+			this->vertices[2].z < threshold ||
+			this->vertices[3].z < threshold);
 }
 
 } /* namespace dfv */

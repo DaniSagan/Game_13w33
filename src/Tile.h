@@ -16,6 +16,7 @@
 #include "Resources.h"
 #include "Camera.h"
 #include "Road.h"
+#include "Prop.h"
 
 namespace dfv
 {
@@ -50,9 +51,10 @@ public:
 	unsigned int GetRoadOrientation() const;
 	bool SetRoadId(unsigned int road_id);
 	bool SetRoadOrientation(unsigned int road_orientation);
-
+	void addProp(Prop* lp_prop);
 	sf::Vector3f GetVertex(const unsigned int index) const;
-	std::vector<sf::Vector3f> GetVertices() const;
+	//std::vector<sf::Vector3f> GetVertices() const;
+	const std::vector<sf::Vector3f> & GetVertices() const;
 
 	void DrawBuildingBox() const;
 	void DrawBuildingOutline() const;
@@ -66,6 +68,9 @@ public:
 	sf::Color GetColor() const;
 	void SetBuildingColor(const sf::Color& color);
 	void DrawRoad(const Camera& camera, const Resources& resources) const;
+	void DrawProp(const Camera& camera, const Resources& resources) const;
+
+	bool isWater() const;
 
 private:
 	std::vector<sf::Vector3f> vertices;
@@ -75,6 +80,7 @@ private:
 	dfv::Building* lp_building;
 	bool is_road;
 	dfv::Road* lp_road;
+	dfv::Prop* lp_prop;
 };
 
 } /* namespace dfv */

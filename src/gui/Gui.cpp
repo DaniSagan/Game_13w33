@@ -55,7 +55,7 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	sf::Text text("", this->font);
 	std::stringstream ss;
 
-	ss << "FPS: " << floor(this->fps);
+	ss << "FPS: " << floor(this->fps) << ", Quadrant: " << camera.GetQuadrant() << ", RPY: " << camera.GetRpy().x << ", " << camera.GetRpy().y << ", " << camera.GetRpy().z;
 	text.setString(ss.str());
 	text.setCharacterSize(14.0);
 	text.setPosition(300, 5);

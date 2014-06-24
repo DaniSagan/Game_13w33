@@ -715,12 +715,38 @@ bool Map::IsRoad(const sf::Vector2i& tile_pos) const
 	}
 }
 
+bool Map::isRoad(unsigned int x, unsigned int y) const
+{
+	if(x >= 0 && x < this->size &&
+	   y >= 0 && y < this->size)
+	{
+		return this->lp_tiles[x][y]->IsRoad();
+	}
+	else
+	{
+		return false;
+	}
+}
+
 bool Map::HasBuilding(const sf::Vector2i& tile_pos) const
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
 	{
 		return this->lp_tiles[tile_pos.x][tile_pos.y]->HasBuilding();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Map::hasBuilding(unsigned int x, unsigned int y) const
+{
+	if(x >= 0 && x < this->size &&
+	   y >= 0 && y < this->size)
+	{
+		return this->lp_tiles[x][y]->HasBuilding();
 	}
 	else
 	{
@@ -829,7 +855,7 @@ sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window)
 	return sf::Vector3f((float)win_x, viewport[3] - (float)win_y, (float)win_z);
 }
 
-std::vector<sf::Vector3f> Map::GetTileVertices(sf::Vector2i pos)
+const std::vector<sf::Vector3f> & Map::GetTileVertices(sf::Vector2i pos)
 {
 	return this->lp_tiles[pos.x][pos.y]->GetVertices();
 }
@@ -1187,6 +1213,58 @@ void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 }
 
+void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
+{
+	dfv::Utils::TrimRect(rect, this->GetRect());
+	unsigned int quadrant = camera.GetQuadrant();
+	if(quadrant == 0)
+	{
+		for(int i = rect.Right; i > rect.Left; i--)
+		{
+			for(int j = rect.Bottom; j < rect.Top; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 1)
+	{
+		for(int j = rect.Top; j > rect.Bottom; j--)
+		{
+			for(int i = rect.Left; i < rect.Right; i++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 2)
+	{
+		for(int i = rect.Left; i < rect.Right; i++)
+		{
+			for(int j = rect.Bottom; j < rect.Top; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 3)
+	{
+		for(int j = rect.Bottom; j < rect.Top; j++)
+		{
+			for(int i = rect.Right; i > rect.Left; i--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+
+}
+
+void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
+{
+	this->lp_tiles[x][y]->addProp(lp_prop);
+}
+
 unsigned int Map::GetRoadId(const sf::Vector2i& pos) const
 {
 	return this->lp_tiles[pos.x][pos.y]->GetRoadId();
@@ -1268,6 +1346,11 @@ bool Map::SaveAsSgmFormat(const std::string& filename) const
 bool Map::LoadFromSgmFormat(const std::string& filename)
 {
 	return false;
+}
+
+bool Map::isWater(unsigned int x, unsigned int y) const
+{
+	return this->lp_tiles[x][y]->isWater();
 }
 
 } /* namespace dfv */

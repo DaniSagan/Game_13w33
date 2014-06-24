@@ -10,6 +10,8 @@
 namespace dfv
 {
 
+
+
 Resources::Resources():
 		img_1_handle(0)
 {
@@ -75,7 +77,25 @@ bool Resources::Load()
 		);
 	}
 
+	this->img_tree_2.loadFromFile("res/prop/tree-1.png");
+	this->img_tree.loadFromFile("res/prop/tree-2.png");
+	/*glGenTextures(1, &this->img_1_handle);
+	glBindTexture(GL_TEXTURE_2D, img_1_handle);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, GL_RGBA,
+		img_1.GetWidth(), img_1.GetHeight(),
+		0,
+		GL_RGBA, GL_UNSIGNED_BYTE, img_1.GetPixelsPtr()
+	);*/
+
 	return true;
 }
+
 
 } /* namespace dfv */

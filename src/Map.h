@@ -18,6 +18,8 @@
 #include "Tile.h"
 #include "Resources.h"
 #include "Sky.h"
+#include "Prop.h"
+#include "Tree.h"
 
 
 namespace dfv
@@ -43,14 +45,16 @@ public:
 	void GenerateMapImg(const unsigned int tile_size);
 
 	bool IsRoad(const sf::Vector2i& tile_pos) const;
+	bool isRoad(unsigned int x, unsigned int y) const;
 	bool HasBuilding(const sf::Vector2i& tile_pos) const;
+	bool hasBuilding(unsigned int x, unsigned int y) const;
 	sf::Color GetBuildingColor(const sf::Vector2i& tile_pos) const;
 	bool ChangeRoadType(const sf::Vector2i& tile_pos);
 	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
 
 	sf::Vector3f GetMapPosFromMouse(sf::Vector2i mouse_pos);
 	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window);
-	std::vector<sf::Vector3f> GetTileVertices(sf::Vector2i pos);
+	const std::vector<sf::Vector3f> & GetTileVertices(sf::Vector2i pos);
 
 	void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void DrawBuildingBoxes(dfv::IntRect rect) const;
@@ -74,6 +78,8 @@ public:
 	void CallTileList() const;
 
 	void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	void DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
 	unsigned int GetRoadId(const sf::Vector2i& pos) const;
 	unsigned int GetRoadOrientation(const sf::Vector2i& pos) const;
 	bool SetRoadId(const sf::Vector2i& pos, unsigned int id);
@@ -81,6 +87,8 @@ public:
 
 	bool SaveAsSgmFormat(const std::string& filename) const;
 	bool LoadFromSgmFormat(const std::string& filename);
+
+	bool isWater(unsigned int x, unsigned int y) const;
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

@@ -38,7 +38,26 @@ void App::Initialize()
 	this->InitOpenGL();
 
 	this->map.LoadFromMapFormat("res/map/world1.map");
+	Tree* lp_tree = new Tree();
+	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
+	lp_tree->Create(tile_vertices);
+	this->map.addProp(167, 196, lp_tree);
+
+	for(unsigned int i = 0; i < 50000; i++)
+	{
+		unsigned int x = rand() % this->map.GetSize();
+		unsigned int y = rand() % this->map.GetSize();
+		if(!this->map.isWater(x, y) && !this->map.hasBuilding(x, y) && !this->map.isRoad(x, y))
+		{
+			lp_tree = new Tree();
+			std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(x, y));
+			lp_tree->Create(tile_vertices);
+			this->map.addProp(x, y, lp_tree);
+		}
+	}
+
 	this->camera.SetPosition(sf::Vector3f(this->map.GetSize() / 2, this->map.GetSize() / 2, 5.f));
+	this->camera.SetRpy(sf::Vector3f(-90.0, 0.0, 0.0));
 	this->resources.Load();
 
 	//this->minimap.Create(256);
@@ -195,7 +214,7 @@ void App::HandleInput()
 		this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
 	}
 
-	float rot = 20.0f * this->frame_time;
+	float rot = 40.0f * this->frame_time;
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
 		this->camera.Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
@@ -240,6 +259,14 @@ void App::Draw()
 	this->camera.SetView(this->window);
 
 	this->map.DrawSky();
+
+	//sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
+	//dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
+	//dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
+	//glDisable(GL_CULL_FACE);
+
+	//glDisable(GL_CULL_FACE);
+
 	this->map.SetLight(sf::Vector3f(400.f, -200.f, 400.f));
 
 	dfv::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
@@ -253,6 +280,9 @@ void App::Draw()
 	dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
 	dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
 	this->map.DrawRoads(road_rect, this->camera, this->resources);
+	//glDisable(GL_CULL_FACE);
+	//this->map.DrawProps(road_rect, this->camera, this->resources);
+	//glEnable(GL_CULL_FACE);
 
 	dfv::IntRect outlines_rect = dfv::Utils::CreateRect(
 			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
@@ -266,6 +296,15 @@ void App::Draw()
 	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
 	this->gui.SetMapPos(this->map_pos);
 	this->map.DrawBuildingFloors(outlines_rect);
+
+	//glDisable(GL_LIGHTING);
+	//glShadeModel (GL_FLAT);
+	glDisable(GL_LIGHTING);
+	this->map.DrawProps(road_rect, this->camera, this->resources);
+	glEnable(GL_LIGHTING);
+	//glShadeModel (GL_SMOOTH);
+	//glEnable(GL_LIGHTING);
+
 	glEnable(GL_CULL_FACE);
 	//this->map.DrawBuildingBoxes(view_rect);
 
@@ -297,6 +336,8 @@ void App::InitOpenGL()
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_BLEND);
+	//glEnable(GL_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	GLfloat mat_specular[] = { 0.2, 0.2, 0.2, 0.2 };
 	GLfloat mat_shininess[] = { 128.0 };

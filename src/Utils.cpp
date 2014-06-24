@@ -26,6 +26,86 @@ IntRect::IntRect(int left, int top, int right, int bottom)
 	this->Bottom = bottom;
 }
 
+OpenGLImage::OpenGLImage():
+		handle(0)
+{
+
+}
+
+void OpenGLImage::loadFromFile(std::string filename)
+{
+	this->image.loadFromFile(filename);
+	glGenTextures(1, &this->handle);
+	glBindTexture(GL_TEXTURE_2D, this->handle);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, GL_RGBA,
+		this->image.getSize().x, this->image.getSize().y,
+		0,
+		GL_RGBA, GL_UNSIGNED_BYTE, this->image.getPixelsPtr()
+	);
+	this->tex_coords.resize(4);
+	this->tex_coords[0] = sf::Vector2f(0.f, 1.f);
+	this->tex_coords[1] = sf::Vector2f(1.f, 1.f);
+	this->tex_coords[2] = sf::Vector2f(1.f, 0.f);
+	this->tex_coords[3] = sf::Vector2f(0.f, 0.f);
+}
+
+GLuint OpenGLImage::getHandle() const
+{
+	return this->handle;
+}
+
+sf::Vector2f OpenGLImage::getTexCoords(const unsigned int index) const
+{
+	return this->tex_coords[index];
+}
+
+Quad::Quad()
+{
+
+}
+
+void Quad::create(const std::vector<sf::Vector3f>& vertices)
+{
+	if(vertices.size() != 4)
+	{
+		throw std::invalid_argument("parameter vertices must have 4 elements");
+	}
+	this->vertices.resize(4);
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		this->vertices[i] = vertices[i];
+	}
+	this->normals.resize(4);
+	this->normals[0] = Utils::Cross(this->vertices[1] - this->vertices[0],
+			                        this->vertices[3] - this->vertices[0]);
+	//this->normals[0] = this->normals[0] / Utils::Length(this->normals[0]);
+	this->normals[1] = Utils::Cross(this->vertices[2] - this->vertices[1],
+				                    this->vertices[0] - this->vertices[1]);
+	//this->normals[1] = this->normals[1] / Utils::Length(this->normals[1]);
+	this->normals[2] = Utils::Cross(this->vertices[3] - this->vertices[2],
+									this->vertices[1] - this->vertices[2]);
+	//this->normals[2] = this->normals[0] / Utils::Length(this->normals[2]);
+	this->normals[3] = Utils::Cross(this->vertices[0] - this->vertices[3],
+									this->vertices[2] - this->vertices[3]);
+	//this->normals[3] = this->normals[3] / Utils::Length(this->normals[3]);
+}
+
+sf::Vector3f Quad::getVertex(const unsigned int index) const
+{
+	return this->vertices[index];
+}
+
+sf::Vector3f Quad::getNormal(const unsigned int vertex_index) const
+{
+	return this->normals[vertex_index];
+}
+
 Utils::Utils()
 {
 	// TODO Auto-generated constructor stub

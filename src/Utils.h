@@ -9,9 +9,11 @@
 #define UTILS_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 #include <cmath>
 #include <string>
 #include <sstream>
+#include <stdexcept>
 
 namespace dfv
 {
@@ -24,6 +26,31 @@ struct IntRect
 	int Right;
 	int Top;
 	int Bottom;
+};
+
+class OpenGLImage
+{
+public:
+	OpenGLImage();
+	void loadFromFile(std::string filename);
+	GLuint getHandle() const;
+	sf::Vector2f getTexCoords(const unsigned int index) const;
+protected:
+	sf::Image image;
+	GLuint handle;
+	std::vector<sf::Vector2f> tex_coords;
+};
+
+class Quad
+{
+public:
+	Quad();
+	void create(const std::vector<sf::Vector3f>& vertices);
+	sf::Vector3f getVertex(const unsigned int index) const;
+	sf::Vector3f getNormal(const unsigned int vertex_index) const;
+protected:
+	std::vector<sf::Vector3f> vertices;
+	std::vector<sf::Vector3f> normals;
 };
 
 class Utils
