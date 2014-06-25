@@ -1219,29 +1219,57 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	unsigned int quadrant = camera.GetQuadrant();
 	if(quadrant == 0)
 	{
+		int midpoint = (rect.Bottom + rect.Top)/2;
 		for(int i = rect.Right; i > rect.Left; i--)
 		{
-			for(int j = rect.Bottom; j < rect.Top; j++)
+			for(int j = rect.Bottom; j < midpoint; j++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
+			for(int j = rect.Top; j >= midpoint; j--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+			/*for(int j = rect.Bottom; j < rect.Top; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}*/
 		}
 	}
 	else if(quadrant == 1)
 	{
+		int midpoint = (rect.Left + rect.Right)/2;
 		for(int j = rect.Top; j > rect.Bottom; j--)
 		{
-			for(int i = rect.Left; i < rect.Right; i++)
+			for(int i = rect.Left; i < midpoint; i++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
+			for(int i = rect.Right; i >= midpoint; i--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+
+			/*for(int i = rect.Left; i < rect.Right; i++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}*/
 		}
 	}
 	else if(quadrant == 2)
 	{
+		int midpoint = (rect.Bottom + rect.Top)/2;
 		for(int i = rect.Left; i < rect.Right; i++)
 		{
-			for(int j = rect.Bottom; j < rect.Top; j++)
+			/*for(int j = rect.Bottom; j < rect.Top; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}*/
+			for(int j = rect.Bottom; j < midpoint; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+			for(int j = rect.Top; j >= midpoint; j--)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
@@ -1249,12 +1277,22 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 3)
 	{
+		int midpoint = (rect.Left + rect.Right)/2;
 		for(int j = rect.Bottom; j < rect.Top; j++)
 		{
-			for(int i = rect.Right; i > rect.Left; i--)
+			for(int i = rect.Left; i < midpoint; i++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
+			for(int i = rect.Right; i >= midpoint; i--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+
+			/*for(int i = rect.Right; i > rect.Left; i--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}*/
 		}
 	}
 
