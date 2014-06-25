@@ -1219,7 +1219,7 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	unsigned int quadrant = camera.GetQuadrant();
 	if(quadrant == 0)
 	{
-		int midpoint = (rect.Bottom + rect.Top)/2;
+		int midpoint = camera.GetPosition().y;
 		for(int i = rect.Right; i > rect.Left; i--)
 		{
 			for(int j = rect.Bottom; j < midpoint; j++)
@@ -1238,7 +1238,7 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 1)
 	{
-		int midpoint = (rect.Left + rect.Right)/2;
+		int midpoint = camera.GetPosition().x;
 		for(int j = rect.Top; j > rect.Bottom; j--)
 		{
 			for(int i = rect.Left; i < midpoint; i++)
@@ -1258,7 +1258,7 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 2)
 	{
-		int midpoint = (rect.Bottom + rect.Top)/2;
+		int midpoint = camera.GetPosition().y;
 		for(int i = rect.Left; i < rect.Right; i++)
 		{
 			/*for(int j = rect.Bottom; j < rect.Top; j++)
@@ -1277,7 +1277,9 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 3)
 	{
-		int midpoint = (rect.Left + rect.Right)/2;
+		//int midpoint = (rect.Left + rect.Right)/2;
+		int midpoint = camera.GetPosition().x;
+		std::cout << midpoint << std::endl;
 		for(int j = rect.Bottom; j < rect.Top; j++)
 		{
 			for(int i = rect.Left; i < midpoint; i++)
