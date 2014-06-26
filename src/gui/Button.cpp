@@ -24,6 +24,7 @@ Button::Button(const std::string& image_file, const sf::Vector2f& position)
 	this->image.loadFromFile(image_file);
 	this->texture.loadFromFile(image_file);
 	this->position = position;
+	this->size = this->image.getSize();
 	//this->sprite.setTexture(this->texture, true);
 	//this->sprite.setPosition(position);
 }
@@ -34,7 +35,7 @@ Button::~Button()
 	// TODO Auto-generated destructor stub
 }
 
-void Button::SetSize(const sf::Vector2i& size)
+void Button::SetSize(const sf::Vector2u& size)
 {
 	this->size = size;
 }

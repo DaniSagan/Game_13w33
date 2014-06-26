@@ -239,7 +239,7 @@ std::string Utils::ToString(const IntRect& rect)
 bool Utils::RectContains(const IntRect& rect, const sf::Vector2i& pos)
 {
 	return pos.x >= rect.Left && pos.x <= rect.Right &&
-			pos.y >= rect.Bottom && pos.y <= rect.Top;
+			pos.y <= rect.Bottom && pos.y >= rect.Top;
 }
 
 

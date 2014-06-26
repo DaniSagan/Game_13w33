@@ -67,6 +67,35 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	text.setPosition(300, 20);
 	window.draw(text);
 
+	ss.str(std::string(""));
+	ss << floor(camera.getCarSpeed()*3.6) << " km/h";
+	text.setCharacterSize(40);
+	text.setString(ss.str());
+	text.setPosition(820, 400);
+	window.draw(text);
+
+	ss.str(std::string(""));
+	ss << floor(camera.getMotorRPM()) << " rpm";
+	text.setString(ss.str());
+	text.setPosition(820, 450);
+	window.draw(text);
+
+	ss.str(std::string(""));
+	ss << "Gear " << camera.getCarGear() + 1;
+	text.setString(ss.str());
+	text.setPosition(820, 500);
+	window.draw(text);
+
+	/*
+	sf::ConvexShape shape;
+	shape.setPointCount(4);
+	shape.setPoint(0, this->selected_tile_vertices[0]);
+	shape.setPoint(1, this->selected_tile_vertices[1]);
+	shape.setPoint(2, this->selected_tile_vertices[2]);
+	shape.setPoint(3, this->selected_tile_vertices[3]);
+	shape.setFillColor(sf::Color(255, 255, 255, 64));
+	window.draw(shape);*/
+
 	/*sf::Shape shape = sf::Shape::Line(
 			this->selected_tile_vertices[0],
 			this->selected_tile_vertices[1],

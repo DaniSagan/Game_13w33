@@ -10,8 +10,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <iostream>
 #include <cmath>
 #include "Utils.h"
+#include "Car.h"
 
 namespace dfv
 {
@@ -21,6 +23,35 @@ class Camera
 public:
 	Camera();
 	virtual ~Camera();
+
+	enum Mode
+	{
+		Free,
+		Walking,
+		Driving
+	};
+
+	enum Direction
+	{
+		NoDirection,
+		Forwards,
+		Backwards,
+		SidewaysLeft,
+		SidewaysRight,
+		Up,
+		Down
+	};
+
+	enum Rotation
+	{
+		NoRotation,
+		RollCW,
+		RolCCW,
+		PitchUp,
+		PitchDown,
+		YawLeft,
+		YawRight
+	};
 
 	sf::Vector3f GetPosition() const;
 	sf::Vector2f GetPosition2d() const;
@@ -33,10 +64,17 @@ public:
 	void SetView(const sf::Window& window) const;
 	//sf::IntRect GetRectFromView(const sf::IntRect& map_rect) const;
 	dfv::IntRect GetRectFromView(const dfv::IntRect& map_rect) const;
+	void handleInput(sf::Event& event);
+	void update(float dt, float map_height);
+	float getCarSpeed() const;
+	float getMotorRPM() const;
+	unsigned int getCarGear() const;
 
 private:
 	sf::Vector3f position;
 	sf::Vector3f rpy;
+	Mode mode;
+	Car car;
 };
 
 } /* namespace dfv */

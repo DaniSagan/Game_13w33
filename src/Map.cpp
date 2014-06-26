@@ -1126,11 +1126,12 @@ float Map::GetHeight(const sf::Vector2f& pos) const
 
 		return (1.0/((x1-x0)*(y1-y0)))*(h0*(x1-pos.x)*(y1-pos.y)+h1*(pos.x-x0)*(y1-pos.y)+h2*(pos.x-x0)*(pos.y-y0)+h3*(x1-pos.x)*(pos.y-y0));
 	}
-	else
+	return 0;
+	/*else
 	{
 		std::cout << "test" << std::endl;
 		return 0.f;
-	}
+	}*/
 }
 
 dfv::IntRect Map::GetRect() const

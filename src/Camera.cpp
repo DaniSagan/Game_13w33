@@ -10,7 +10,8 @@
 namespace dfv
 {
 
-Camera::Camera()
+Camera::Camera():
+		mode(Free)
 {
 	// TODO Auto-generated constructor stub
 
@@ -142,4 +143,132 @@ dfv::IntRect Camera::GetRectFromView(const dfv::IntRect& map_rect) const
 	return view_rect;
 }
 
+void Camera::handleInput(sf::Event& event)
+{
+	if(event.key.code == sf::Keyboard::N)
+	{
+		this->mode = Free;
+	}
+	else if(event.key.code == sf::Keyboard::M)
+	{
+		if(this->mode != Driving)
+		{
+			this->mode = Driving;
+			this->car.init();
+		}
+	}
+}
+
+void Camera::update(float dt, float map_height)
+{
+	float height = this->GetPosition().z - map_height;
+	if(height < 0.04f)
+	{
+		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
+	}
+	//float vel = dt * 0.1f * (16*height + 16.0);
+	float vel = 0.1 * (16.0*height + 16.0);
+	float ang = this->GetRpy().z * 3.1416 / 180.0;
+	float angx = this->GetRpy().x * 3.1416 / 180.0;
+
+	if(this->mode == Free)
+	{
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			this->Move(sf::Vector3f(dt * vel * sin(ang) * sin(-angx), dt * vel * cos(ang) * sin(-angx), -dt * vel * cos(angx)));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			this->Move(sf::Vector3f(-dt * vel * sin(ang) * sin(-angx), -dt * vel * cos(ang) * sin(-angx), dt * vel * cos(angx)));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			this->Move(sf::Vector3f(dt * vel * cos(ang), -dt * vel * sin(ang), 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			this->Move(sf::Vector3f(-dt * vel * cos(ang), dt * vel * sin(ang), 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		{
+			this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.0));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+		{
+			this->Move(sf::Vector3f(-dt * vel * sin(ang), -dt * vel * cos(ang), 0.0));
+		}
+
+		float rot = 20.0f * dt;
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			this->Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			this->Rotate(sf::Vector3f(rot/2.0, 0.f, 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			this->Rotate(sf::Vector3f(0.f, 0.f, -rot));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			this->Rotate(sf::Vector3f(0.f, 0.f, rot));
+		}
+		std::cout << "height:" << height << std::endl;
+		if(height < 0.04f)
+		{
+			this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
+		}
+
+	}
+	else if(this->mode == Driving)
+	{
+		this->car.update(dt);
+		vel = 1.f/32.f*this->car.getSpeed();
+		float rot = 0.0;
+		if(vel > 0.0)
+		{
+			/*if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			{
+				rot -= 40.f;//*this->car.getSpeed();
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			{
+				rot += 40.f;//*this->car.getSpeed();
+			}*/
+			rot = this->car.getSteeringAngle();
+		}
+		float rot_pitch = 0.0;
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			rot_pitch -= 50.f;
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			rot_pitch += 50.f;
+		}
+		this->Rotate(sf::Vector3f(rot_pitch*dt, 0.f, rot*dt));
+		this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
+		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
+	}
+}
+
+float Camera::getCarSpeed() const
+{
+	return this->car.getSpeed();
+}
+
+unsigned int Camera::getCarGear() const
+{
+	return this->car.getGear();
+}
+
+float Camera::getMotorRPM() const
+{
+	return this->car.getMotorW() * 60 / (2*3.1416);
+}
+
 } /* namespace dfv */
+
+

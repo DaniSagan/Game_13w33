@@ -15,7 +15,8 @@ App::App():
 		walking(false),
 		road_id(0),
 		road_orientation(0),
-		frame_time(0)
+		frame_time(0),
+		moving_mode(Free)
 {
 	this->Initialize();
 	this->Run();
@@ -78,9 +79,9 @@ void App::Run()
 {
 	while(this->window.isOpen())
 	{
+		this->HandleInput();
 		this->Update();
 		this->Draw();
-		this->HandleInput();
 	}
 	this->map.SaveAsMapFormat("res/map/world1.map");
 }
@@ -104,7 +105,9 @@ void App::Update()
 	{
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
-
+	//this->camera.update(this->frame_time, this->map.GetHeight(this->camera.GetPosition2d()));
+	this->camera.update(this->frame_time,
+						this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y)));
 	//this->gui.SetFps(1.0 / this->window.getFrameTime());
 
 	this->frame_time = this->clock.restart().asSeconds();
@@ -151,14 +154,19 @@ void App::HandleInput()
 			this->map.GenerateTileList(this->camera, this->resources);
 			this->map.GenerateBuildingList();
 		}*/
-		if(event.type == sf::Event::KeyPressed)
+		else if (event.type == sf::Event::Resized)
+		{
+			// adjust the viewport when the window is resized
+			glViewport(0, 0, event.size.width, event.size.height);
+		}
+		else if(event.type == sf::Event::KeyPressed)
 		{
 			if(event.key.code == sf::Keyboard::N)
 			{
 				this->walking = !this->walking;
 			}
 		}
-		if(event.type == sf::Event::MouseWheelMoved)
+		else if(event.type == sf::Event::MouseWheelMoved)
 		{
 			//float height = this->map.GetHeight((int)this->camera.GetPosition().x, (int)this->camera.GetPosition().y);
 			float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
@@ -181,64 +189,73 @@ void App::HandleInput()
 		this->ExecuteCommand(command_list[i]);
 	}
 
+	this->camera.handleInput(event);
+	/*
+	if(this->moving_mode == Free)
+	{
+		float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
+		float height = this->camera.GetPosition().z - map_height;
+		//float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
+		float vel = this->frame_time * 0.1f * (16*height + 16.0);
+		float ang = camera.GetRpy().z * 3.1416 / 180.0;
+		float angx = camera.GetRpy().x * 3.1416 / 180.0;
+
+		//if(input.IsKeyDown(sf::Key::W))
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			this->camera.Move(sf::Vector3f(vel * sin(ang) * sin(-angx), vel * cos(ang) * sin(-angx), -vel * cos(angx)));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			this->camera.Move(sf::Vector3f(-vel * sin(ang) * sin(-angx), -vel * cos(ang) * sin(-angx), vel * cos(angx)));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			this->camera.Move(sf::Vector3f(vel * cos(ang), -vel * sin(ang), 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			this->camera.Move(sf::Vector3f(-vel * cos(ang), vel * sin(ang), 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		{
+			this->camera.Move(sf::Vector3f(vel * sin(ang), vel * cos(ang), 0.0));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+		{
+			this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
+		}
+
+		float rot = 20.0f * this->frame_time;
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			this->camera.Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			this->camera.Rotate(sf::Vector3f(rot/2.0, 0.f, 0.f));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			this->camera.Rotate(sf::Vector3f(0.f, 0.f, -rot));
+		}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			this->camera.Rotate(sf::Vector3f(0.f, 0.f, rot));
+		}
+	}
+	else if(this->moving_mode == Driving)
+	{
+		this->camera.handleInput(event);
+	}
+
 	float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	float height = this->camera.GetPosition().z - map_height;
-	//float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
-	float vel = this->frame_time * 0.1f * (16*height + 1.0);
-	float ang = camera.GetRpy().z * 3.1416 / 180.0;
-	float angx = camera.GetRpy().x * 3.1416 / 180.0;
-
-	//if(input.IsKeyDown(sf::Key::W))
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		this->camera.Move(sf::Vector3f(vel * sin(ang) * sin(-angx), vel * cos(ang) * sin(-angx), -vel * cos(angx)));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		this->camera.Move(sf::Vector3f(-vel * sin(ang) * sin(-angx), -vel * cos(ang) * sin(-angx), vel * cos(angx)));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		this->camera.Move(sf::Vector3f(vel * cos(ang), -vel * sin(ang), 0.f));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		this->camera.Move(sf::Vector3f(-vel * cos(ang), vel * sin(ang), 0.f));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-	{
-		this->camera.Move(sf::Vector3f(vel * sin(ang), vel * cos(ang), 0.0));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
-	{
-		this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
-	}
-
-	float rot = 40.0f * this->frame_time;
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		this->camera.Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		this->camera.Rotate(sf::Vector3f(rot/2.0, 0.f, 0.f));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -rot));
-	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		this->camera.Rotate(sf::Vector3f(0.f, 0.f, rot));
-	}
-
-	map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-	height = this->camera.GetPosition().z - map_height;
 
 	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 	if(this->walking)
 	{
-		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.05f + map_height + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
+		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.05f + map_height));// + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
 	}
 	else
 	{
@@ -247,6 +264,7 @@ void App::HandleInput()
 			this->camera.Move(sf::Vector3f(0.f, 0.f, 0.04f - height));
 		}
 	}
+	*/
 
 }
 
@@ -275,6 +293,20 @@ void App::Draw()
 		//this->map.DrawTiles(view_rect, this->camera, this->resources);
 		this->map.CallTileList();
 	}
+	//this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+
+	/*sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
+	if(tile_pos.x < 0) tile_pos.x = 0;
+	if(tile_pos.x >= (int)this->map.GetSize()) tile_pos.x = this->map.GetSize() - 1;
+	if(tile_pos.y < 0) tile_pos.y = 0;
+	if(tile_pos.y >= (int)this->map.GetSize()) tile_pos.y = this->map.GetSize() - 1;
+	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(tile_pos);
+	std::vector<sf::Vector2f> sel_vertices(4);
+	sel_vertices[0] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[0], this->window));
+	sel_vertices[1] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[1], this->window));
+	sel_vertices[2] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[2], this->window));
+	sel_vertices[3] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[3], this->window));
+	this->gui.SetSelectedTileVertices(sel_vertices);*/
 
 	sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
 	dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
@@ -294,6 +326,10 @@ void App::Draw()
 	glDisable(GL_CULL_FACE);
 	this->map.DrawBuildingOutlines(outlines_rect);
 	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+	if(camera.GetQuadrant() == 0) map_pos.x += 0.1;
+	else if(camera.GetQuadrant() == 1) map_pos.y += 0.1;
+	else if(camera.GetQuadrant() == 2) map_pos.x -= 0.1;
+	else if(camera.GetQuadrant() == 3) map_pos.y -= 0.1;
 	this->gui.SetMapPos(this->map_pos);
 	this->map.DrawBuildingFloors(outlines_rect);
 

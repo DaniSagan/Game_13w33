@@ -21,7 +21,7 @@ public:
 	Button(const std::string& image_file, const sf::Vector2f& position);
 	virtual ~Button();
 
-	void SetSize(const sf::Vector2i& size);
+	void SetSize(const sf::Vector2u& size);
 	void SetPosition(const sf::Vector2i& position);
 	void SetImage(const sf::Image& image);
 	void SetCommand(const std::string& command);
@@ -32,7 +32,7 @@ public:
 	bool LoadImage(const std::string& filename);
 
 private:
-	sf::Vector2i size;
+	sf::Vector2u size;
 	sf::Vector2f position;
 	std::string command;
 	sf::Image image;

@@ -13,7 +13,8 @@ namespace dfv
 Tile::Tile():
 		lp_building(NULL),
 		is_road(false),
-		lp_road(NULL)
+		lp_road(NULL),
+		lp_prop(NULL)
 {
 	// TODO Auto-generated constructor stub
 

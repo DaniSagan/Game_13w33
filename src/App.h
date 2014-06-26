@@ -28,6 +28,13 @@ public:
 	App();
 	virtual ~App();
 
+	enum MovingMode
+	{
+		Free,
+		Walking,
+		Driving
+	};
+
 	void Initialize();
 	void Run();
 	void Update();
@@ -58,6 +65,7 @@ private:
 
 	//sf::Clock clock;
 	float frame_time;
+	MovingMode moving_mode;
 };
 
 } /* namespace dfv */
