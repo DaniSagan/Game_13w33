@@ -1280,7 +1280,7 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	{
 		//int midpoint = (rect.Left + rect.Right)/2;
 		int midpoint = camera.GetPosition().x;
-		std::cout << midpoint << std::endl;
+		//std::cout << midpoint << std::endl;
 		for(int j = rect.Bottom; j < rect.Top; j++)
 		{
 			for(int i = rect.Left; i < midpoint; i++)

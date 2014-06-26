@@ -215,7 +215,7 @@ void Camera::update(float dt, float map_height)
 		{
 			this->Rotate(sf::Vector3f(0.f, 0.f, rot));
 		}
-		std::cout << "height:" << height << std::endl;
+		//std::cout << "height:" << height << std::endl;
 		if(height < 0.04f)
 		{
 			this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));

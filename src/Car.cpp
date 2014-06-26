@@ -156,7 +156,7 @@ void Car::update(float dt)
 	{
 		this->speed = 0.0;
 	}
-	std::cout << "Gear: " << this->curr_gear + 1 << ", Speed: " << this->speed*3.6f << "(km/h), rpm: " << this->getMotorW()*(60.0/(2.0*3.1416))  << std::endl;
+	//std::cout << "Gear: " << this->curr_gear + 1 << ", Speed: " << this->speed*3.6f << "(km/h), rpm: " << this->getMotorW()*(60.0/(2.0*3.1416))  << std::endl;
 }
 
 void Car::setState(State state)
