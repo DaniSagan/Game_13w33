@@ -105,7 +105,7 @@ bool Car::gearDown()
 	}
 }
 
-void Car::update(float dt)
+void Car::update(float dt, float pitch)
 {
 	this->state = None;
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -151,7 +151,7 @@ void Car::update(float dt)
 	{
 		this->gearDown();
 	}
-	this->speed += dt * (this->getForce() - this->getDrag()) / (this->mass);
+	this->speed += dt * (this->getForce() - this->getDrag() - this->getGravityForce(pitch)) / (this->mass);
 	if(this->speed < 0.0)
 	{
 		this->speed = 0.0;
@@ -166,7 +166,7 @@ void Car::setState(State state)
 
 float Car::getDrag() const
 {
-	const float Ad = 0.6;
+	const float Ad = 0.65;
 	const float d = 1.2;
 	return 0.5 * d * Ad * this->speed*this->speed;
 }
@@ -183,7 +183,7 @@ float Car::getForce() const
 	}
 	else if(this->state == Braking)
 	{
-		return -20000.0;
+		return -15000.0;
 	}
 	else
 	{
@@ -204,6 +204,11 @@ float Car::getSteeringAngle() const
 unsigned int Car::getGear() const
 {
 	return this->curr_gear;
+}
+
+float Car::getGravityForce(float pitch) const
+{
+	return this->mass*9.81*sin(pitch*3.141592/180.0);
 }
 
 } /* namespace dfv */

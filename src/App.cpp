@@ -106,8 +106,12 @@ void App::Update()
 		this->camera.Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
 	//this->camera.update(this->frame_time, this->map.GetHeight(this->camera.GetPosition2d()));
+	sf::Vector2f camera_pos = this->camera.GetPosition2d();
+	sf::Vector3f normal = this->map.getNormal(camera_pos.x, camera_pos.y);
+
 	this->camera.update(this->frame_time,
-						this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y)));
+						this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y)),
+						normal);
 	//this->gui.SetFps(1.0 / this->window.getFrameTime());
 
 	this->frame_time = this->clock.restart().asSeconds();
@@ -165,6 +169,17 @@ void App::HandleInput()
 			{
 				this->walking = !this->walking;
 			}
+			else if(event.key.code == sf::Keyboard::P)
+			{
+				this->map.SaveAsMapFormat("res/map/world1.map");
+			}
+			else if(event.key.code == sf::Keyboard::O)
+			{
+				std::string cmd;
+				std::cout << "cmd> ";
+				std::getline(std::cin, cmd);
+				std::cout << "cmd: " << cmd << std::endl;
+			}
 		}
 		else if(event.type == sf::Event::MouseWheelMoved)
 		{
@@ -190,81 +205,6 @@ void App::HandleInput()
 	}
 
 	this->camera.handleInput(event);
-	/*
-	if(this->moving_mode == Free)
-	{
-		float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-		float height = this->camera.GetPosition().z - map_height;
-		//float vel = this->window.GetFrameTime() * 0.1f * (8*height + 1.0);
-		float vel = this->frame_time * 0.1f * (16*height + 16.0);
-		float ang = camera.GetRpy().z * 3.1416 / 180.0;
-		float angx = camera.GetRpy().x * 3.1416 / 180.0;
-
-		//if(input.IsKeyDown(sf::Key::W))
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		{
-			this->camera.Move(sf::Vector3f(vel * sin(ang) * sin(-angx), vel * cos(ang) * sin(-angx), -vel * cos(angx)));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			this->camera.Move(sf::Vector3f(-vel * sin(ang) * sin(-angx), -vel * cos(ang) * sin(-angx), vel * cos(angx)));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			this->camera.Move(sf::Vector3f(vel * cos(ang), -vel * sin(ang), 0.f));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			this->camera.Move(sf::Vector3f(-vel * cos(ang), vel * sin(ang), 0.f));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-		{
-			this->camera.Move(sf::Vector3f(vel * sin(ang), vel * cos(ang), 0.0));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
-		{
-			this->camera.Move(sf::Vector3f(-vel * sin(ang), -vel * cos(ang), 0.0));
-		}
-
-		float rot = 20.0f * this->frame_time;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			this->camera.Rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			this->camera.Rotate(sf::Vector3f(rot/2.0, 0.f, 0.f));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			this->camera.Rotate(sf::Vector3f(0.f, 0.f, -rot));
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			this->camera.Rotate(sf::Vector3f(0.f, 0.f, rot));
-		}
-	}
-	else if(this->moving_mode == Driving)
-	{
-		this->camera.handleInput(event);
-	}
-
-	float map_height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-	float height = this->camera.GetPosition().z - map_height;
-
-	//float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-	if(this->walking)
-	{
-		this->camera.SetPosition(sf::Vector3f(this->camera.GetPosition().x, this->camera.GetPosition().y, 0.05f + map_height));// + 0.001f * sin(75.f * this->camera.GetPosition().x) + 0.001f * sin(75.f * this->camera.GetPosition().y)));
-	}
-	else
-	{
-		if(height < 0.04f)
-		{
-			this->camera.Move(sf::Vector3f(0.f, 0.f, 0.04f - height));
-		}
-	}
-	*/
 
 }
 

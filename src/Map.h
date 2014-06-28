@@ -89,6 +89,7 @@ public:
 	bool LoadFromSgmFormat(const std::string& filename);
 
 	bool isWater(unsigned int x, unsigned int y) const;
+	sf::Vector3f getNormal(unsigned int x, unsigned int y);
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

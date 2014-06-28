@@ -162,28 +162,16 @@ void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile
 
 std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 {
-	std::vector<std::string> button_commands;
-	//std::stringstream ss;
-
-	/*
-	// if left click
-	if(event.Type == sf::Event::MouseButtonPressed &&
-			event.MouseButton.Button == sf::Mouse::Left)
+	if(event.type == sf::Event::KeyPressed)
 	{
-		// command : build_road <x> <y>
-		ss << "build_road " << floor(this->map_pos.x) << " " << this->map_pos.y;
-		commands.push_back(ss.str());
+		if(event.key.code == sf::Keyboard::B)
+		{
+
+		}
 	}
 
-	// if right click
-	if(event.Type == sf::Event::MouseButtonPressed &&
-				event.MouseButton.Button == sf::Mouse::Right)
-	{
-		// command : rotate_road <x> <y>
-		ss << "rotate_road " << floor(this->map_pos.x) << " " << this->map_pos.y;
-		commands.push_back(ss.str());
-	}*/
 
+	std::vector<std::string> button_commands;
 	std::list<Button>::iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{
@@ -256,6 +244,17 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 		}
 	}
 
+	return commands;
+}
+
+std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::vector<std::string>& commands)
+{
+	//std::vector<std::string> button_commands;
+	std::list<Button>::iterator it;
+	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
+	{
+		it->HandleInput(commands, event);
+	}
 	return commands;
 }
 

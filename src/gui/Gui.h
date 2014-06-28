@@ -40,6 +40,7 @@ public:
 	void SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_vertices);
 
 	std::vector<std::string> HandleInput(const sf::Event& event);
+	std::vector<std::string>& handleButtonInput(const sf::Event& event, std::vector<std::string>& commands);
 	void Update(const Map& map, const sf::Vector2f& position);
 
 private:

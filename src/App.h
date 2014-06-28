@@ -66,6 +66,8 @@ private:
 	//sf::Clock clock;
 	float frame_time;
 	MovingMode moving_mode;
+
+	std::vector<std::string> commands;
 };
 
 } /* namespace dfv */

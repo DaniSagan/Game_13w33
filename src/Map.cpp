@@ -1318,8 +1318,17 @@ unsigned int Map::GetRoadOrientation(const sf::Vector2i& pos) const
 
 bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 {
-	dfv::IntRect rect = this->GetRect();
+	/*dfv::IntRect rect = this->GetRect();
 	if(dfv::Utils::RectContains(rect, pos))
+	{
+		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
+	}
+	else
+	{
+		return false;
+	}*/
+	if(pos.x >= 0 && pos.x < this->size &&
+	   pos.y >= 0 && pos.y < this->size)
 	{
 		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
 	}
@@ -1392,6 +1401,15 @@ bool Map::LoadFromSgmFormat(const std::string& filename)
 bool Map::isWater(unsigned int x, unsigned int y) const
 {
 	return this->lp_tiles[x][y]->isWater();
+}
+
+sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
+{
+	std::vector<sf::Vector3f> vertices;
+	vertices = this->GetTileVertices(sf::Vector2i(x, y));
+	sf::Vector3f v = Utils::Cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
+	float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+	return sf::Vector3f(v.x/len, v.y/len, v.z/len);
 }
 
 } /* namespace dfv */

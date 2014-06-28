@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <cmath>
 
 namespace dfv
 {
@@ -37,13 +38,14 @@ public:
 	float getMotorW() const;
 	bool gearUp();
 	bool gearDown();
-	void update(float dt);
+	void update(float dt, float pitch);
 	void setState(State state);
 	float getDrag() const;
 	float getForce() const;
 	float getSpeed() const;
 	float getSteeringAngle() const;
 	unsigned int getGear() const;
+	float getGravityForce(float pitch) const;
 private:
 	float k, w0, w1;
 	sf::Vector3f position;
