@@ -69,6 +69,8 @@ public:
 	float getCarSpeed() const;
 	float getMotorRPM() const;
 	unsigned int getCarGear() const;
+	float getCarTorque() const;
+	float getCarPower() const;
 
 private:
 	sf::Vector3f position;

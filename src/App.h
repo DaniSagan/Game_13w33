@@ -68,6 +68,7 @@ private:
 	MovingMode moving_mode;
 
 	std::vector<std::string> commands;
+	std::vector<sf::Vector2u> selected_tiles;
 };
 
 } /* namespace dfv */

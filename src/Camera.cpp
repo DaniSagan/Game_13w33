@@ -289,6 +289,16 @@ float Camera::getMotorRPM() const
 	return this->car.getMotorW() * 60 / (2*3.1416);
 }
 
+float Camera::getCarTorque() const
+{
+	return this->car.getCurrTorque();
+}
+
+float Camera::getCarPower() const
+{
+	return this->car.getCurrTorque()*this->car.getMotorW();
+}
+
 } /* namespace dfv */
 
 

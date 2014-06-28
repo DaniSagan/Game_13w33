@@ -1412,6 +1412,39 @@ sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
 	return sf::Vector3f(v.x/len, v.y/len, v.z/len);
 }
 
+bool Map::clearRoad(unsigned int x, unsigned int y)
+{
+	try
+	{
+		return this->lp_tiles[x][y]->clearRoad();
+	}
+	catch(...)
+	{
+		return false;
+	}
+}
+
+bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned int orientation)
+{
+	if(!this->lp_tiles[x][y]->IsRoad())
+	{
+		unsigned int rr = rand() % 5;
+		this->lp_tiles[x][y]->SetColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
+		Road::Type road_type;
+		switch(id)
+		{
+		case 0: road_type = Road::straight; 	break;
+		case 1: road_type = Road::cross; 		break;
+		case 2: road_type = Road::tcross; 		break;
+		case 3:	road_type = Road::curve; 		break;
+		case 4:	road_type = Road::av_straight; 	break;
+		case 5:	road_type = Road::av_cross; 	break;
+		case 6:	road_type = Road::av_tcross; 	break;
+		}
+		this->lp_tiles[x][y]->AddRoad(road_type, orientation);
+	}
+}
+
 } /* namespace dfv */
 
 

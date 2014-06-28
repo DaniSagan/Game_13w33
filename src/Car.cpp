@@ -11,18 +11,25 @@ namespace dfv
 {
 
 Car::Car():
-		k(-143.0/(127793.0)),
-		w0(-500.0*2.0*3.1416/60.0), w1(8000.0*2.0*3.1416/60.0),
-		curr_gear(0), yaw(0), wheel_radius(0.3), speed(0),
+		k(-141.0/(186327.1)),
+		w0(-500.0*2.0*3.1416/60.0), w1(9100.0*2.0*3.1416/60.0),
+		curr_gear(0), yaw(0), wheel_radius(0.381), speed(0),
 		mass(1200), state(None), steering_angle(0.0), steering_time(0.0)
 {
-	float diff_ratio = 3.944;
+	/*float diff_ratio = 3.944;
 	this->gear_ratios.resize(5);
 	this->gear_ratios[0] = diff_ratio * 3.538;
 	this->gear_ratios[1] = diff_ratio * 2.045;
 	this->gear_ratios[2] = diff_ratio * 1.333;
 	this->gear_ratios[3] = diff_ratio * 0.972;
-	this->gear_ratios[4] = diff_ratio * 0.731;
+	this->gear_ratios[4] = diff_ratio * 0.731;*/
+	float diff_ratio = 4.17;
+	this->gear_ratios.resize(5);
+	this->gear_ratios[0] = diff_ratio * 3.06;
+	this->gear_ratios[1] = diff_ratio * 1.83;
+	this->gear_ratios[2] = diff_ratio * 1.29;
+	this->gear_ratios[3] = diff_ratio * 0.98;
+	this->gear_ratios[4] = diff_ratio * 0.76;
 }
 
 Car::~Car()
@@ -45,7 +52,22 @@ void Car::setTorqueParameters(float k, float w0, float w1)
 
 float Car::getCurrTorque() const
 {
-	return this->k*(this->getMotorW() - this->w0) * (this->getMotorW() - this->w1);
+	if(this->state == Accelerating)
+	{
+		float torque = this->k*(this->getMotorW() - this->w0) * (this->getMotorW() - this->w1);
+		if(this->curr_gear == 0 && torque < 80.0)
+		{
+			return 80.0;
+		}
+		else
+		{
+			return torque;
+		}
+	}
+	else
+	{
+		return 0.0;
+	}
 }
 
 float Car::getMaxTorque() const

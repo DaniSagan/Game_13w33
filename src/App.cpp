@@ -38,7 +38,7 @@ void App::Initialize()
 	//this->window.useVerticalSync(true);
 	this->InitOpenGL();
 
-	this->map.LoadFromMapFormat("res/map/world1.map");
+	this->map.LoadFromMapFormat("res/map/world1_test.map");
 	Tree* lp_tree = new Tree();
 	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
 	lp_tree->Create(tile_vertices);
@@ -83,7 +83,7 @@ void App::Run()
 		this->Update();
 		this->Draw();
 	}
-	this->map.SaveAsMapFormat("res/map/world1.map");
+	//this->map.SaveAsMapFormat("res/map/world1.map");
 }
 
 void App::Update()
@@ -178,12 +178,11 @@ void App::HandleInput()
 				std::string cmd;
 				std::cout << "cmd> ";
 				std::getline(std::cin, cmd);
-				std::cout << "cmd: " << cmd << std::endl;
+				this->commands.push_back(cmd);
 			}
 		}
 		else if(event.type == sf::Event::MouseWheelMoved)
 		{
-			//float height = this->map.GetHeight((int)this->camera.GetPosition().x, (int)this->camera.GetPosition().y);
 			float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
 			this->camera.Move(
 					sf::Vector3f(
@@ -198,11 +197,13 @@ void App::HandleInput()
 		}*/
 	}
 
-	std::vector<std::string> command_list = this->gui.HandleInput(event);
-	for(unsigned int i = 0; i < command_list.size(); i++)
+	//std::vector<std::string> command_list = this->gui.HandleInput(event, this->commands);
+	this->gui.HandleInput(event, this->commands);
+	for(unsigned int i = 0; i < this->commands.size(); i++)
 	{
-		this->ExecuteCommand(command_list[i]);
+		this->ExecuteCommand(this->commands[i]);
 	}
+	this->commands.clear();
 
 	this->camera.handleInput(event);
 
@@ -233,6 +234,7 @@ void App::Draw()
 		//this->map.DrawTiles(view_rect, this->camera, this->resources);
 		this->map.CallTileList();
 	}
+	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
 	//this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
 
 	/*sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
@@ -265,11 +267,11 @@ void App::Draw()
 	this->map.CallBuildingList();
 	glDisable(GL_CULL_FACE);
 	this->map.DrawBuildingOutlines(outlines_rect);
-	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
-	if(camera.GetQuadrant() == 0) map_pos.x += 0.1;
+	//this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+	/*if(camera.GetQuadrant() == 0) map_pos.x += 0.1;
 	else if(camera.GetQuadrant() == 1) map_pos.y += 0.1;
 	else if(camera.GetQuadrant() == 2) map_pos.x -= 0.1;
-	else if(camera.GetQuadrant() == 3) map_pos.y -= 0.1;
+	else if(camera.GetQuadrant() == 3) map_pos.y -= 0.1;*/
 	this->gui.SetMapPos(this->map_pos);
 	this->map.DrawBuildingFloors(outlines_rect);
 
@@ -336,7 +338,100 @@ bool App::ExecuteCommand(std::string cmd)
 {
 	std::vector<std::string> tokens = dfv::Utils::StringTokenize(cmd, " ");
 
-	if(tokens.size() > 0)
+	try
+	{
+		if(tokens[0] == std::string("save"))
+		{
+			std::string filename;
+			if(tokens.size() == 2)
+			{
+				filename = tokens[1];
+			}
+			else
+			{
+				filename = "res/map/world1_test.map";
+			}
+			this->map.SaveAsMapFormat(filename);
+			std::cout << "Map saved in file " << filename << std::endl;
+			return true;
+		}
+		if(tokens.at(0) == std::string("select"))
+		{
+			if(tokens.at(1) == std::string("from") && tokens.at(4) == std::string("to"))
+			{
+				unsigned int x1, y1, x2, y2;
+				x1 = strtol(tokens.at(2).c_str(), NULL, 10);
+				y1 = strtol(tokens.at(3).c_str(), NULL, 10);
+				x2 = strtol(tokens.at(5).c_str(), NULL, 10);
+				y2 = strtol(tokens.at(6).c_str(), NULL, 10);
+				for(unsigned int y = std::min(y1, y2); y <= std::max(y1, y2); y++)
+				{
+					for(unsigned int x = std::min(x1, x2); x <= std::max(x1, x2); x++)
+					{
+						this->selected_tiles.push_back(sf::Vector2u(x, y));
+					}
+				}
+				return true;
+			}
+			else
+			{
+				unsigned int x, y;
+				//x = strtol(tokens.at(1).c_str(), NULL, 10);
+				//y = strtol(tokens.at(2).c_str(), NULL, 10);
+				x = std::stoi(tokens.at(1));
+				y = std::stoi(tokens.at(2));
+				this->selected_tiles.push_back(sf::Vector2u(x, y));
+				std::cout << "Selected tile at " << x << "," << y << std::endl;
+				return true;
+			}
+		}
+		else if(tokens.at(0) == std::string("selected"))
+		{
+			std::vector<sf::Vector2u>::iterator it;
+			for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+			{
+				std::cout << it->x << ", " << it->y << std::endl;
+			}
+			return true;
+		}
+		else if(tokens.at(0) == std::string("clear"))
+		{
+			if(tokens.at(1) == std::string("road"))
+			{
+				std::vector<sf::Vector2u>::iterator it;
+				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+				{
+					this->map.clearRoad(it->x, it->y);
+				}
+				this->map.GenerateTileList(this->camera, this->resources);
+				return true;
+			}
+		}
+		else if(tokens.at(0) == std::string("build"))
+		{
+			if(tokens.at(1) == std::string("road"))
+			{
+				unsigned int id = std::stoi(tokens.at(2));
+				unsigned int orientation = std::stoi(tokens.at(2));
+				std::vector<sf::Vector2u>::iterator it;
+				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+				{
+					this->map.buildRoad(it->x, it->y, id, orientation);
+				}
+				this->map.GenerateTileList(this->camera, this->resources);
+				return true;
+			}
+		}
+		std::cout << "Could not recognize command" << std::endl;
+		return false;
+	}
+	catch(...)
+	{
+		std::cout << "Could not recognize command" << std::endl;
+		return false;
+	}
+
+	/*if(tokens.size() > 0)
 	{
 		if(tokens[0] == std::string("build_road"))
 		{
@@ -395,7 +490,7 @@ bool App::ExecuteCommand(std::string cmd)
 			}
 		}
 	}
-	return false;
+	return false;*/
 }
 
 } /* namespace dfv */

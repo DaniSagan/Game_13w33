@@ -68,6 +68,12 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(text);
 
 	ss.str(std::string(""));
+	ss << floor(camera.getCarTorque()) << " Nm, " << floor(camera.getCarPower()/746.0) << " bhp";
+	text.setString(ss.str());
+	text.setPosition(820, 380);
+	window.draw(text);
+
+	ss.str(std::string(""));
 	ss << floor(camera.getCarSpeed()*3.6) << " km/h";
 	text.setCharacterSize(40);
 	text.setString(ss.str());
@@ -86,7 +92,7 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	text.setPosition(820, 500);
 	window.draw(text);
 
-	/*
+
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
 	shape.setPoint(0, this->selected_tile_vertices[0]);
@@ -94,7 +100,7 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	shape.setPoint(2, this->selected_tile_vertices[2]);
 	shape.setPoint(3, this->selected_tile_vertices[3]);
 	shape.setFillColor(sf::Color(255, 255, 255, 64));
-	window.draw(shape);*/
+	window.draw(shape);
 
 	/*sf::Shape shape = sf::Shape::Line(
 			this->selected_tile_vertices[0],
@@ -160,7 +166,7 @@ void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile
 	this->selected_tile_vertices = selected_tile_vertices;
 }
 
-std::vector<std::string> Gui::HandleInput(const sf::Event& event)
+std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<std::string>& commands)
 {
 	if(event.type == sf::Event::KeyPressed)
 	{
@@ -178,7 +184,7 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event)
 		it->HandleInput(button_commands, event);
 	}
 
-	std::vector<std::string> commands;
+	//std::vector<std::string> commands;
 	if(button_commands.size() == 0)
 	{
 		std::stringstream ss;

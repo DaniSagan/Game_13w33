@@ -71,6 +71,7 @@ public:
 	void DrawProp(const Camera& camera, const Resources& resources) const;
 
 	bool isWater() const;
+	bool clearRoad();
 
 private:
 	std::vector<sf::Vector3f> vertices;

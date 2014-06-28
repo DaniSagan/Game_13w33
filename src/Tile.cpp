@@ -86,7 +86,7 @@ void Tile::SetColor(sf::Color color)
 
 void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	if(this->HasBuilding() == false)
+	//if(this->HasBuilding() == false)
 	{
 		//sf::Vector3f position = camera.GetPosition();
 		//if(this->IsRoad() && fabs(position.x - this->vertices[0].x) < 50 && fabs(position.y - this->vertices[0].y) < 50)
@@ -115,7 +115,7 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 			//this->lp_road->Draw(camera, resources);
 		//}
 		//else
-		{
+		//{
 			glBegin(GL_QUADS);
 				//glTexCoord2d(0.0,0.0);
 				glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
@@ -134,7 +134,7 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 				glNormal3f(this->normals[3].x, this->normals[3].y, this->normals[3].z);
 				glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
 			glEnd();
-		}
+		//}
 	}
 
 	/*if(this->lp_building != NULL)
@@ -183,7 +183,8 @@ void Tile::SetAsRoad(const bool r)
 
 bool Tile::IsRoad() const
 {
-	return this->is_road;
+	//return this->is_road;
+	return this->lp_road != NULL;
 }
 
 float Tile::GetBuildingHeight() const
@@ -350,6 +351,22 @@ bool Tile::isWater() const
 			this->vertices[1].z < threshold ||
 			this->vertices[2].z < threshold ||
 			this->vertices[3].z < threshold);
+}
+
+bool Tile::clearRoad()
+{
+	if(this->lp_road != NULL)
+	{
+		delete this->lp_road;
+		this->lp_road = NULL;
+		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 } /* namespace dfv */
