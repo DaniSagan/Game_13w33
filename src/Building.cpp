@@ -242,7 +242,7 @@ void Building::DrawOutline() const
 
 void Building::DrawFloors() const
 {
-	glBegin(GL_QUADS);
+	//glBegin(GL_QUADS);
 
 	glColor3f(0.1f, 0.1f, 0.1f);
 	for(unsigned int i = 0; i < this->floor_heights.size(); i++)
@@ -265,7 +265,7 @@ void Building::DrawFloors() const
 		}
 	}
 
-	glEnd();
+	//glEnd();
 }
 
 sf::Vector3f Building::GetColor3f() const

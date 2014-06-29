@@ -116,7 +116,7 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 		//}
 		//else
 		//{
-			glBegin(GL_QUADS);
+			//glBegin(GL_QUADS);
 				//glTexCoord2d(0.0,0.0);
 				glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
 				glNormal3f(this->normals[0].x, this->normals[0].y, this->normals[0].z);
@@ -133,7 +133,7 @@ void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 				glColor3f(this->colors[3].x, this->colors[3].y, this->colors[3].z);
 				glNormal3f(this->normals[3].x, this->normals[3].y, this->normals[3].z);
 				glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
-			glEnd();
+			//glEnd();
 		//}
 	}
 

@@ -867,6 +867,7 @@ void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& re
 	if(rect.Bottom < 0) rect.Bottom = 0;
 	if(rect.Top >= (int)this->GetSize()) rect.Top = this->GetSize() - 1;
 
+	glBegin(GL_QUADS);
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
@@ -874,6 +875,7 @@ void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& re
 			this->lp_tiles[i][j]->Draw(camera, resources);
 		}
 	}
+	glEnd();
 }
 
 void Map::DrawBuildingBoxes(dfv::IntRect rect) const
@@ -929,6 +931,7 @@ void Map::DrawBuildingFloors(dfv::IntRect rect) const
 
 	glColor3f(0.1, 0.1, 0.1);
 
+	glBegin(GL_QUADS);
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
@@ -940,6 +943,7 @@ void Map::DrawBuildingFloors(dfv::IntRect rect) const
 			}
 		}
 	}
+	glEnd();
 }
 
 bool Map::SaveAsMapFormat(std::string filename)
@@ -1201,6 +1205,7 @@ void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& re
 {
 
 	dfv::Utils::TrimRect(rect, this->GetRect());
+	//glBegin(GL_QUADS);
 	for(int i = rect.Left; i < rect.Right; i++)
 	{
 		for(int j = rect.Bottom; j < rect.Top; j++)
@@ -1212,6 +1217,7 @@ void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& re
 			}
 		}
 	}
+	//glEnd();
 }
 
 void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
