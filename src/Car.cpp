@@ -55,14 +55,15 @@ float Car::getCurrTorque() const
 	if(this->state == Accelerating)
 	{
 		float torque = this->k*(this->getMotorW() - this->w0) * (this->getMotorW() - this->w1);
-		if(this->curr_gear == 0 && torque < 80.0)
+		return torque;
+		/*if(this->curr_gear == 0 && torque < 80.0)
 		{
 			return 80.0;
 		}
 		else
 		{
 			return torque;
-		}
+		}*/
 	}
 	else
 	{
@@ -111,7 +112,17 @@ bool Car::gearUp()
 
 float Car::getMotorW() const
 {
-	return (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
+	//return (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
+	float wmin = 980*2*3.1416/60;
+	float w = (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
+	if(w < wmin)
+	{
+		return wmin;
+	}
+	else
+	{
+		return w;
+	}
 }
 
 bool Car::gearDown()

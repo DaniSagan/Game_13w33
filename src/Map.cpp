@@ -1442,6 +1442,20 @@ bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned in
 		case 6:	road_type = Road::av_tcross; 	break;
 		}
 		this->lp_tiles[x][y]->AddRoad(road_type, orientation);
+		return true;
+	}
+	return false;
+}
+
+bool Map::clearBuilding(unsigned int x, unsigned int y)
+{
+	try
+	{
+		return this->lp_tiles[x][y]->clearBuilding();
+	}
+	catch(...)
+	{
+		return false;
 	}
 }
 

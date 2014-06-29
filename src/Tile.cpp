@@ -369,4 +369,19 @@ bool Tile::clearRoad()
 
 }
 
+bool Tile::clearBuilding()
+{
+	if(this->lp_building != NULL)
+	{
+		delete this->lp_building;
+		this->lp_building = NULL;
+		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 } /* namespace dfv */

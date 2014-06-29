@@ -93,6 +93,7 @@ public:
 
 	bool clearRoad(unsigned int x, unsigned int y);
 	bool buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned int orientation);
+	bool clearBuilding(unsigned int x, unsigned int y);
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

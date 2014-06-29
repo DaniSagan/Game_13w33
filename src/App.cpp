@@ -406,6 +406,16 @@ bool App::ExecuteCommand(std::string cmd)
 				this->map.GenerateTileList(this->camera, this->resources);
 				return true;
 			}
+			if(tokens.at(1) == std::string("building"))
+			{
+				std::vector<sf::Vector2u>::iterator it;
+				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+				{
+					this->map.clearBuilding(it->x, it->y);
+				}
+				this->map.GenerateBuildingList();
+				return true;
+			}
 		}
 		else if(tokens.at(0) == std::string("build"))
 		{
