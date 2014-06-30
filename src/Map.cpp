@@ -297,7 +297,6 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 	// If not looking down, draw only the half of the map we're facing
 	else
 	{
-
 		// get the quadrant from the angle of view
 		unsigned int quadrant;
 		if(camera.GetRpy().z >= 315.f || camera.GetRpy().z < 45.f) quadrant = 1;
@@ -833,7 +832,7 @@ sf::Vector3f Map::GetMapPosFromMouse(sf::Vector2i mouse_pos)
 	return sf::Vector3f(pos_x, pos_y, pos_z);
 }
 
-sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window)
+sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window) const
 {
 	GLint viewport[4];
 	GLdouble modelview[16];
@@ -855,9 +854,10 @@ sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window)
 	return sf::Vector3f((float)win_x, viewport[3] - (float)win_y, (float)win_z);
 }
 
-const std::vector<sf::Vector3f> & Map::GetTileVertices(sf::Vector2i pos)
+const std::vector<sf::Vector3f> & Map::GetTileVertices(sf::Vector2i pos) const
 {
-	return this->lp_tiles[pos.x][pos.y]->GetVertices();
+	//return this->lp_tiles[pos.x][pos.y]->GetVertices();
+	return this->lp_tiles.at(pos.x).at(pos.y)->GetVertices();
 }
 
 void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
@@ -910,6 +910,7 @@ void Map::DrawBuildingOutlines(dfv::IntRect rect) const
 
 	glColor3f(0.1, 0.1, 0.1);
 
+	glBegin(GL_QUADS);
 	for(unsigned int i = rect.Left; (int)i <= rect.Right; i++)
 	{
 		for(unsigned int j = rect.Bottom; (int)j <= rect.Top; j++)
@@ -920,6 +921,7 @@ void Map::DrawBuildingOutlines(dfv::IntRect rect) const
 			}
 		}
 	}
+	glEnd();
 }
 
 void Map::DrawBuildingFloors(dfv::IntRect rect) const
@@ -1179,6 +1181,10 @@ void Map::GenerateBuildingList()
 	this->building_list = glGenLists(1);
 	glNewList(this->building_list, GL_COMPILE);
 	this->DrawBuildingBoxes(this->GetRect());
+	/*glDisable(GL_CULL_FACE);
+	this->DrawBuildingOutlines(this->GetRect());
+	this->DrawBuildingFloors(this->GetRect());
+	glEnable(GL_CULL_FACE);*/
 	glEndList();
 	//glDisable(GL_DEPTH_TEST);
 }
@@ -1222,20 +1228,33 @@ void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& re
 
 void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
-	dfv::Utils::TrimRect(rect, this->GetRect());
+	//dfv::Utils::TrimRect(rect, this->GetRect());
+
+
+	if(rect.Left >= this->size) rect.Left = this->size - 1;
+	if(rect.Left < 0) rect.Left = 0;
+	if(rect.Right >= this->size) rect.Right = this->size - 1;
+	if(rect.Right < 0) rect.Right = 0;
+	if(rect.Top >= this->size) rect.Top = this->size - 1;
+	if(rect.Top < 0) rect.Top = 0;
+	if(rect.Bottom >= this->size) rect.Bottom = this->size - 1;
+	if(rect.Bottom < 0) rect.Bottom = 0;
+
 	unsigned int quadrant = camera.GetQuadrant();
 	if(quadrant == 0)
 	{
-		int midpoint = camera.GetPosition().y;
-		for(int i = rect.Right; i > rect.Left; i--)
+		unsigned int midpoint = camera.GetPosition().y;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(unsigned int i = rect.Right; i > rect.Left; i--)
 		{
-			for(int j = rect.Bottom; j < midpoint; j++)
+			for(unsigned int j = rect.Bottom; j < midpoint; j++)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
-			for(int j = rect.Top; j >= midpoint; j--)
+			for(unsigned int j = rect.Top; j >= midpoint; j--)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
 			/*for(int j = rect.Bottom; j < rect.Top; j++)
 			{
@@ -1245,16 +1264,18 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 1)
 	{
-		int midpoint = camera.GetPosition().x;
+		unsigned int midpoint = camera.GetPosition().x;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(int j = rect.Top; j > rect.Bottom; j--)
 		{
-			for(int i = rect.Left; i < midpoint; i++)
+			for(unsigned int i = rect.Left; i < midpoint; i++)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
-			for(int i = rect.Right; i >= midpoint; i--)
+			for(unsigned int i = rect.Right; i >= midpoint; i--)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
 
 			/*for(int i = rect.Left; i < rect.Right; i++)
@@ -1265,18 +1286,20 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 2)
 	{
-		int midpoint = camera.GetPosition().y;
-		for(int i = rect.Left; i < rect.Right; i++)
+		unsigned int midpoint = camera.GetPosition().y;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(unsigned int i = rect.Left; i < rect.Right; i++)
 		{
 			/*for(int j = rect.Bottom; j < rect.Top; j++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}*/
-			for(int j = rect.Bottom; j < midpoint; j++)
+			for(unsigned int j = rect.Bottom; j < midpoint; j++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
-			for(int j = rect.Top; j >= midpoint; j--)
+			for(unsigned int j = rect.Top; j >= midpoint; j--)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
@@ -1285,15 +1308,17 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	else if(quadrant == 3)
 	{
 		//int midpoint = (rect.Left + rect.Right)/2;
-		int midpoint = camera.GetPosition().x;
+		unsigned int midpoint = camera.GetPosition().x;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
 		//std::cout << midpoint << std::endl;
-		for(int j = rect.Bottom; j < rect.Top; j++)
+		for(unsigned int j = rect.Bottom; j < rect.Top; j++)
 		{
-			for(int i = rect.Left; i < midpoint; i++)
+			for(unsigned int i = rect.Left; i < midpoint; i++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
-			for(int i = rect.Right; i >= midpoint; i--)
+			for(unsigned int i = rect.Right; i >= midpoint; i--)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
@@ -1411,11 +1436,19 @@ bool Map::isWater(unsigned int x, unsigned int y) const
 
 sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
 {
-	std::vector<sf::Vector3f> vertices;
-	vertices = this->GetTileVertices(sf::Vector2i(x, y));
-	sf::Vector3f v = Utils::Cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
-	float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-	return sf::Vector3f(v.x/len, v.y/len, v.z/len);
+	if(x >= 0 && x < this->size &&
+	   y >= 0 && y < this->size)
+	{
+		std::vector<sf::Vector3f> vertices;
+		vertices = this->GetTileVertices(sf::Vector2i(x, y));
+		sf::Vector3f v = Utils::Cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
+		float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+		return sf::Vector3f(v.x/len, v.y/len, v.z/len);
+	}
+	else
+	{
+		return sf::Vector3f(0.0, 0.0, 1.0);
+	}
 }
 
 bool Map::clearRoad(unsigned int x, unsigned int y)

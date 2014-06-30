@@ -53,8 +53,8 @@ public:
 	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
 
 	sf::Vector3f GetMapPosFromMouse(sf::Vector2i mouse_pos);
-	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window);
-	const std::vector<sf::Vector3f> & GetTileVertices(sf::Vector2i pos);
+	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
+	const std::vector<sf::Vector3f> & GetTileVertices(sf::Vector2i pos) const;
 
 	void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void DrawBuildingBoxes(dfv::IntRect rect) const;

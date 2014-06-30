@@ -38,10 +38,13 @@ public:
 	void SetQuadrant(unsigned int quadrant);
 	void SetMapPos(const sf::Vector3f& mapPos);
 	void SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_vertices);
+	void setSelectedShapes(std::vector<sf::ConvexShape>& shapes);
 
 	std::vector<std::string> HandleInput(const sf::Event& event, std::vector<std::string>& commands);
 	std::vector<std::string>& handleButtonInput(const sf::Event& event, std::vector<std::string>& commands);
 	void Update(const Map& map, const sf::Vector2f& position);
+
+	void drawShapes(sf::RenderWindow& window) const;
 
 private:
 
@@ -56,6 +59,7 @@ private:
 	std::list<Button> button_list;
 	sf::Image toolbar_img;
 	sf::Font font;
+	std::vector<sf::ConvexShape> selected_shapes;
 
 	//unsigned int copy_road_id;
 	//unsigned int copy_road_orientation;

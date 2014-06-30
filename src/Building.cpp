@@ -218,7 +218,7 @@ void Building::DrawBox() const
 
 void Building::DrawOutline() const
 {
-	glBegin(GL_QUADS);
+	//glBegin(GL_QUADS);
 
 	glNormal3f(0.7071, -0.7071, 0.0);
 	glVertex3f(this->floor_pos[0].x, this->floor_pos[0].y, this->floor_heights.front());
@@ -237,7 +237,7 @@ void Building::DrawOutline() const
 	glVertex3f(this->base_pos[2].x, this->base_pos[2].y, this->base_pos[2].z);
 	glVertex3f(this->base_pos[3].x, this->base_pos[3].y, this->base_pos[3].z);
 
-	glEnd();
+	//glEnd();
 }
 
 void Building::DrawFloors() const

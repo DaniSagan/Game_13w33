@@ -129,12 +129,48 @@ void App::Update()
 
 	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(tile_pos);
 	std::vector<sf::Vector2f> sel_vertices(4);
-	sel_vertices[0] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[0], this->window));
-	sel_vertices[1] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[1], this->window));
-	sel_vertices[2] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[2], this->window));
-	sel_vertices[3] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[3], this->window));
+	try
+	{
+		for(unsigned int k = 0; k < 4; k++)
+		{
+			sel_vertices.at(k) = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices.at(k), this->window));
+		}
+		/*sel_vertices[1] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[1], this->window));
+		sel_vertices[2] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[2], this->window));
+		sel_vertices[3] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[3], this->window));
+		*/
+		this->gui.SetSelectedTileVertices(sel_vertices);
+	}
+	catch(...)
+	{
+		std::cout << "Error getting view pos vertices" << std::endl;
+	}
 
-	this->gui.SetSelectedTileVertices(sel_vertices);
+
+	std::vector<sf::ConvexShape> selected_shapes(this->selected_tiles.size());
+	std::vector<sf::Vector2u>::iterator it;
+	unsigned int i = 0;
+	for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+	{
+		sf::Vector2i pos(it->x, it->y);
+		std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(pos);
+		std::vector<sf::Vector2f> sel_vertices(4);
+		for(unsigned int k = 0; k < 4; k++)
+		{
+			sel_vertices.at(k) = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[k], window));
+		}
+		//sf::ConvexShape shape;
+		selected_shapes.at(i).setPointCount(4);
+		for(unsigned int k = 0; k < 4; k++)
+		{
+			selected_shapes.at(i).setPoint(k, sel_vertices.at(k));
+		}
+		selected_shapes.at(i).setFillColor(sf::Color(255, 0, 0, 64));
+		i++;
+		//window.draw(shape);
+	}
+
+	this->gui.setSelectedShapes(selected_shapes);
 	//std::cout << "world pos: " << this->map_pos.x << ", " << this->map_pos.y << ", " << this->map_pos.z << std::endl;
 }
 
@@ -213,6 +249,8 @@ void App::Draw()
 {
 
 	//this->window.PreserveOpenGLStates(false);
+
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->window.setActive();
 	this->camera.SetView(this->window);
@@ -264,16 +302,14 @@ void App::Draw()
 
 	dfv::Utils::TrimRect(outlines_rect, view_rect);
 
+
 	this->map.CallBuildingList();
 	glDisable(GL_CULL_FACE);
 	this->map.DrawBuildingOutlines(outlines_rect);
-	//this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
-	/*if(camera.GetQuadrant() == 0) map_pos.x += 0.1;
-	else if(camera.GetQuadrant() == 1) map_pos.y += 0.1;
-	else if(camera.GetQuadrant() == 2) map_pos.x -= 0.1;
-	else if(camera.GetQuadrant() == 3) map_pos.y -= 0.1;*/
+
 	this->gui.SetMapPos(this->map_pos);
 	this->map.DrawBuildingFloors(outlines_rect);
+
 
 	//glDisable(GL_LIGHTING);
 	//glShadeModel (GL_FLAT);
@@ -288,16 +324,17 @@ void App::Draw()
 
 
 
-
 	//std::cout << "road_rect: " << dfv::Utils::ToString(road_rect) << std::endl;
-
 
 
 	this->window.pushGLStates();
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//this->drawSelection(this->window);
 	this->gui.Draw(this->window, this->camera);
+
 	this->window.popGLStates();
 	this->window.display();
+
 
 }
 
@@ -364,6 +401,7 @@ bool App::ExecuteCommand(std::string cmd)
 				y1 = strtol(tokens.at(3).c_str(), NULL, 10);
 				x2 = strtol(tokens.at(5).c_str(), NULL, 10);
 				y2 = strtol(tokens.at(6).c_str(), NULL, 10);
+				this->selected_tiles.clear();
 				for(unsigned int y = std::min(y1, y2); y <= std::max(y1, y2); y++)
 				{
 					for(unsigned int x = std::min(x1, x2); x <= std::max(x1, x2); x++)
@@ -380,6 +418,7 @@ bool App::ExecuteCommand(std::string cmd)
 				//y = strtol(tokens.at(2).c_str(), NULL, 10);
 				x = std::stoi(tokens.at(1));
 				y = std::stoi(tokens.at(2));
+				this->selected_tiles.clear();
 				this->selected_tiles.push_back(sf::Vector2u(x, y));
 				std::cout << "Selected tile at " << x << "," << y << std::endl;
 				return true;
@@ -501,6 +540,29 @@ bool App::ExecuteCommand(std::string cmd)
 		}
 	}
 	return false;*/
+}
+
+void App::drawSelection(sf::RenderWindow& window) const
+{
+	std::vector<sf::Vector2u>::const_iterator it;
+	for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
+	{
+		sf::Vector2i pos(it->x, it->y);
+		std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(pos);
+		std::vector<sf::Vector2f> sel_vertices(4);
+		for(unsigned int i = 0; i < 4; i++)
+		{
+			sel_vertices[i] = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[i], window));
+		}
+		sf::ConvexShape shape;
+		shape.setPointCount(4);
+		for(unsigned int i = 0; i < 4; i++)
+		{
+			shape.setPoint(i, sel_vertices[i]);
+		}
+		shape.setFillColor(sf::Color(255, 0, 0, 64));
+		window.draw(shape);
+	}
 }
 
 } /* namespace dfv */

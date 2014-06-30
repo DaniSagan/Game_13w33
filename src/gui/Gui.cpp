@@ -52,6 +52,8 @@ Gui::~Gui()
 
 void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 {
+	this->drawShapes(window);
+
 	sf::Text text("", this->font);
 	std::stringstream ss;
 
@@ -166,6 +168,13 @@ void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile
 	this->selected_tile_vertices = selected_tile_vertices;
 }
 
+void Gui::setSelectedShapes(std::vector<sf::ConvexShape>& shapes)
+{
+	this->selected_shapes.clear();
+	this->selected_shapes.resize(shapes.size());
+	this->selected_shapes = shapes;
+}
+
 std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<std::string>& commands)
 {
 	if(event.type == sf::Event::KeyPressed)
@@ -267,6 +276,15 @@ std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::ve
 void Gui::Update(const Map& map, const sf::Vector2f& position)
 {
 	this->minimap.GenerateFromMap(map, position, 64);
+}
+
+void Gui::drawShapes(sf::RenderWindow& window) const
+{
+	std::vector<sf::ConvexShape>::const_iterator it;
+	for(it = this->selected_shapes.begin(); it != this->selected_shapes.end(); it++)
+	{
+		window.draw(*it);
+	}
 }
 
 } /* namespace dfv */

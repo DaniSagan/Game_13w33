@@ -44,6 +44,8 @@ public:
 
 	bool ExecuteCommand(std::string cmd);
 
+	void drawSelection(sf::RenderWindow& window) const;
+
 private:
 	//sf::RenderWindow window;
 	sf::RenderWindow window;
