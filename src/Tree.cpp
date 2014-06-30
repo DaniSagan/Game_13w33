@@ -55,7 +55,6 @@ void Tree::Create(const std::vector<sf::Vector3f>& tile_vertices)
 	quad_vertices[2] = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
 	quad_vertices[3] = tile_vertices[3] + sf::Vector3f(0.0, 0.0, 1.0);
 	this->quads[3].create(quad_vertices);
-	//this->lp_img = resources.img_tree;
 	this->type = rand() % 2;
 }
 
@@ -71,7 +70,6 @@ void Tree::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	}
 
 	float yaw = camera.GetRpy().z;
-	//unsigned int quadrant = camera.GetQuadrant();
 	glColor4f(1.f, 1.f, 1.f, 1.0f);
 	if(yaw < 90.f)
 	{
@@ -101,23 +99,6 @@ void Tree::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 		this->drawQuad(2, resources);
 		this->drawQuad(1, resources);
 	}
-	/*glBegin(GL_QUADS);
-		glColor4f(1.f, 1.f, 1.f, 1.0f);
-		for(unsigned int i = 0; i < 4; i++)
-		{
-			glTexCoord2d(resources.img_tree.getTexCoords(i).x, resources.img_tree.getTexCoords(i).y);
-			glNormal3f(this->quads[0].getNormal(i).x, this->quads[0].getNormal(i).y, this->quads[0].getNormal(i).z);
-			glVertex3f(this->quads[0].getVertex(i).x, this->quads[0].getVertex(i).y, this->quads[0].getVertex(i).z);
-		}
-	glEnd();
-	glBegin(GL_QUADS);
-		for(unsigned int i = 0; i < 4; i++)
-		{
-			glTexCoord2d(resources.img_tree.getTexCoords(i).x, resources.img_tree.getTexCoords(i).y);
-			glNormal3f(this->quads[1].getNormal(i).x, this->quads[1].getNormal(i).y, this->quads[1].getNormal(i).z);
-			glVertex3f(this->quads[1].getVertex(i).x, this->quads[1].getVertex(i).y, this->quads[1].getVertex(i).z);
-		}
-	glEnd();*/
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 

@@ -24,7 +24,6 @@ Tile::~Tile()
 {
 	if(lp_building != NULL) delete this->lp_building;
 	if(lp_road != NULL) delete this->lp_road;
-	// TODO Auto-generated destructor stub
 }
 
 void Tile::Create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
@@ -79,69 +78,27 @@ void Tile::SetColor(sf::Color color)
 		else
 		{
 			this->colors[i] = sf::Vector3f(this->color.x, this->color.y, this->color.z);
-			//this->colors[i] = sf::Vector3f(0.5f, 0.5f, 0.5f);
 		}
 	}
 }
 
 void Tile::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	//if(this->HasBuilding() == false)
-	{
-		//sf::Vector3f position = camera.GetPosition();
-		//if(this->IsRoad() && fabs(position.x - this->vertices[0].x) < 50 && fabs(position.y - this->vertices[0].y) < 50)
-		//{
-			/*glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[0]);
-			glBegin(GL_QUADS);
-				//glTexCoord2d(0.0,0.0);
-				glColor3f(1.f, 1.f, 1.f);
-				glTexCoord2d(0.0,0.0);
-				glNormal3f(this->normals[0].x, this->normals[0].y, this->normals[0].z);
-				glVertex3f(this->vertices[0].x, this->vertices[0].y, this->vertices[0].z);
+	glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
+	glNormal3f(this->normals[0].x, this->normals[0].y, this->normals[0].z);
+	glVertex3f(this->vertices[0].x, this->vertices[0].y, this->vertices[0].z);
 
-				glTexCoord2d(1.0,0.0);
-				glNormal3f(this->normals[1].x, this->normals[1].y, this->normals[1].z);
-				glVertex3f(this->vertices[1].x, this->vertices[1].y, this->vertices[1].z);
+	glColor3f(this->colors[1].x, this->colors[1].y, this->colors[1].z);
+	glNormal3f(this->normals[1].x, this->normals[1].y, this->normals[1].z);
+	glVertex3f(this->vertices[1].x, this->vertices[1].y, this->vertices[1].z);
 
-				glTexCoord2d(1.0,1.0);
-				glNormal3f(this->normals[2].x, this->normals[2].y, this->normals[2].z);
-				glVertex3f(this->vertices[2].x, this->vertices[2].y, this->vertices[2].z);
+	glColor3f(this->colors[2].x, this->colors[2].y, this->colors[2].z);
+	glNormal3f(this->normals[2].x, this->normals[2].y, this->normals[2].z);
+	glVertex3f(this->vertices[2].x, this->vertices[2].y, this->vertices[2].z);
 
-				glTexCoord2d(0.0,1.0);
-				glNormal3f(this->normals[3].x, this->normals[3].y, this->normals[3].z);
-				glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
-			glEnd();
-			glBindTexture(GL_TEXTURE_2D, 0);*/
-			//this->lp_road->Draw(camera, resources);
-		//}
-		//else
-		//{
-			//glBegin(GL_QUADS);
-				//glTexCoord2d(0.0,0.0);
-				glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
-				glNormal3f(this->normals[0].x, this->normals[0].y, this->normals[0].z);
-				glVertex3f(this->vertices[0].x, this->vertices[0].y, this->vertices[0].z);
-
-				glColor3f(this->colors[1].x, this->colors[1].y, this->colors[1].z);
-				glNormal3f(this->normals[1].x, this->normals[1].y, this->normals[1].z);
-				glVertex3f(this->vertices[1].x, this->vertices[1].y, this->vertices[1].z);
-
-				glColor3f(this->colors[2].x, this->colors[2].y, this->colors[2].z);
-				glNormal3f(this->normals[2].x, this->normals[2].y, this->normals[2].z);
-				glVertex3f(this->vertices[2].x, this->vertices[2].y, this->vertices[2].z);
-
-				glColor3f(this->colors[3].x, this->colors[3].y, this->colors[3].z);
-				glNormal3f(this->normals[3].x, this->normals[3].y, this->normals[3].z);
-				glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
-			//glEnd();
-		//}
-	}
-
-	/*if(this->lp_building != NULL)
-	{
-		this->lp_building->Draw();
-	}*/
-
+	glColor3f(this->colors[3].x, this->colors[3].y, this->colors[3].z);
+	glNormal3f(this->normals[3].x, this->normals[3].y, this->normals[3].z);
+	glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
 }
 
 void Tile::AddBuilding(float height)
@@ -183,7 +140,6 @@ void Tile::SetAsRoad(const bool r)
 
 bool Tile::IsRoad() const
 {
-	//return this->is_road;
 	return this->lp_road != NULL;
 }
 
@@ -273,13 +229,6 @@ sf::Vector3f Tile::GetVertex(const unsigned int index) const
 
 const std::vector<sf::Vector3f> & Tile::GetVertices() const
 {
-	/*std::vector<sf::Vector3f> res;
-	res.resize(4);
-	res[0] = this->vertices[0];
-	res[1] = this->vertices[1];
-	res[2] = this->vertices[2];
-	res[3] = this->vertices[3];
-	return res;*/
 	return this->vertices;
 }
 

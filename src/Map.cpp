@@ -1177,16 +1177,10 @@ bool Map::AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 
 void Map::GenerateBuildingList()
 {
-	//glEnable(GL_DEPTH_TEST);
 	this->building_list = glGenLists(1);
 	glNewList(this->building_list, GL_COMPILE);
 	this->DrawBuildingBoxes(this->GetRect());
-	/*glDisable(GL_CULL_FACE);
-	this->DrawBuildingOutlines(this->GetRect());
-	this->DrawBuildingFloors(this->GetRect());
-	glEnable(GL_CULL_FACE);*/
 	glEndList();
-	//glDisable(GL_DEPTH_TEST);
 }
 
 void Map::CallBuildingList() const
@@ -1209,28 +1203,21 @@ void Map::CallTileList() const
 
 void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
-
 	dfv::Utils::TrimRect(rect, this->GetRect());
-	//glBegin(GL_QUADS);
 	for(int i = rect.Left; i < rect.Right; i++)
 	{
 		for(int j = rect.Bottom; j < rect.Top; j++)
 		{
 			if(this->lp_tiles[i][j]->IsRoad())
 			{
-				//std::cout << "Hello" << std::endl;
 				this->lp_tiles[i][j]->DrawRoad(camera, resources);
 			}
 		}
 	}
-	//glEnd();
 }
 
 void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
-	//dfv::Utils::TrimRect(rect, this->GetRect());
-
-
 	if(rect.Left >= this->size) rect.Left = this->size - 1;
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= this->size) rect.Right = this->size - 1;
@@ -1256,10 +1243,6 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 			{
 				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
-			/*for(int j = rect.Bottom; j < rect.Top; j++)
-			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
-			}*/
 		}
 	}
 	else if(quadrant == 1)
@@ -1277,11 +1260,6 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 			{
 				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
 			}
-
-			/*for(int i = rect.Left; i < rect.Right; i++)
-			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
-			}*/
 		}
 	}
 	else if(quadrant == 2)
@@ -1291,10 +1269,6 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(unsigned int i = rect.Left; i < rect.Right; i++)
 		{
-			/*for(int j = rect.Bottom; j < rect.Top; j++)
-			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
-			}*/
 			for(unsigned int j = rect.Bottom; j < midpoint; j++)
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
@@ -1307,11 +1281,9 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 	}
 	else if(quadrant == 3)
 	{
-		//int midpoint = (rect.Left + rect.Right)/2;
 		unsigned int midpoint = camera.GetPosition().x;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= this->size) midpoint = this->size - 1;
-		//std::cout << midpoint << std::endl;
 		for(unsigned int j = rect.Bottom; j < rect.Top; j++)
 		{
 			for(unsigned int i = rect.Left; i < midpoint; i++)
@@ -1322,14 +1294,8 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 			{
 				this->lp_tiles[i][j]->DrawProp(camera, resources);
 			}
-
-			/*for(int i = rect.Right; i > rect.Left; i--)
-			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
-			}*/
 		}
 	}
-
 }
 
 void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
@@ -1349,15 +1315,6 @@ unsigned int Map::GetRoadOrientation(const sf::Vector2i& pos) const
 
 bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 {
-	/*dfv::IntRect rect = this->GetRect();
-	if(dfv::Utils::RectContains(rect, pos))
-	{
-		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
-	}
-	else
-	{
-		return false;
-	}*/
 	if(pos.x >= 0 && pos.x < this->size &&
 	   pos.y >= 0 && pos.y < this->size)
 	{

@@ -91,7 +91,6 @@ void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 {
 	glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[this->id]);
 	glBegin(GL_QUADS);
-		//glTexCoord2d(0.0,0.0);
 		glColor3f(1.f, 1.f, 1.f);
 		for(unsigned int i = 0; i < 4; i++)
 		{

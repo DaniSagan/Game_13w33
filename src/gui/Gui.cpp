@@ -14,35 +14,21 @@ Gui::Gui():
 		fps(0),
 		quadrant(0),
 		selected_tool(none)
-		//copy_road_id(0),
-		//copy_road_orientation(0)
 {
 	this->minimap.Create(256);
 	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
 
 	Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
-	//b1.LoadImage("res/gui/button_road.png");
-	//b1.SetSize(sf::Vector2i(32, 32));
-	//b1.SetPosition(sf::Vector2i(0, 0));
 	b1.SetCommand(std::string("button_road_cmd"));
 	this->button_list.push_back(b1);
 
 	Button b2("res/gui/button_select.png", sf::Vector2f(0, 32));
-	//b2.LoadImage("res/gui/button_select.png");
-	//b2.SetSize(sf::Vector2i(32, 32));
-	//b2.SetPosition(sf::Vector2i(0, 32));
 	b2.SetCommand(std::string("button_select_cmd"));
 	this->button_list.push_back(b2);
 
 	Button b3("res/gui/button_copy.png", sf::Vector2f(0, 64));
-	//b3.LoadImage("res/gui/button_copy.png");
-	//b3.SetSize(sf::Vector2i(32, 32));
-	//b3.SetPosition(sf::Vector2i(0, 64));
 	b3.SetCommand(std::string("button_copy_cmd"));
 	this->button_list.push_back(b3);
-
-
-	//this->toolbar_img = sf::Image()
 }
 
 Gui::~Gui()
@@ -94,7 +80,6 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	text.setPosition(820, 500);
 	window.draw(text);
 
-
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
 	shape.setPoint(0, this->selected_tile_vertices[0]);
@@ -104,48 +89,14 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	shape.setFillColor(sf::Color(255, 255, 255, 64));
 	window.draw(shape);
 
-	/*sf::Shape shape = sf::Shape::Line(
-			this->selected_tile_vertices[0],
-			this->selected_tile_vertices[1],
-			2.0, sf::Color(255, 0, 0));
-	window.Draw(shape);
-	shape = sf::Shape::Line(
-			this->selected_tile_vertices[1],
-			this->selected_tile_vertices[2],
-			2.0, sf::Color(255, 0, 0));
-	window.Draw(shape);
-	shape = sf::Shape::Line(
-			this->selected_tile_vertices[2],
-			this->selected_tile_vertices[3],
-			2.0, sf::Color(255, 0, 0));
-	window.Draw(shape);
-	shape = sf::Shape::Line(
-			this->selected_tile_vertices[3],
-			this->selected_tile_vertices[0],
-			2.0, sf::Color(255, 0, 0));
-	window.Draw(shape);*/
-
 	// toolbar
-
 	this->minimap.Draw(window, camera);
-
-	/*sf::Image toolbar_img(42, window.GetHeight() - this->minimap.GetSize() + 1, sf::Color(200, 200, 200, 150));
-	window.Draw(sf::Sprite(toolbar_img));*/
 
 	std::list<Button>::const_iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{
 		it->Draw(window);
 	}
-
-
-	/*sf::Shape toolbar_rect;
-	toolbar_rect = sf::Shape::Line(
-			200, 200,
-			//window.GetWidth() - this->minimap.GetSize(), 42,
-			500, 500, 1.0,
-			sf::Color(0, 0, 0));
-	window.Draw(toolbar_rect);*/
 }
 
 void Gui::SetFps(float fps)
@@ -185,7 +136,6 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 		}
 	}
 
-
 	std::vector<std::string> button_commands;
 	std::list<Button>::iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
@@ -193,7 +143,6 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 		it->HandleInput(button_commands, event);
 	}
 
-	//std::vector<std::string> commands;
 	if(button_commands.size() == 0)
 	{
 		std::stringstream ss;
@@ -264,7 +213,6 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 
 std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::vector<std::string>& commands)
 {
-	//std::vector<std::string> button_commands;
 	std::list<Button>::iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{

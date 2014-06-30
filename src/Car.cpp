@@ -16,13 +16,6 @@ Car::Car():
 		curr_gear(0), yaw(0), wheel_radius(0.381), speed(0),
 		mass(1200), state(None), steering_angle(0.0), steering_time(0.0)
 {
-	/*float diff_ratio = 3.944;
-	this->gear_ratios.resize(5);
-	this->gear_ratios[0] = diff_ratio * 3.538;
-	this->gear_ratios[1] = diff_ratio * 2.045;
-	this->gear_ratios[2] = diff_ratio * 1.333;
-	this->gear_ratios[3] = diff_ratio * 0.972;
-	this->gear_ratios[4] = diff_ratio * 0.731;*/
 	float diff_ratio = 4.17;
 	this->gear_ratios.resize(5);
 	this->gear_ratios[0] = diff_ratio * 3.06;
@@ -56,14 +49,6 @@ float Car::getCurrTorque() const
 	{
 		float torque = this->k*(this->getMotorW() - this->w0) * (this->getMotorW() - this->w1);
 		return torque;
-		/*if(this->curr_gear == 0 && torque < 80.0)
-		{
-			return 80.0;
-		}
-		else
-		{
-			return torque;
-		}*/
 	}
 	else
 	{
@@ -112,7 +97,6 @@ bool Car::gearUp()
 
 float Car::getMotorW() const
 {
-	//return (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
 	float wmin = 980*2*3.1416/60;
 	float w = (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
 	if(w < wmin)
@@ -155,7 +139,6 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		//this->steering_angle -= 80.f*this->steering_time*dt;
 		this->steering_angle -= 80.f*dt;
 		if(this->steering_angle < -40.f)
 		{
@@ -164,7 +147,6 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		//this->steering_angle += 80.f*this->steering_time*dt;
 		this->steering_angle += 80.f*dt;
 		if(this->steering_angle > 40.f)
 		{
@@ -189,7 +171,6 @@ void Car::update(float dt, float pitch)
 	{
 		this->speed = 0.0;
 	}
-	//std::cout << "Gear: " << this->curr_gear + 1 << ", Speed: " << this->speed*3.6f << "(km/h), rpm: " << this->getMotorW()*(60.0/(2.0*3.1416))  << std::endl;
 }
 
 void Car::setState(State state)

@@ -47,14 +47,12 @@ public:
 	void drawSelection(sf::RenderWindow& window) const;
 
 private:
-	//sf::RenderWindow window;
 	sf::RenderWindow window;
 	sf::Clock clock;
 	dfv::Camera camera;
 	dfv::Map map;
 	unsigned int frame;
 	dfv::Resources resources;
-	//dfv::Minimap minimap;
 	sf::Vector3f map_pos;
 	sf::Vector2i mouse_pos;
 
@@ -65,7 +63,6 @@ private:
 	unsigned int road_id;
 	unsigned int road_orientation;
 
-	//sf::Clock clock;
 	float frame_time;
 	MovingMode moving_mode;
 

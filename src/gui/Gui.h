@@ -60,9 +60,6 @@ private:
 	sf::Image toolbar_img;
 	sf::Font font;
 	std::vector<sf::ConvexShape> selected_shapes;
-
-	//unsigned int copy_road_id;
-	//unsigned int copy_road_orientation;
 };
 
 } /* namespace dfv */

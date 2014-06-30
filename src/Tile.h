@@ -53,7 +53,6 @@ public:
 	bool SetRoadOrientation(unsigned int road_orientation);
 	void addProp(Prop* lp_prop);
 	sf::Vector3f GetVertex(const unsigned int index) const;
-	//std::vector<sf::Vector3f> GetVertices() const;
 	const std::vector<sf::Vector3f> & GetVertices() const;
 
 	void DrawBuildingBox() const;

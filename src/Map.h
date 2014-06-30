@@ -103,9 +103,6 @@ private:
 	GLuint building_list;
 	GLuint tile_list;
 	unsigned int population;
-
-	//dfv::IntRect selected_tiles;
-	//std::vector<std::vector<dfv::Cube*> > lp_cubes;
 };
 
 } /* namespace dfv */
