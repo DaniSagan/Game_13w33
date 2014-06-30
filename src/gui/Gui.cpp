@@ -55,30 +55,33 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	text.setPosition(300, 20);
 	window.draw(text);
 
-	ss.str(std::string(""));
-	ss << floor(camera.getCarTorque()) << " Nm, " << floor(camera.getCarPower()/746.0) << " bhp";
-	text.setString(ss.str());
-	text.setPosition(820, 380);
-	window.draw(text);
+	if(camera.getMode() == Camera::Driving)
+	{
+		ss.str(std::string(""));
+		ss << floor(camera.getCarTorque()) << " Nm, " << floor(camera.getCarPower()/746.0) << " bhp";
+		text.setString(ss.str());
+		text.setPosition(window.getSize().x - 200, window.getSize().y - 195);
+		window.draw(text);
 
-	ss.str(std::string(""));
-	ss << floor(camera.getCarSpeed()*3.6) << " km/h";
-	text.setCharacterSize(40);
-	text.setString(ss.str());
-	text.setPosition(820, 400);
-	window.draw(text);
+		ss.str(std::string(""));
+		ss << floor(camera.getCarSpeed()*3.6) << " km/h";
+		text.setCharacterSize(40);
+		text.setString(ss.str());
+		text.setPosition(window.getSize().x - 200, window.getSize().y - 175);
+		window.draw(text);
 
-	ss.str(std::string(""));
-	ss << floor(camera.getMotorRPM()) << " rpm";
-	text.setString(ss.str());
-	text.setPosition(820, 450);
-	window.draw(text);
+		ss.str(std::string(""));
+		ss << floor(camera.getMotorRPM()) << " rpm";
+		text.setString(ss.str());
+		text.setPosition(window.getSize().x - 200, window.getSize().y - 125);
+		window.draw(text);
 
-	ss.str(std::string(""));
-	ss << "Gear " << camera.getCarGear() + 1;
-	text.setString(ss.str());
-	text.setPosition(820, 500);
-	window.draw(text);
+		ss.str(std::string(""));
+		ss << "Gear " << camera.getCarGear() + 1;
+		text.setString(ss.str());
+		text.setPosition(window.getSize().x - 200, window.getSize().y - 75);
+		window.draw(text);
+	}
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);

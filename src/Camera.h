@@ -71,6 +71,7 @@ public:
 	unsigned int getCarGear() const;
 	float getCarTorque() const;
 	float getCarPower() const;
+	Mode getMode() const;
 
 private:
 	sf::Vector3f position;

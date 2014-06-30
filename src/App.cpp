@@ -156,6 +156,7 @@ void App::HandleInput()
 		else if (event.type == sf::Event::Resized)
 		{
 			glViewport(0, 0, event.size.width, event.size.height);
+			this->window.setView(sf::View(sf::FloatRect(0.0, 0.0, event.size.width, event.size.height)));
 		}
 		else if(event.type == sf::Event::KeyPressed)
 		{
@@ -178,11 +179,9 @@ void App::HandleInput()
 		else if(event.type == sf::Event::MouseWheelMoved)
 		{
 			float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-			this->camera.Move(
-					sf::Vector3f(
-							0.f,
-							0.f,
-							-0.02f * (float)event.mouseWheel.delta * (this->camera.GetPosition().z - height)));
+			this->camera.Move(sf::Vector3f(0.f,
+										   0.f,
+							               -0.02f * (float)event.mouseWheel.delta * (this->camera.GetPosition().z - height)));
 		}
 	}
 

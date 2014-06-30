@@ -299,6 +299,11 @@ float Camera::getCarPower() const
 	return this->car.getCurrTorque()*this->car.getMotorW();
 }
 
+Camera::Mode Camera::getMode() const
+{
+	return this->mode;
+}
+
 } /* namespace dfv */
 
 
