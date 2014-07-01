@@ -46,6 +46,11 @@ public:
 	float getSteeringAngle() const;
 	unsigned int getGear() const;
 	float getGravityForce(float pitch) const;
+	float getSteeringRadius() const;
+	float getDeltaSteeringAngle(float dt) const;
+	float getCentrifugalForce() const;
+	float getMaxCentrifugalForce() const;
+	float getMaxDeltaSteeringAngle(float dt) const;
 private:
 	float k, w0, w1;
 	sf::Vector3f position;
@@ -59,6 +64,8 @@ private:
 	State state;
 	float steering_angle;
 	float steering_time;
+	float friction_coeff;
+	float wheel_base;
 };
 
 } /* namespace dfv */

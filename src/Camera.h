@@ -62,7 +62,6 @@ public:
 	void Rotate(const sf::Vector3f& v);
 	unsigned int GetQuadrant() const;
 	void SetView(const sf::Window& window) const;
-	//sf::IntRect GetRectFromView(const sf::IntRect& map_rect) const;
 	dfv::IntRect GetRectFromView(const dfv::IntRect& map_rect) const;
 	void handleInput(sf::Event& event);
 	void update(float dt, float map_height, sf::Vector3f& normal);

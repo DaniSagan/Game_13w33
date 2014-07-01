@@ -15,6 +15,7 @@
 #include <list>
 #include "Minimap.h"
 #include "Button.h"
+#include "TextButton.h"
 
 namespace dfv
 {
@@ -60,6 +61,9 @@ private:
 	sf::Image toolbar_img;
 	sf::Font font;
 	std::vector<sf::ConvexShape> selected_shapes;
+
+	std::vector<TextButton> text_button_list;
+	//TextButton text_button;
 };
 
 } /* namespace dfv */

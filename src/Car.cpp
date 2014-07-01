@@ -12,9 +12,13 @@ namespace dfv
 
 Car::Car():
 		k(-141.0/(186327.1)),
+		//k(-1200.0/(186327.1)),
 		w0(-500.0*2.0*3.1416/60.0), w1(9100.0*2.0*3.1416/60.0),
 		curr_gear(0), yaw(0), wheel_radius(0.381), speed(0),
-		mass(1200), state(None), steering_angle(0.0), steering_time(0.0)
+		mass(1200),
+		//mass(1800),
+		state(None), steering_angle(0.0), steering_time(0.0),
+		friction_coeff(1.f), wheel_base(2.54f)
 {
 	float diff_ratio = 4.17;
 	this->gear_ratios.resize(5);
@@ -23,6 +27,15 @@ Car::Car():
 	this->gear_ratios[2] = diff_ratio * 1.29;
 	this->gear_ratios[3] = diff_ratio * 0.98;
 	this->gear_ratios[4] = diff_ratio * 0.76;
+	/*float diff_ratio = 3.64;
+	this->gear_ratios.resize(7);
+	this->gear_ratios[0] = diff_ratio * 3.18;
+	this->gear_ratios[1] = diff_ratio * 2.26;
+	this->gear_ratios[2] = diff_ratio * 1.68;
+	this->gear_ratios[3] = diff_ratio * 1.29;
+	this->gear_ratios[4] = diff_ratio * 1.06;
+	this->gear_ratios[5] = diff_ratio * 0.88;
+	this->gear_ratios[6] = diff_ratio * 0.80;*/
 }
 
 Car::~Car()
@@ -139,7 +152,7 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		this->steering_angle -= 80.f*dt;
+		this->steering_angle -= 20.f*dt*(1.0/(1.0+0.1f*this->speed));
 		if(this->steering_angle < -40.f)
 		{
 			this->steering_angle = -40.f;
@@ -147,7 +160,7 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		this->steering_angle += 80.f*dt;
+		this->steering_angle += 20.f*dt*(1.0/(1.0+0.1f*this->speed));
 		if(this->steering_angle > 40.f)
 		{
 			this->steering_angle = 40.f;
@@ -180,7 +193,7 @@ void Car::setState(State state)
 
 float Car::getDrag() const
 {
-	const float Ad = 0.65;
+	const float Ad = 0.7;
 	const float d = 1.2;
 	return 0.5 * d * Ad * this->speed*this->speed;
 }
@@ -223,6 +236,31 @@ unsigned int Car::getGear() const
 float Car::getGravityForce(float pitch) const
 {
 	return this->mass*9.81*sin(pitch*3.141592/180.0);
+}
+
+float Car::getSteeringRadius() const
+{
+	return this->wheel_base/tan(this->steering_angle);
+}
+
+float Car::getDeltaSteeringAngle(float dt) const
+{
+	return this->speed*dt*tan(this->steering_angle*3.141592/180.0)/this->wheel_base;
+}
+
+float Car::getCentrifugalForce() const
+{
+	return this->mass*this->speed*this->speed*tan(this->steering_angle*3.1416/180.0)/this->wheel_base;
+}
+
+float Car::getMaxCentrifugalForce() const
+{
+	return this->mass*this->friction_coeff*9.81;
+}
+
+float Car::getMaxDeltaSteeringAngle(float dt) const
+{
+	return dt*this->friction_coeff*9.81/this->speed;
 }
 
 } /* namespace dfv */

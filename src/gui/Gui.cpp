@@ -29,6 +29,15 @@ Gui::Gui():
 	Button b3("res/gui/button_copy.png", sf::Vector2f(0, 64));
 	b3.SetCommand(std::string("button_copy_cmd"));
 	this->button_list.push_back(b3);
+
+	TextButton tb1;
+	tb1.setPosition(sf::Vector2f(0.0, 0.0));
+	tb1.setText(std::string("Select"));
+	tb1.setCommand(std::string("select"));
+	this->text_button_list.push_back(tb1);
+
+	//this->text_button.setPosition(sf::Vector2f(1.f, 1.f));
+	//this->text_button.setText(std::string("Test"));
 }
 
 Gui::~Gui()
@@ -38,7 +47,7 @@ Gui::~Gui()
 
 void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 {
-	this->drawShapes(window);
+	//this->drawShapes(window);
 
 	sf::Text text("", this->font);
 	std::stringstream ss;
@@ -95,10 +104,18 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	// toolbar
 	this->minimap.Draw(window, camera);
 
-	std::list<Button>::const_iterator it;
+	/*std::list<Button>::const_iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{
 		it->Draw(window);
+	}*/
+
+	//this->text_button.onDraw(window, this->font);
+
+	std::vector<TextButton>::const_iterator it;
+	for(it = this->text_button_list.begin(); it != this->text_button_list.end(); it++)
+	{
+		it->onDraw(window, this->font);
 	}
 }
 
@@ -139,7 +156,7 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 		}
 	}
 
-	std::vector<std::string> button_commands;
+	/*std::vector<std::string> button_commands;
 	std::list<Button>::iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{
@@ -209,6 +226,12 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 				std::cout << "Selected copy tool" << std::endl;
 			}
 		}
+	}*/
+
+	std::vector<TextButton>::iterator it;
+	for(it = this->text_button_list.begin(); it != this->text_button_list.end(); it++)
+	{
+		it->handleInput(event, commands);
 	}
 
 	return commands;

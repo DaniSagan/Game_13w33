@@ -44,6 +44,7 @@ public:
 
 	bool ExecuteCommand(std::string cmd);
 
+	void createSelectedShapes();
 	void drawSelection(sf::RenderWindow& window) const;
 
 private:
@@ -68,6 +69,10 @@ private:
 
 	std::vector<std::string> commands;
 	std::vector<sf::Vector2u> selected_tiles;
+	std::vector<sf::ConvexShape> selected_shapes;
+
+	sf::Vector2u select_from;
+	sf::Vector2u select_to;
 };
 
 } /* namespace dfv */

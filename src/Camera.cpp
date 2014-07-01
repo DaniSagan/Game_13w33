@@ -190,11 +190,11 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	{
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			this->Move(sf::Vector3f(dt * vel * sin(ang) * sin(-angx), dt * vel * cos(ang) * sin(-angx), -dt * vel * cos(angx)));
+			this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.0));
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
-			this->Move(sf::Vector3f(-dt * vel * sin(ang) * sin(-angx), -dt * vel * cos(ang) * sin(-angx), dt * vel * cos(angx)));
+			this->Move(sf::Vector3f(-dt * vel * sin(ang), -dt * vel * cos(ang), 0.0));
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
@@ -252,7 +252,22 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 			{
 				rot += 40.f;//*this->car.getSpeed();
 			}*/
-			rot = this->car.getSteeringAngle();
+			//rot = this->car.getSteeringAngle()*this->car.getSpeed()*dt;
+			rot = this->car.getDeltaSteeringAngle(dt);
+			float fc = this->car.getCentrifugalForce();
+			float fc_max = this->car.getMaxCentrifugalForce();
+			if(fc > fc_max)
+			{
+				rot = this->car.getMaxDeltaSteeringAngle(dt);
+			}
+			else if(fc < -fc_max)
+			{
+				rot = -this->car.getMaxDeltaSteeringAngle(dt);
+			}
+			//std::cout << "Fc = " << fc << std::endl;
+			//std::cout << "Fcmax = " << this->car.getMaxCentrifugalForce() << std::endl;
+			//if(rot > 40.f) rot = 40.f;
+			//if(rot < -40.f) rot = -40.f;
 		}
 		float rot_pitch = 0.0;
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -263,12 +278,12 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		{
 			rot_pitch += 50.f;
 		}
-		this->curr_pitch += 0.5f*(pitch - this->curr_pitch)*dt;
-		this->curr_roll += 0.5f*(roll - this->curr_roll)*dt;
+		this->curr_pitch += 2.0f*(pitch - this->curr_pitch)*dt;
+		this->curr_roll += 2.0f*(roll - this->curr_roll)*dt;
 		//this->SetRpy(sf::Vector3f(-90.0 - pitch - 5.0, -roll, this->GetRpy().z));
 				this->SetRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->GetRpy().z));
 		//this->Rotate(sf::Vector3f(rot_pitch*dt, 0.f, rot*dt));
-		this->Rotate(sf::Vector3f(0.f, 0.f, rot*dt));
+		this->Rotate(sf::Vector3f(0.f, 0.f, rot*180.0/3.1416));
 		this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
 		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
 	}
