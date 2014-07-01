@@ -333,4 +333,20 @@ bool Tile::clearBuilding()
 	}
 }
 
+bool Tile::clearProp()
+{
+	std::cout << "Clearing prop" << std::endl;
+	if(this->lp_prop != NULL)
+	{
+		delete this->lp_prop;
+		this->lp_prop = NULL;
+		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 } /* namespace dfv */

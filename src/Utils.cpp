@@ -26,6 +26,110 @@ IntRect::IntRect(int left, int top, int right, int bottom)
 	this->Bottom = bottom;
 }
 
+RealRect::RealRect():
+		xmin(0.0), xmax(0.0), ymin(0.0), ymax(0.0)
+{
+}
+
+RealRect::RealRect(float xmin_, float xmax_, float ymin_, float ymax_):
+		xmin(xmin_), xmax(xmax_), ymin(ymin_), ymax(ymax_)
+{
+}
+
+bool RealRect::contains(sf::Vector2f pos)
+{
+	return pos.x >= this->xmin && pos.x < this->xmax &&
+		   pos.y >= this->ymin && pos.y < this->ymax;
+}
+
+void RealRect::trim(float xmin, float xmax, float ymin, float ymax)
+{
+	if(this->xmin < xmin) this->xmin = xmin;
+	if(this->xmax > xmax) this->xmax = xmax;
+	if(this->ymin < ymin) this->ymin = ymin;
+	if(this->ymax > ymax) this->ymax = ymax;
+}
+
+void RealRect::trim(RealRect rect)
+{
+	return this->trim(rect.xmin, rect.xmax, rect.ymin, rect.ymax);
+}
+
+void RealRect::setFromCenterRadius(sf::Vector2f center_pos, float radius)
+{
+	this->xmin = center_pos.x - radius;
+	this->xmax = center_pos.x + radius;
+	this->ymin = center_pos.y - radius;
+	this->ymax = center_pos.y + radius;
+}
+
+std::string RealRect::toString() const
+{
+	std::stringstream ss;
+	ss << "xmin=" << this->xmin << ", xmax=" << this->xmax << ", ymin=" << this->ymin << ", ymax=" << this->ymax;
+	return ss.str();
+}
+
+RealIntRect::RealIntRect():
+		xmin(0.0), xmax(0.0), ymin(0.0), ymax(0.0)
+{
+}
+
+RealIntRect::RealIntRect(int xmin_, int xmax_, int ymin_, int ymax_):
+		xmin(xmin_), xmax(xmax_), ymin(ymin_), ymax(ymax_)
+{
+}
+
+bool RealIntRect::contains(sf::Vector2i pos)
+{
+	return pos.x >= this->xmin && pos.x < this->xmax &&
+		   pos.y >= this->ymin && pos.y < this->ymax;
+}
+
+void RealIntRect::trim(int xmin, int xmax, int ymin, int ymax)
+{
+	if(this->xmin < xmin) this->xmin = xmin;
+	if(this->xmax > xmax) this->xmax = xmax;
+	if(this->ymin < ymin) this->ymin = ymin;
+	if(this->ymax > ymax) this->ymax = ymax;
+}
+
+void RealIntRect::trim(RealIntRect rect)
+{
+	return this->trim(rect.xmin, rect.xmax, rect.ymin, rect.ymax);
+}
+
+void RealIntRect::setFromCenterRadius(sf::Vector2i center_pos, int radius)
+{
+	this->xmin = center_pos.x - radius;
+	this->xmax = center_pos.x + radius;
+	this->ymin = center_pos.y - radius;
+	this->ymax = center_pos.y + radius;
+}
+
+std::string RealIntRect::toString() const
+{
+	std::stringstream ss;
+	ss << "xmin=" << this->xmin << ", xmax=" << this->xmax << ", ymin=" << this->ymin << ", ymax=" << this->ymax;
+	return ss.str();
+}
+
+GuiRect::GuiRect():
+		left(0.0), top(0.0), right(0.0), bottom(0.0)
+{
+}
+
+GuiRect::GuiRect(float left_, float top_, float right_, float bottom_):
+		left(left_), top(top_), right(right_), bottom(bottom_)
+{
+}
+
+bool GuiRect::contains(sf::Vector2f pos)
+{
+	return pos.x >= this->left && pos.x < this->right &&
+			pos.y >= this->top && pos.y < this->bottom;
+}
+
 OpenGLImage::OpenGLImage():
 		handle(0)
 {
@@ -250,3 +354,5 @@ bool Utils::RectContains(const IntRect& rect, const sf::Vector2i& pos)
 
 
 } /* namespace dfv */
+
+

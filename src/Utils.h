@@ -28,6 +28,38 @@ struct IntRect
 	int Bottom;
 };
 
+struct RealRect
+{
+	RealRect();
+	RealRect(float xmin_, float xmax_, float ymin_, float ymax_);
+	float xmin, xmax, ymin, ymax;
+	bool contains(sf::Vector2f pos);
+	void trim(float xmin, float xmax, float ymin, float ymax);
+	void trim(RealRect rect);
+	void setFromCenterRadius(sf::Vector2f center_pos, float radius);
+	std::string toString() const;
+};
+
+struct RealIntRect
+{
+	RealIntRect();
+	RealIntRect(int xmin_, int xmax_, int ymin_, int ymax_);
+	int xmin, xmax, ymin, ymax;
+	bool contains(sf::Vector2i pos);
+	void trim(int xmin, int xmax, int ymin, int ymax);
+	void trim(RealIntRect rect);
+	void setFromCenterRadius(sf::Vector2i center_pos, int radius);
+	std::string toString() const;
+};
+
+struct GuiRect
+{
+	GuiRect();
+	GuiRect(float left_, float top_, float right_, float bottom_);
+	float left, top, right, bottom;
+	bool contains(sf::Vector2f pos);
+};
+
 class OpenGLImage
 {
 public:

@@ -89,7 +89,7 @@ void Camera::SetView(const sf::Window& window) const
 
 }
 
-dfv::IntRect Camera::GetRectFromView(const dfv::IntRect& map_rect) const
+/*dfv::IntRect Camera::GetRectFromView(const dfv::IntRect& map_rect) const
 {
 	dfv::IntRect view_rect(0, 0, 0, 0);
 
@@ -143,7 +143,7 @@ dfv::IntRect Camera::GetRectFromView(const dfv::IntRect& map_rect) const
 			map_rect.Top, map_rect.Bottom);
 
 	return view_rect;
-}
+}*/
 
 void Camera::handleInput(sf::Event& event)
 {
@@ -244,15 +244,6 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		float rot = 0.0;
 		if(vel > 0.0)
 		{
-			/*if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			{
-				rot -= 40.f;//*this->car.getSpeed();
-			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-			{
-				rot += 40.f;//*this->car.getSpeed();
-			}*/
-			//rot = this->car.getSteeringAngle()*this->car.getSpeed()*dt;
 			rot = this->car.getDeltaSteeringAngle(dt);
 			float fc = this->car.getCentrifugalForce();
 			float fc_max = this->car.getMaxCentrifugalForce();
@@ -264,10 +255,6 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 			{
 				rot = -this->car.getMaxDeltaSteeringAngle(dt);
 			}
-			//std::cout << "Fc = " << fc << std::endl;
-			//std::cout << "Fcmax = " << this->car.getMaxCentrifugalForce() << std::endl;
-			//if(rot > 40.f) rot = 40.f;
-			//if(rot < -40.f) rot = -40.f;
 		}
 		float rot_pitch = 0.0;
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -280,12 +267,20 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		}
 		this->curr_pitch += 2.0f*(pitch - this->curr_pitch)*dt;
 		this->curr_roll += 2.0f*(roll - this->curr_roll)*dt;
-		//this->SetRpy(sf::Vector3f(-90.0 - pitch - 5.0, -roll, this->GetRpy().z));
-				this->SetRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->GetRpy().z));
-		//this->Rotate(sf::Vector3f(rot_pitch*dt, 0.f, rot*dt));
+		this->SetRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->GetRpy().z));
 		this->Rotate(sf::Vector3f(0.f, 0.f, rot*180.0/3.1416));
 		this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
 		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
+	}
+
+	// Normalize camera angles
+	if(this->GetRpy().z < 0.f)
+	{
+		this->Rotate(sf::Vector3f(0.f, 0.f, 360.f));
+	}
+	if(this->GetRpy().z >= 360.f)
+	{
+		this->Rotate(sf::Vector3f(0.f, 0.f, -360.f));
 	}
 }
 
@@ -317,6 +312,69 @@ float Camera::getCarPower() const
 Camera::Mode Camera::getMode() const
 {
 	return this->mode;
+}
+
+dfv::RealIntRect Camera::getRectFromView(const dfv::RealIntRect& map_rect) const
+{
+	dfv::RealIntRect view_rect = map_rect;
+
+	// If looking down return the entire map
+
+
+	if(this->GetRpy().x > -20.f)
+	{
+		return map_rect;
+	}
+
+	// If not looking down, draw only the half of the map we're facing
+	else
+	{
+		if(this->GetQuadrant() == 0)
+		{
+
+			view_rect.trim(this->GetPosition2d().x - 5, map_rect.xmax, map_rect.ymin, map_rect.ymax);
+			//view_rect.Left = floor(this->GetPosition2d().x) - 5;
+			//view_rect.Bottom = 0;
+			//view_rect.Right = map_rect.Right;
+			//view_rect.Top = map_rect.Top;
+		}
+
+		else if(this->GetQuadrant() == 1)
+		{
+			view_rect.trim(map_rect.xmin, map_rect.xmax, this->GetPosition2d().y - 5, map_rect.ymax);
+			/*view_rect.Left = 0;
+			view_rect.Bottom = floor(this->GetPosition2d().y) - 5;
+			view_rect.Right = map_rect.Right;
+			view_rect.Top = map_rect.Top;*/
+		}
+
+		else if(this->GetQuadrant() == 2)
+		{
+			view_rect.trim(map_rect.xmin, this->GetPosition2d().x + 5, map_rect.ymin, map_rect.ymax);
+			/*view_rect.Left = 0;
+			view_rect.Bottom = 0;
+			view_rect.Right = floor(this->GetPosition2d().x) + 5;
+			view_rect.Top = map_rect.Top;*/
+		}
+
+		else if(this->GetQuadrant() == 3)
+		{
+			view_rect.trim(map_rect.xmin, map_rect.xmax, map_rect.ymin, this->GetPosition2d().y + 5);
+			/*view_rect.Left = 0;
+			view_rect.Bottom = 0;
+			view_rect.Right = map_rect.Right;
+			view_rect.Top = floor(this->GetPosition2d().y) + 5;*/
+		}
+	}
+
+	/*
+
+	dfv::Utils::TrimRect(
+			view_rect,
+			map_rect.Left, map_rect.Right,
+			map_rect.Top, map_rect.Bottom);*/
+	//aastd::cout << "view_rect: " << view_rect.toString() << std::endl;
+	return view_rect;
 }
 
 } /* namespace dfv */

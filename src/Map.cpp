@@ -857,10 +857,13 @@ sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window) con
 const std::vector<sf::Vector3f> & Map::GetTileVertices(sf::Vector2i pos) const
 {
 	//return this->lp_tiles[pos.x][pos.y]->GetVertices();
+	//if(pos.x >= 0 && pos.x < this->size &&
+	//   pos.y >= 0 && pos.y < this->size)
+
 	return this->lp_tiles.at(pos.x).at(pos.y)->GetVertices();
 }
 
-void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
+/*void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 	if(rect.Left < 0) rect.Left = 0;
 	if(rect.Right >= (int)this->GetSize()) rect.Right = this->GetSize() - 1;
@@ -942,6 +945,73 @@ void Map::DrawBuildingFloors(dfv::IntRect rect) const
 			if(this->lp_tiles[i][j]->HasBuilding())
 			{
 				this->lp_tiles[i][j]->DrawBuildingFloors();
+			}
+		}
+	}
+	glEnd();
+}*/
+
+void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
+{
+	rect.trim(this->getTileRect());
+	glBegin(GL_QUADS);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			this->lp_tiles.at(i).at(j)->Draw(camera, resources);
+		}
+	}
+	glEnd();
+}
+
+void Map::drawBuildingBoxes(dfv::RealIntRect rect) const
+{
+	rect.trim(this->getTileRect());
+	glBegin(GL_QUADS);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			{
+				this->lp_tiles.at(i).at(j)->DrawBuildingBox();
+			}
+		}
+	}
+	glEnd();
+}
+
+void Map::drawBuildingOutlines(dfv::RealIntRect rect) const
+{
+	rect.trim(this->getTileRect());
+	glColor3f(0.1, 0.1, 0.1);
+	glBegin(GL_QUADS);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			{
+				this->lp_tiles.at(i).at(j)->DrawBuildingOutline();
+			}
+		}
+	}
+	glEnd();
+}
+
+void Map::drawBuildingFloors(dfv::RealIntRect rect) const
+{
+	rect.trim(this->getTileRect());
+	glColor3f(0.1, 0.1, 0.1);
+	glBegin(GL_QUADS);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			{
+				this->lp_tiles.at(i).at(j)->DrawBuildingFloors();
 			}
 		}
 	}
@@ -1140,14 +1210,20 @@ float Map::GetHeight(const sf::Vector2f& pos) const
 	}*/
 }
 
-dfv::IntRect Map::GetRect() const
+dfv::RealRect Map::getRect() const
 {
-	dfv::IntRect rect;
+	/*dfv::IntRect rect;
 	rect.Left = 0;
 	rect.Right = this->size - 1;
 	rect.Top = this->size - 1;
 	rect.Bottom = 0;
-	return rect;
+	return rect;*/
+	return dfv::RealRect(0, this->size, 0, this->size);
+}
+
+dfv::RealIntRect Map::getTileRect() const
+{
+	return dfv::RealIntRect(0, (int)this->size, 0, (int)this->size);
 }
 
 void Map::DrawSky() const
@@ -1179,7 +1255,7 @@ void Map::GenerateBuildingList()
 {
 	this->building_list = glGenLists(1);
 	glNewList(this->building_list, GL_COMPILE);
-	this->DrawBuildingBoxes(this->GetRect());
+	this->drawBuildingBoxes(this->getTileRect());
 	glEndList();
 }
 
@@ -1192,7 +1268,7 @@ void Map::GenerateTileList(const Camera& camera, const Resources& resources)
 {
 	this->tile_list = glGenLists(1);
 	glNewList(this->tile_list, GL_COMPILE);
-	this->DrawTiles(this->GetRect(), camera, resources);
+	this->drawTiles(this->getTileRect(), camera, resources);
 	glEndList();
 }
 
@@ -1201,7 +1277,7 @@ void Map::CallTileList() const
 	glCallList(this->tile_list);
 }
 
-void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
+/*void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 	dfv::Utils::TrimRect(rect, this->GetRect());
 	for(int i = rect.Left; i < rect.Right; i++)
@@ -1214,9 +1290,98 @@ void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& re
 			}
 		}
 	}
+}*/
+
+void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
+{
+	rect.trim(this->getTileRect());
+	for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
+	{
+		for(int j = floor(rect.ymin); j < floor(rect.ymax); j++)
+		{
+			if(this->lp_tiles.at(i).at(j)->IsRoad())
+			{
+				this->lp_tiles.at(i).at(j)->DrawRoad(camera, resources);
+			}
+		}
+	}
 }
 
-void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
+void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
+{
+	rect.trim(this->getTileRect());
+	unsigned int quadrant = camera.GetQuadrant();
+	if(quadrant == 0)
+	{
+		unsigned int midpoint = camera.GetPosition().y;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(unsigned int i = floor(rect.xmax); i > floor(rect.xmin); i--)
+		{
+			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
+			{
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+			}
+			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
+			{
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 1)
+	{
+		unsigned int midpoint = camera.GetPosition().x;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(int j = floor(rect.ymax); j > floor(rect.ymin); j--)
+		{
+			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
+			{
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+			}
+			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
+			{
+				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 2)
+	{
+		unsigned int midpoint = camera.GetPosition().y;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(unsigned int i = floor(rect.xmin); i < floor(rect.xmax); i++)
+		{
+			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+	else if(quadrant == 3)
+	{
+		unsigned int midpoint = camera.GetPosition().x;
+		if(midpoint < 0) midpoint = 0;
+		if(midpoint >= this->size) midpoint = this->size - 1;
+		for(unsigned int j = floor(rect.ymin); j < floor(rect.ymax); j++)
+		{
+			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
+			{
+				this->lp_tiles[i][j]->DrawProp(camera, resources);
+			}
+		}
+	}
+}
+
+/*void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {
 	if(rect.Left >= this->size) rect.Left = this->size - 1;
 	if(rect.Left < 0) rect.Left = 0;
@@ -1296,7 +1461,7 @@ void Map::DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& re
 			}
 		}
 	}
-}
+}*/
 
 void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
 {
@@ -1328,8 +1493,8 @@ bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 
 bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 {
-	dfv::IntRect rect = this->GetRect();
-	if(dfv::Utils::RectContains(rect, pos))
+	//dfv::IntRect rect = this->GetRect();
+	if(this->getTileRect().contains(pos))
 	{
 		return this->lp_tiles[pos.x][pos.y]->SetRoadOrientation(orientation);
 	}
@@ -1337,6 +1502,15 @@ bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 	{
 		return false;
 	}
+	/*
+	if(dfv::Utils::RectContains(rect, pos))
+	{
+		return this->lp_tiles[pos.x][pos.y]->SetRoadOrientation(orientation);
+	}
+	else
+	{
+		return false;
+	}*/
 }
 
 bool Map::SaveAsSgmFormat(const std::string& filename) const
@@ -1453,6 +1627,23 @@ bool Map::clearBuilding(unsigned int x, unsigned int y)
 	{
 		return false;
 	}
+}
+
+bool Map::clearProp(unsigned int x, unsigned int y)
+{
+	try
+	{
+		return this->lp_tiles[x][y]->clearProp();
+	}
+	catch(...)
+	{
+		return false;
+	}
+}
+
+sf::Vector2i Map::getTileFromMapPos(sf::Vector3f map_pos) const
+{
+	return sf::Vector2i(floor(map_pos.x), floor(map_pos.y));
 }
 
 } /* namespace dfv */

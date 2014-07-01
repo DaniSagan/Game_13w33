@@ -42,6 +42,7 @@ public:
 	void setSelectedShapes(std::vector<sf::ConvexShape>& shapes);
 
 	std::vector<std::string> HandleInput(const sf::Event& event, std::vector<std::string>& commands);
+	void handleInput(const sf::Event& event, std::string& command);
 	std::vector<std::string>& handleButtonInput(const sf::Event& event, std::vector<std::string>& commands);
 	void Update(const Map& map, const sf::Vector2f& position);
 

@@ -46,6 +46,7 @@ public:
 
 	void createSelectedShapes();
 	void drawSelection(sf::RenderWindow& window) const;
+	sf::Vector2i getCameraTile() const;
 
 private:
 	sf::RenderWindow window;
@@ -67,12 +68,13 @@ private:
 	float frame_time;
 	MovingMode moving_mode;
 
-	std::vector<std::string> commands;
-	std::vector<sf::Vector2u> selected_tiles;
+	//std::vector<std::string> commands;
+	std::string command;
+	std::vector<sf::Vector2i> selected_tiles;
 	std::vector<sf::ConvexShape> selected_shapes;
 
-	sf::Vector2u select_from;
-	sf::Vector2u select_to;
+	sf::Vector2i select_from;
+	sf::Vector2i select_to;
 };
 
 } /* namespace dfv */

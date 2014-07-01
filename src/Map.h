@@ -56,16 +56,23 @@ public:
 	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
 	const std::vector<sf::Vector3f> & GetTileVertices(sf::Vector2i pos) const;
 
-	void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	/*void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void DrawBuildingBoxes(dfv::IntRect rect) const;
 	void DrawBuildingOutlines(dfv::IntRect rect) const;
-	void DrawBuildingFloors(dfv::IntRect rect) const;
+	void DrawBuildingFloors(dfv::IntRect rect) const;*/
+
+	void drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
+	void drawBuildingBoxes(dfv::RealIntRect rect) const;
+	void drawBuildingOutlines(dfv::RealIntRect rect) const;
+	void drawBuildingFloors(dfv::RealIntRect rect) const;
 
 	bool SaveAsMapFormat(std::string filename);
 	bool LoadFromMapFormat(std::string filename);
 	float GetHeight(const sf::Vector2f& pos) const;
 
-	dfv::IntRect GetRect() const;
+	//dfv::IntRect GetRect() const;
+	dfv::RealRect getRect() const;
+	dfv::RealIntRect getTileRect() const;
 
 	void DrawSky() const;
 	void SetLight(const sf::Vector3f& position) const;
@@ -77,8 +84,10 @@ public:
 	void GenerateTileList(const Camera& camera, const Resources& resources);
 	void CallTileList() const;
 
-	void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
-	void DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	/*void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;*/
+	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
+	//void DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
+	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
 	unsigned int GetRoadId(const sf::Vector2i& pos) const;
 	unsigned int GetRoadOrientation(const sf::Vector2i& pos) const;
@@ -94,6 +103,8 @@ public:
 	bool clearRoad(unsigned int x, unsigned int y);
 	bool buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned int orientation);
 	bool clearBuilding(unsigned int x, unsigned int y);
+	bool clearProp(unsigned int x, unsigned int y);
+	sf::Vector2i getTileFromMapPos(sf::Vector3f map_pos) const;
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

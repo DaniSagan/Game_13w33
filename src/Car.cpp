@@ -171,7 +171,7 @@ void Car::update(float dt, float pitch)
 		this->steering_time = 0.0f;
 		this->steering_angle -= 5.0f*this->steering_angle*dt;
 	}
-	if(this->getMotorW() > 5500.0*2.0*3.1416/60.0)
+	if(this->getMotorW() > 5000.0*2.0*3.1416/60.0)
 	{
 		this->gearUp();
 	}

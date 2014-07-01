@@ -28,9 +28,11 @@ public:
 	TextButton();
 	virtual ~TextButton();
 
-	void onClick(std::vector<std::string>& commands);
+	//void onClick(std::vector<std::string>& commands);
+	void onClick(std::string& command);
 	void onDraw(sf::RenderWindow& window, const sf::Font& font) const;
-	void handleInput(const sf::Event& event, std::vector<std::string>& commands);
+	//void handleInput(const sf::Event& event, std::vector<std::string>& commands);
+	void handleInput(const sf::Event& event, std::string& command);
 
 	void setVisible(bool value);
 	void setText(std::string text);

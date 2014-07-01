@@ -18,7 +18,7 @@ Gui::Gui():
 	this->minimap.Create(256);
 	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
 
-	Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
+	/*Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
 	b1.SetCommand(std::string("button_road_cmd"));
 	this->button_list.push_back(b1);
 
@@ -28,13 +28,25 @@ Gui::Gui():
 
 	Button b3("res/gui/button_copy.png", sf::Vector2f(0, 64));
 	b3.SetCommand(std::string("button_copy_cmd"));
-	this->button_list.push_back(b3);
+	this->button_list.push_back(b3);*/
 
 	TextButton tb1;
 	tb1.setPosition(sf::Vector2f(0.0, 0.0));
-	tb1.setText(std::string("Select"));
-	tb1.setCommand(std::string("select"));
+	tb1.setText(std::string("Clear props"));
+	tb1.setCommand(std::string("clear prop"));
 	this->text_button_list.push_back(tb1);
+
+	TextButton tb2;
+	tb2.setPosition(sf::Vector2f(0.0, 32.0));
+	tb2.setText(std::string("Clear roads"));
+	tb2.setCommand(std::string("clear road"));
+	this->text_button_list.push_back(tb2);
+
+	TextButton tb3;
+	tb3.setPosition(sf::Vector2f(0.0, 64.0));
+	tb3.setText(std::string("Clear buildings"));
+	tb3.setCommand(std::string("clear building"));
+	this->text_button_list.push_back(tb3);
 
 	//this->text_button.setPosition(sf::Vector2f(1.f, 1.f));
 	//this->text_button.setText(std::string("Test"));
@@ -146,7 +158,7 @@ void Gui::setSelectedShapes(std::vector<sf::ConvexShape>& shapes)
 	this->selected_shapes = shapes;
 }
 
-std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<std::string>& commands)
+/*std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<std::string>& commands)
 {
 	if(event.type == sf::Event::KeyPressed)
 	{
@@ -226,15 +238,24 @@ std::vector<std::string> Gui::HandleInput(const sf::Event& event, std::vector<st
 				std::cout << "Selected copy tool" << std::endl;
 			}
 		}
-	}*/
+	}
 
 	std::vector<TextButton>::iterator it;
 	for(it = this->text_button_list.begin(); it != this->text_button_list.end(); it++)
 	{
-		it->handleInput(event, commands);
+		it->handleInput(event, command);
 	}
 
 	return commands;
+}*/
+
+void Gui::handleInput(const sf::Event& event, std::string& command)
+{
+	std::vector<TextButton>::iterator it;
+	for(it = this->text_button_list.begin(); it != this->text_button_list.end(); it++)
+	{
+		it->handleInput(event, command);
+	}
 }
 
 std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::vector<std::string>& commands)

@@ -10,5 +10,6 @@
 
 int main() {
 	dfv::App app;
+	app.Run();
 	return 0;
 }

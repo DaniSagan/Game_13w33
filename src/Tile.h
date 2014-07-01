@@ -72,6 +72,7 @@ public:
 	bool isWater() const;
 	bool clearRoad();
 	bool clearBuilding();
+	bool clearProp();
 
 private:
 	std::vector<sf::Vector3f> vertices;
