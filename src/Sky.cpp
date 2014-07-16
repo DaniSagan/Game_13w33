@@ -22,7 +22,7 @@ Sky::~Sky()
 	// TODO Auto-generated destructor stub
 }
 
-void Sky::Create(float size, std::string filename)
+void Sky::Create(float size, sf::Vector2f center, std::string filename)
 {
 	this->size = size;
 	if(!this->sky_img.loadFromFile(filename))
@@ -65,23 +65,23 @@ void Sky::Create(float size, std::string filename)
 	this->vertices.resize(8);
 	//this->normals.resize(8);
 
-	this->vertices[0] = sf::Vector3f(-size /2, -size/2, -size/2);
-	this->vertices[4] = sf::Vector3f(-size /2, -size/2, size/2);
+	this->vertices[0] = sf::Vector3f(center.x -size /2, center.y-size/2, -size/2);
+	this->vertices[4] = sf::Vector3f(center.x -size /2, center.y-size/2, size/2);
 
-	this->vertices[1] = sf::Vector3f(size /2, -size/2, -size/2);
-	this->vertices[5] = sf::Vector3f(size /2, -size/2, size/2);
+	this->vertices[1] = sf::Vector3f(center.x + size /2, center.y-size/2, -size/2);
+	this->vertices[5] = sf::Vector3f(center.x + size /2, center.y-size/2, size/2);
 
-	this->vertices[2] = sf::Vector3f(size /2, size/2, -size/2);
-	this->vertices[6] = sf::Vector3f(size /2, size/2, size/2);
+	this->vertices[2] = sf::Vector3f(center.x + size /2, center.y+size/2, -size/2);
+	this->vertices[6] = sf::Vector3f(center.x + size /2, center.y+size/2, size/2);
 
-	this->vertices[3] = sf::Vector3f(-size /2, size/2, -size/2);
-	this->vertices[7] = sf::Vector3f(-size /2, size/2, size/2);
+	this->vertices[3] = sf::Vector3f(center.x -size /2, center.y+size/2, -size/2);
+	this->vertices[7] = sf::Vector3f(center.x -size /2, center.y+size/2, size/2);
 }
 
 void Sky::Draw() const
 {
 	glDisable(GL_LIGHTING);
-	glBindTexture(GL_TEXTURE_2D, this->image_handles[0]);
+	glBindTexture(GL_TEXTURE_2D, this->image_handles.at(0));
 	glBegin(GL_QUADS);
 		//top
 

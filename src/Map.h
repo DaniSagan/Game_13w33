@@ -81,6 +81,9 @@ public:
 	void GenerateBuildingList();
 	void CallBuildingList() const;
 
+	void generateRoadList(const Camera& camera, const Resources& resources);
+	void callRoadList() const;
+
 	void GenerateTileList(const Camera& camera, const Resources& resources);
 	void CallTileList() const;
 
@@ -113,6 +116,7 @@ private:
 	dfv::Sky sky;
 	GLuint building_list;
 	GLuint tile_list;
+	GLuint road_list;
 	unsigned int population;
 };
 

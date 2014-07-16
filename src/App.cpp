@@ -36,6 +36,7 @@ void App::Initialize()
 	this->InitOpenGL();
 
 	this->map.LoadFromMapFormat("res/map/world1_test.map");
+	//this->map.CreateRandom(512);
 	Tree* lp_tree = new Tree();
 	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
 	lp_tree->Create(tile_vertices);
@@ -60,6 +61,7 @@ void App::Initialize()
 
 	this->map.GenerateTileList(this->camera, this->resources);
 	this->map.GenerateBuildingList();
+	this->map.generateRoadList(this->camera, this->resources);
 
 }
 
@@ -249,14 +251,16 @@ void App::Draw()
 	//road_rect.trim(this->map.getRect());
 	road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 	//this->map.DrawRoads(road_rect, this->camera, this->resources);
+
 	this->map.drawRoads(road_rect, this->camera, this->resources);
+	//this->map.callRoadList();
 
 	/*dfv::IntRect outlines_rect = dfv::Utils::CreateRect(
 			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
 			30);*/
 
 	dfv::RealIntRect outlines_rect;
-	outlines_rect.setFromCenterRadius(dfv::Utils::ToVector2i(this->camera.GetPosition2d()), 30.f);
+	outlines_rect.setFromCenterRadius(dfv::Utils::ToVector2i(this->camera.GetPosition2d()), 30);
 	outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 
 	//dfv::Utils::TrimRect(outlines_rect, view_rect);

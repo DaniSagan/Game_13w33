@@ -55,7 +55,7 @@ void Map::Create(unsigned int size)
 		}
 	}
 
-	this->sky.Create(2000, "res/bg/bg.png");
+	this->sky.Create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
 void Map::GenerateTiles()
@@ -184,7 +184,10 @@ void Map::CreateRandom(const unsigned int size)
 										  0.4 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
 										  0.3 * pow(sin(0.04 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
 										  0.1 * pow(sin(0.1 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
-										  0.1 * pow((sin(0.1* x) + sin(0.1*y)), 2.0));
+										  0.1 * pow((sin(0.1* x) + sin(0.1*y)), 2.0) +
+										  0.05 * pow((sin(0.23* x + 89.0) + sin(0.345*y - 123.0)), 2.0) +
+										  0.03 * pow((sin(0.32* x - 121.3) + sin(0.4*y + 57.56)), 2.0) +
+										  0.01 * pow((sin(0.41* x - 11.0) + sin(0.52*y + 570.0)), 2.0));
 			this->heights[i][j] = 0.1 * this->heights[i][j] * this->heights[i][j] + 0.9f;
 			if(this->heights[i][j] < 1.0)
 			{
@@ -212,7 +215,7 @@ void Map::CreateRandom(const unsigned int size)
 					this->heights[i][j+1]);
 			lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
-			if(rand() % 5 < 4)
+			/*if(rand() % 5 < 4)
 			{
 				if(this->heights[i][j] > 1.2f &&
 				   this->heights[i+1][j] > 1.2f &&
@@ -226,8 +229,8 @@ void Map::CreateRandom(const unsigned int size)
 					//float rr = (float)rand() / (float)RAND_MAX;
 					//this->lp_tiles[i][j]->AddBuilding(2.f + 5.f * pow(rr, 4.0));
 				}
-			}
-			if(i%3 == 0 || j %5 == 0)
+			}*/
+			/*if(i%3 == 0 || j %5 == 0)
 			{
 				if(this->heights[i][j] > 1.2f &&
 				   this->heights[i+1][j] > 1.2f &&
@@ -240,7 +243,7 @@ void Map::CreateRandom(const unsigned int size)
 					this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
 					//this->lp_tiles[i][j]->SetAsRoad(true);
 				}
-			}
+			}*/
 			if(this->heights[i][j] < 1.1f &&
 			   this->heights[i+1][j] < 1.1f &&
 			   this->heights[i+1][j+1] < 1.1f &&
@@ -251,6 +254,7 @@ void Map::CreateRandom(const unsigned int size)
 			}
 		}
 	}
+	this->sky.Create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 	std::cout << "No. of buildings: " << building_count << std::endl;
 }
 
@@ -1264,6 +1268,30 @@ void Map::CallBuildingList() const
 	glCallList(this->building_list);
 }
 
+void Map::generateRoadList(const Camera& camera, const Resources& resources)
+{
+	this->road_list = glGenLists(1);
+	glNewList(this->road_list, GL_COMPILE);
+	glBegin(GL_QUADS);
+	for(unsigned int i = 0; i < this->size; i++)
+	{
+		for(unsigned int j = 0; j < this->size; j++)
+		{
+			if(this->lp_tiles.at(i).at(j)->IsRoad())
+			{
+				this->lp_tiles.at(i).at(j)->DrawRoad(camera, resources);
+			}
+		}
+	}
+	glEnd();
+	glEndList();
+}
+
+void Map::callRoadList() const
+{
+	glCallList(this->road_list);
+}
+
 void Map::GenerateTileList(const Camera& camera, const Resources& resources)
 {
 	this->tile_list = glGenLists(1);
@@ -1276,6 +1304,8 @@ void Map::CallTileList() const
 {
 	glCallList(this->tile_list);
 }
+
+
 
 /*void Map::DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
 {

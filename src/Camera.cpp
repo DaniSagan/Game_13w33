@@ -270,7 +270,7 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		this->SetRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->GetRpy().z));
 		this->Rotate(sf::Vector3f(0.f, 0.f, rot*180.0/3.1416));
 		this->Move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
-		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.04f + map_height));
+		this->SetPosition(sf::Vector3f(this->GetPosition().x, this->GetPosition().y, 0.05f + map_height));
 	}
 
 	// Normalize camera angles
