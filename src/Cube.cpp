@@ -21,12 +21,12 @@ Cube::~Cube()
 	// TODO Auto-generated destructor stub
 }
 
-sf::Color Cube::GetColor() const
+sf::Color Cube::getColor() const
 {
 	return this->color;
 }
 
-void Cube::SetColor(sf::Color color)
+void Cube::setColor(sf::Color color)
 {
 	this->color = color;
 	this->gl_color_top = sf::Vector3f((float)color.r / 255.f, (float)color.g / 255.f, (float)color.b / 255.f);
@@ -35,17 +35,17 @@ void Cube::SetColor(sf::Color color)
 	this->gl_color_bottom = sf::Vector3f(gl_color_top.x * 0.4, gl_color_top.y * 0.4, gl_color_top.z * 0.4);
 }
 
-const sf::Vector3f& Cube::GetPosition() const
+const sf::Vector3f& Cube::getPosition() const
 {
 	return this->position;
 }
 
-void Cube::SetPosition(const sf::Vector3f& position)
+void Cube::setPosition(const sf::Vector3f& position)
 {
 	this->position = position;
 }
 
-void Cube::Draw(sf::Window& window, const dfv::Camera& camera, bool top_only)
+void Cube::draw(sf::Window& window, const dfv::Camera& camera, bool top_only)
 {
 	//glLoadIdentity();
 	//glTranslatef(this->position.x - camera.GetPosition().x,

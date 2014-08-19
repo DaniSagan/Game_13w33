@@ -36,12 +36,12 @@ public:
 		count
 	};
 
-	void Create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
-	void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-	void SetId(unsigned int id);
-	void SetOrientation(unsigned int orientation);
-	unsigned int GetOrientation() const;
-	unsigned int GetId() const;
+	void create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
+	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+	void setId(unsigned int id);
+	void setOrientation(unsigned int orientation);
+	unsigned int getOrientation() const;
+	unsigned int getId() const;
 
 private:
 	//Type id;

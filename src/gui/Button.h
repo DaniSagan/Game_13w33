@@ -21,15 +21,15 @@ public:
 	Button(const std::string& image_file, const sf::Vector2f& position);
 	virtual ~Button();
 
-	void SetSize(const sf::Vector2u& size);
-	void SetPosition(const sf::Vector2i& position);
-	void SetImage(const sf::Image& image);
-	void SetCommand(const std::string& command);
+	void setSize(const sf::Vector2u& size);
+	void setPosition(const sf::Vector2i& position);
+	void setImage(const sf::Image& image);
+	void setCommand(const std::string& command);
 
-	void Draw(sf::RenderWindow& window) const;
-	void HandleInput(std::vector<std::string>& command_list, const sf::Event& event);
-	bool Contains(const sf::Vector2i& pos) const;
-	bool LoadImage(const std::string& filename);
+	void draw(sf::RenderWindow& window) const;
+	void handleInput(std::vector<std::string>& command_list, const sf::Event& event);
+	bool contains(const sf::Vector2i& pos) const;
+	bool loadImage(const std::string& filename);
 
 private:
 	sf::Vector2u size;

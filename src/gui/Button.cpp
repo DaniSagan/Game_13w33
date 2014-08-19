@@ -35,17 +35,17 @@ Button::~Button()
 	// TODO Auto-generated destructor stub
 }
 
-void Button::SetSize(const sf::Vector2u& size)
+void Button::setSize(const sf::Vector2u& size)
 {
 	this->size = size;
 }
 
-void Button::SetPosition(const sf::Vector2i& position)
+void Button::setPosition(const sf::Vector2i& position)
 {
 	//this->position = position;
 }
 
-void Button::SetImage(const sf::Image& image)
+void Button::setImage(const sf::Image& image)
 {
 	//this->image = image;
 	this->texture.loadFromImage(this->image);
@@ -53,12 +53,12 @@ void Button::SetImage(const sf::Image& image)
 	//this->sprite.setPosition(this->position.x, this->position.y);
 }
 
-void Button::SetCommand(const std::string& command)
+void Button::setCommand(const std::string& command)
 {
 	this->command = command;
 }
 
-void Button::Draw(sf::RenderWindow& window) const
+void Button::draw(sf::RenderWindow& window) const
 {
 	sf::Sprite sprite;
 	sprite.setTexture(this->texture);
@@ -73,19 +73,19 @@ void Button::Draw(sf::RenderWindow& window) const
 	window.draw(sprite);
 }
 
-void Button::HandleInput(std::vector<std::string>& command_list, const sf::Event& event)
+void Button::handleInput(std::vector<std::string>& command_list, const sf::Event& event)
 {
 	if(event.type == sf::Event::MouseButtonPressed &&
 			event.mouseButton.button == sf::Mouse::Left)
 	{
-		if(this->Contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)))
+		if(this->contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y)))
 		{
 			command_list.push_back(this->command);
 		}
 	}
 }
 
-bool Button::Contains(const sf::Vector2i& pos) const
+bool Button::contains(const sf::Vector2i& pos) const
 {
 	dfv::IntRect rect(
 			this->position.x,
@@ -93,15 +93,15 @@ bool Button::Contains(const sf::Vector2i& pos) const
 			this->position.x + this->size.x,
 			this->position.y + this->size.y);
 
-	return dfv::Utils::RectContains(rect, sf::Vector2i(pos.x, pos.y));
+	return dfv::Utils::rectContains(rect, sf::Vector2i(pos.x, pos.y));
 }
 
-bool Button::LoadImage(const std::string& filename)
+bool Button::loadImage(const std::string& filename)
 {
 	if(this->image.loadFromFile(filename) == false) return false;
 	else
 	{
-		this->SetImage(this->image);
+		this->setImage(this->image);
 		return true;
 	}
 }

@@ -119,28 +119,28 @@ public:
 	Utils();
 	virtual ~Utils();
 
-	static float Dot(const sf::Vector3f& v1, const sf::Vector3f& v2);
-	static sf::Vector3f Cross(const sf::Vector3f& v1, const sf::Vector3f& v2);
-	static sf::Vector3f Diff(const sf::Vector3f& v1, const sf::Vector3f& v2);
-	static sf::Vector2f Diff(const sf::Vector2f& v1, const sf::Vector2f& v2);
-	static void DrawRectangle(
+	static float dot(const sf::Vector3f& v1, const sf::Vector3f& v2);
+	static sf::Vector3f cross(const sf::Vector3f& v1, const sf::Vector3f& v2);
+	static sf::Vector3f diff(const sf::Vector3f& v1, const sf::Vector3f& v2);
+	static sf::Vector2f diff(const sf::Vector2f& v1, const sf::Vector2f& v2);
+	static void drawRectangle(
 			sf::Image& img,
 			const sf::Vector2i& top_left,
 			const sf::Vector2i& bottom_right,
 			const sf::Color& color);
-	static float Length(const sf::Vector3f v);
-	static float Length(const sf::Vector2f v);
-	static void TrimRect(IntRect& rect, int left, int right, int top, int bottom);
-	static void TrimRect(IntRect& rect, const dfv::IntRect& limits);
-	static IntRect CreateRect(const sf::Vector2i& position, int radius);
-	static sf::Vector2i ToVector2i(const sf::Vector2f& v);
-	static sf::Vector2f ToVector2f(const sf::Vector2i& v);
-	static sf::Vector2f GetVector2d(const sf::Vector3f& v);
-	static std::vector<std::string> StringTokenize(
+	static float length(const sf::Vector3f v);
+	static float length(const sf::Vector2f v);
+	static void trimRect(IntRect& rect, int left, int right, int top, int bottom);
+	static void trimRect(IntRect& rect, const dfv::IntRect& limits);
+	static IntRect createRect(const sf::Vector2i& position, int radius);
+	static sf::Vector2i toVector2i(const sf::Vector2f& v);
+	static sf::Vector2f toVector2f(const sf::Vector2i& v);
+	static sf::Vector2f getVector2d(const sf::Vector3f& v);
+	static std::vector<std::string> stringTokenize(
 			const std::string& str,
 			const std::string& delimiters);
-	static std::string ToString(const IntRect& rect);
-	static bool RectContains(const IntRect& rect, const sf::Vector2i& pos);
+	static std::string toString(const IntRect& rect);
+	static bool rectContains(const IntRect& rect, const sf::Vector2i& pos);
 };
 
 } /* namespace dfv */

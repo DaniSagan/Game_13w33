@@ -34,17 +34,17 @@ public:
 		copy
 	};
 
-	void Draw(sf::RenderWindow& window, const Camera& camera) const;
-	void SetFps(float fps);
-	void SetQuadrant(unsigned int quadrant);
-	void SetMapPos(const sf::Vector3f& mapPos);
-	void SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_vertices);
+	void draw(sf::RenderWindow& window, const Camera& camera) const;
+	void setFps(float fps);
+	void setQuadrant(unsigned int quadrant);
+	void setMapPos(const sf::Vector3f& mapPos);
+	void setSelectedTileVertices(const std::vector<sf::Vector2f>& selected_vertices);
 	void setSelectedShapes(std::vector<sf::ConvexShape>& shapes);
 
-	std::vector<std::string> HandleInput(const sf::Event& event, std::vector<std::string>& commands);
+	std::vector<std::string> handleInput(const sf::Event& event, std::vector<std::string>& commands);
 	void handleInput(const sf::Event& event, std::string& command);
 	std::vector<std::string>& handleButtonInput(const sf::Event& event, std::vector<std::string>& commands);
-	void Update(const Map& map, const sf::Vector2f& position);
+	void update(const Map& map, const sf::Vector2f& position);
 
 	void drawShapes(sf::RenderWindow& window) const;
 

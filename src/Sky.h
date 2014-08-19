@@ -22,8 +22,8 @@ public:
 	Sky();
 	virtual ~Sky();
 
-	void Create(float size, sf::Vector2f center, std::string filename);
-	void Draw() const;
+	void create(float size, sf::Vector2f center, std::string filename);
+	void draw() const;
 
 private:
 	float size;

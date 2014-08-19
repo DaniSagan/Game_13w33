@@ -31,7 +31,7 @@ Map::~Map()
 	}
 }
 
-void Map::Create(unsigned int size)
+void Map::create(unsigned int size)
 {
 	this->size = size;
 
@@ -55,17 +55,17 @@ void Map::Create(unsigned int size)
 		}
 	}
 
-	this->sky.Create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
+	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
-void Map::GenerateTiles()
+void Map::generateTiles()
 {
 	for(unsigned int i = 0; i < this->lp_tiles.size(); i++)
 	{
 		for(unsigned int j = 0; j < this->lp_tiles.size(); j++)
 		{
 			this->lp_tiles[i][j] = new Tile;
-			this->lp_tiles[i][j]->Create(
+			this->lp_tiles[i][j]->create(
 					sf::Vector2f(i, j),
 					this->heights[i][j],
 					this->heights[i+1][j],
@@ -76,7 +76,7 @@ void Map::GenerateTiles()
 	}
 }
 
-void Map::CreateFromFile(std::string filename, unsigned int water_level, float max_height)
+void Map::createFromFile(std::string filename, unsigned int water_level, float max_height)
 {
 
 
@@ -114,7 +114,7 @@ void Map::CreateFromFile(std::string filename, unsigned int water_level, float m
 			float y = (float)j - (float)(size + 1)/2.0;
 
 			dfv::Tile* lp_tile = new Tile;
-			lp_tile->Create(
+			lp_tile->create(
 					sf::Vector2f(i, j),
 					this->heights[i][j],
 					this->heights[i+1][j],
@@ -131,7 +131,7 @@ void Map::CreateFromFile(std::string filename, unsigned int water_level, float m
 				   i%3 != 0 &&
 				   j%5 != 0)
 				{
-					this->lp_tiles[i][j]->AddBuilding(0.5f + 0.00001f* (200.f/(float)(0.03*(x*x + y*y) + 50)) * ((float)(rand() % 100)*(float)(rand() % 100) * (float)(rand() % 100)));
+					this->lp_tiles[i][j]->addBuilding(0.5f + 0.00001f* (200.f/(float)(0.03*(x*x + y*y) + 50)) * ((float)(rand() % 100)*(float)(rand() % 100) * (float)(rand() % 100)));
 					building_count++;
 					//float rr = (float)rand() / (float)RAND_MAX;
 					//this->lp_tiles[i][j]->AddBuilding(2.f + 5.f * pow(rr, 4.0));
@@ -162,10 +162,11 @@ void Map::CreateFromFile(std::string filename, unsigned int water_level, float m
 	//std::cout << "No. of buildings: " << building_count << std::endl;
 }
 
-void Map::CreateRandom(const unsigned int size)
+void Map::createRandom(const unsigned int size)
 {
 	this->size = size;
 
+	// Create height data
 	this->heights.resize(size + 1);
 	for(unsigned int i = 0; i < size + 1; i++)
 	{
@@ -196,6 +197,7 @@ void Map::CreateRandom(const unsigned int size)
 		}
 	}
 
+	// Create tile data
 	this->lp_tiles.resize(size);
 	int building_count = 0;
 	for(unsigned int i = 0; i < size; i++)
@@ -207,13 +209,14 @@ void Map::CreateRandom(const unsigned int size)
 			float y = (float)j - (float)(size + 1)/2.0;
 
 			dfv::Tile* lp_tile = new Tile;
-			lp_tile->Create(
+			lp_tile->create(
 					sf::Vector2f(i, j),
 					this->heights[i][j],
 					this->heights[i+1][j],
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
-			lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
+			//lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
+			lp_tile->SetColor(sf::Color(16 + rand() % 20, 144 + rand() % 20, 16 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
 			/*if(rand() % 5 < 4)
 			{
@@ -244,6 +247,8 @@ void Map::CreateRandom(const unsigned int size)
 					//this->lp_tiles[i][j]->SetAsRoad(true);
 				}
 			}*/
+
+			// If it's a beach
 			if(this->heights[i][j] < 1.1f &&
 			   this->heights[i+1][j] < 1.1f &&
 			   this->heights[i+1][j+1] < 1.1f &&
@@ -254,11 +259,11 @@ void Map::CreateRandom(const unsigned int size)
 			}
 		}
 	}
-	this->sky.Create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
+	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 	std::cout << "No. of buildings: " << building_count << std::endl;
 }
 
-void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
+void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
 	glMatrixMode(GL_PROJECTION);
@@ -267,24 +272,24 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glRotatef(camera.GetRpy().x, 1.f, 0.f, 0.f);
-	glRotatef(camera.GetRpy().y, 0.f, 1.f, 0.f);
-	glRotatef(camera.GetRpy().z, 0.f, 0.f, 1.f);
-	glTranslatef(-camera.GetPosition().x, -camera.GetPosition().y, -camera.GetPosition().z);
+	glRotatef(camera.getRpy().x, 1.f, 0.f, 0.f);
+	glRotatef(camera.getRpy().y, 0.f, 1.f, 0.f);
+	glRotatef(camera.getRpy().z, 0.f, 0.f, 1.f);
+	glTranslatef(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
 
-	this->sky.Draw();
+	this->sky.draw();
 
 	GLfloat light_position[] = { 400.0, -200.0, 400.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	// If facing down, draw the entire map
-	if(camera.GetRpy().x > -20.f)
+	if(camera.getRpy().x > -20.f)
 	{
 		for(unsigned int i = 0; i < size; i++)
 		{
 			for(unsigned int j = 0; j < size; j++)
 			{
-				this->lp_tiles[i][j]->Draw(camera, resources);
+				this->lp_tiles[i][j]->draw(camera, resources);
 			}
 		}
 
@@ -293,7 +298,7 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 		{
 			for(unsigned int j = 0; j < size; j++)
 			{
-				this->lp_tiles[i][j]->DrawBuilding(false);
+				this->lp_tiles[i][j]->drawBuilding(false);
 			}
 		}
 	}
@@ -303,13 +308,13 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 	{
 		// get the quadrant from the angle of view
 		unsigned int quadrant;
-		if(camera.GetRpy().z >= 315.f || camera.GetRpy().z < 45.f) quadrant = 1;
-		if(camera.GetRpy().z >= 45.f && camera.GetRpy().z < 135.f) quadrant = 0;
-		if(camera.GetRpy().z >= 135.f && camera.GetRpy().z < 225.f) quadrant = 3;
-		if(camera.GetRpy().z >= 225.f && camera.GetRpy().z < 315.f) quadrant = 2;
+		if(camera.getRpy().z >= 315.f || camera.getRpy().z < 45.f) quadrant = 1;
+		if(camera.getRpy().z >= 45.f && camera.getRpy().z < 135.f) quadrant = 0;
+		if(camera.getRpy().z >= 135.f && camera.getRpy().z < 225.f) quadrant = 3;
+		if(camera.getRpy().z >= 225.f && camera.getRpy().z < 315.f) quadrant = 2;
 
 		// get camera position
-		sf::Vector2i cam_pos(camera.GetPosition().x, camera.GetPosition().y);
+		sf::Vector2i cam_pos(camera.getPosition().x, camera.getPosition().y);
 
 		if(cam_pos.x < 0) cam_pos.x = 0;
 		if(cam_pos.y < 0) cam_pos.y = 0;
@@ -323,13 +328,13 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			cam_pos.x -= 5;
 			if(cam_pos.x < 0) cam_pos.x = 0;
 
-			if(camera.GetRpy().x > -120.f)
+			if(camera.getRpy().x > -120.f)
 			{
 				for(int i = cam_pos.x; i < (int)this->size; i++)
 				{
 					for(int j = 0; j < (int)this->size; j++)
 					{
-						this->lp_tiles[i][j]->Draw(camera, resources);
+						this->lp_tiles[i][j]->draw(camera, resources);
 					}
 				}
 			}
@@ -338,7 +343,7 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			{
 				for(int j = 0; j < (int)this->size; j++)
 				{
-					this->lp_tiles[i][j]->DrawBuilding(i < cam_pos.x + draw_floor_radius && j > cam_pos.y - draw_floor_radius && j < cam_pos.y + draw_floor_radius);
+					this->lp_tiles[i][j]->drawBuilding(i < cam_pos.x + draw_floor_radius && j > cam_pos.y - draw_floor_radius && j < cam_pos.y + draw_floor_radius);
 				}
 			}
 		}
@@ -348,13 +353,13 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			cam_pos.y -= 5;
 			if(cam_pos.y < 0) cam_pos.y = 0;
 
-			if(camera.GetRpy().x > -120.f)
+			if(camera.getRpy().x > -120.f)
 			{
 				for(int i = 0; i < (int)this->size; i++)
 				{
 					for(int j = cam_pos.y; j < (int)this->size; j++)
 					{
-						this->lp_tiles[i][j]->Draw(camera, resources);
+						this->lp_tiles[i][j]->draw(camera, resources);
 					}
 				}
 			}
@@ -363,7 +368,7 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			{
 				for(int j = cam_pos.y; j < (int)this->size; j++)
 				{
-					this->lp_tiles[i][j]->DrawBuilding(j < cam_pos.y + draw_floor_radius && i > cam_pos.x - draw_floor_radius && i < cam_pos.x + draw_floor_radius);
+					this->lp_tiles[i][j]->drawBuilding(j < cam_pos.y + draw_floor_radius && i > cam_pos.x - draw_floor_radius && i < cam_pos.x + draw_floor_radius);
 				}
 			}
 		}
@@ -373,13 +378,13 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			cam_pos.x += 5;
 			if(cam_pos.x > (int)this->size) cam_pos.x = this->size;
 
-			if(camera.GetRpy().x > -120.f)
+			if(camera.getRpy().x > -120.f)
 			{
 				for(int i = 0; i < cam_pos.x; i++)
 				{
 					for(unsigned int j = 0; j < size; j++)
 					{
-						this->lp_tiles[i][j]->Draw(camera, resources);
+						this->lp_tiles[i][j]->draw(camera, resources);
 					}
 				}
 			}
@@ -388,7 +393,7 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			{
 				for(unsigned int j = 0; j < size; j++)
 				{
-					this->lp_tiles[i][j]->DrawBuilding((int)i > cam_pos.x - draw_floor_radius && (int)j > cam_pos.y - draw_floor_radius && (int)j < cam_pos.y + draw_floor_radius);
+					this->lp_tiles[i][j]->drawBuilding((int)i > cam_pos.x - draw_floor_radius && (int)j > cam_pos.y - draw_floor_radius && (int)j < cam_pos.y + draw_floor_radius);
 				}
 			}
 		}
@@ -398,13 +403,13 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			cam_pos.y += 5;
 			if(cam_pos.y > (int)this->size) cam_pos.y = this->size;
 
-			if(camera.GetRpy().x > -120.f)
+			if(camera.getRpy().x > -120.f)
 			{
 				for(int i = 0; i < (int)this->size; i++)
 				{
 					for(int j = 0; j < cam_pos.y; j++)
 					{
-						this->lp_tiles[i][j]->Draw(camera, resources);
+						this->lp_tiles[i][j]->draw(camera, resources);
 					}
 				}
 			}
@@ -413,7 +418,7 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			{
 				for(int j = 0; j < cam_pos.y; j++)
 				{
-					this->lp_tiles[i][j]->DrawBuilding(j > cam_pos.y - draw_floor_radius && i > cam_pos.x - draw_floor_radius && i < cam_pos.x + draw_floor_radius);
+					this->lp_tiles[i][j]->drawBuilding(j > cam_pos.y - draw_floor_radius && i > cam_pos.x - draw_floor_radius && i < cam_pos.x + draw_floor_radius);
 				}
 			}
 		}
@@ -446,12 +451,12 @@ void Map::Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 	}*/
 }
 
-unsigned int Map::GetSize() const
+unsigned int Map::getSize() const
 {
 	return this->size;
 }
 
-float Map::GetHeight(int x, int y)
+float Map::getTileHeight(int x, int y)
 {
 	if(x < 0) x = 0;
 	if(x >= (int)this->size) x = this->size - 1;
@@ -461,7 +466,7 @@ float Map::GetHeight(int x, int y)
 	return this->heights[x][y];
 }
 
-bool Map::SaveHeightMap(const std::string& filename)
+bool Map::saveHeightMap(const std::string& filename)
 {
 	std::ofstream file;
 	file.open(filename.c_str(), std::ios::out | std::ios::binary);
@@ -481,7 +486,7 @@ bool Map::SaveHeightMap(const std::string& filename)
 
 }
 
-bool Map::LoadHeightMap(const std::string& filename)
+bool Map::loadHeightMap(const std::string& filename)
 {
 	std::ifstream file;
 	file.open(filename.c_str(), std::ios::in | std::ios::binary);
@@ -496,7 +501,7 @@ bool Map::LoadHeightMap(const std::string& filename)
 
 		std::cout << "Map size: " << size << std::endl;
 		std::cout << "Creating map..." << std::endl;
-		this->Create(size);
+		this->create(size);
 
 		std::cout << "Reading heights..." << std::endl;
 		for(unsigned int i = 0; i < this->heights.size(); i++)
@@ -508,7 +513,7 @@ bool Map::LoadHeightMap(const std::string& filename)
 		}
 
 		std::cout << "Generating tiles..." << std::endl;
-		this->GenerateTiles();
+		this->generateTiles();
 
 		file.close();
 		std::cout << "Height Map loaded" << std::endl;
@@ -521,7 +526,7 @@ bool Map::LoadHeightMap(const std::string& filename)
 
 }
 
-bool Map::SaveBuildingMap(const std::string& filename)
+bool Map::saveBuildingMap(const std::string& filename)
 {
 	sf::Image img;
 	img.create(this->size, this->size, sf::Color(0, 0, 0));
@@ -530,13 +535,13 @@ bool Map::SaveBuildingMap(const std::string& filename)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles[i][j]->IsRoad())
+			if(this->lp_tiles[i][j]->isRoad())
 			{
 				img.setPixel(i, this->size - j - 1, sf::Color(255, 0, 0));
 			}
-			else if(this->lp_tiles[i][j]->HasBuilding())
+			else if(this->lp_tiles[i][j]->hasBuilding())
 			{
-				float h = this->lp_tiles[i][j]->GetBuildingHeight();
+				float h = this->lp_tiles[i][j]->getBuildingHeight();
 				unsigned char hh = (h > 255 * 8) ? 255 : h * 8;
 				img.setPixel(i, this->size - j - 1, sf::Color(0, hh, 0));
 			}
@@ -546,7 +551,7 @@ bool Map::SaveBuildingMap(const std::string& filename)
 	return img.saveToFile(filename);
 }
 
-bool Map::LoadBuildingMap(const std::string& filename)
+bool Map::loadBuildingMap(const std::string& filename)
 {
 	sf::Image img;
 	img.loadFromFile(filename);
@@ -561,14 +566,14 @@ bool Map::LoadBuildingMap(const std::string& filename)
 				unsigned char rr = pix.r;
 				if(rr == 255)
 				{
-					this->lp_tiles[i][j]->SetAsRoad(true);
+					this->lp_tiles[i][j]->setAsRoad(true);
 					//this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
 					unsigned int ra = rand() % 5;
 					this->lp_tiles[i][j]->SetColor(sf::Color(50 + ra, 50 + ra, 50 + ra));
 				}
 				if(gg > 0)
 				{
-					this->lp_tiles[i][j]->AddBuilding((float)gg / 8.0);
+					this->lp_tiles[i][j]->addBuilding((float)gg / 8.0);
 				}
 			}
 		}
@@ -578,96 +583,96 @@ bool Map::LoadBuildingMap(const std::string& filename)
 		{
 			for(unsigned int j = 0; j < this->size; j++)
 			{
-				if(this->lp_tiles[i][j]->IsRoad())
+				if(this->lp_tiles[i][j]->isRoad())
 				{
 					std::vector<bool> has_road(7, false);
-					has_road[0] = (i == this->size - 1) ? false : this->lp_tiles[i+1][j]->IsRoad();
-					has_road[1] = (i == this->size - 1) || (j == this->size - 1) ? false : this->lp_tiles[i+1][j+1]->IsRoad();
-					has_road[2] = (j == this->size - 1) ? false : this->lp_tiles[i][j+1]->IsRoad();
-					has_road[3] = (i == 0) || (j == this->size - 1) ? false : this->lp_tiles[i-1][j+1]->IsRoad();
-					has_road[4] = (i == 0) ? false : this->lp_tiles[i-1][j]->IsRoad();
-					has_road[5] = (i == 0) || (j == 0) ? false : this->lp_tiles[i-1][j-1]->IsRoad();
-					has_road[6] = (j == 0) ? false : this->lp_tiles[i][j-1]->IsRoad();
-					has_road[7] = (i == this->size - 1) || (j == 0) ? false : this->lp_tiles[i+1][j-1]->IsRoad();
+					has_road[0] = (i == this->size - 1) ? false : this->lp_tiles[i+1][j]->isRoad();
+					has_road[1] = (i == this->size - 1) || (j == this->size - 1) ? false : this->lp_tiles[i+1][j+1]->isRoad();
+					has_road[2] = (j == this->size - 1) ? false : this->lp_tiles[i][j+1]->isRoad();
+					has_road[3] = (i == 0) || (j == this->size - 1) ? false : this->lp_tiles[i-1][j+1]->isRoad();
+					has_road[4] = (i == 0) ? false : this->lp_tiles[i-1][j]->isRoad();
+					has_road[5] = (i == 0) || (j == 0) ? false : this->lp_tiles[i-1][j-1]->isRoad();
+					has_road[6] = (j == 0) ? false : this->lp_tiles[i][j-1]->isRoad();
+					has_road[7] = (i == this->size - 1) || (j == 0) ? false : this->lp_tiles[i+1][j-1]->isRoad();
 
 					if(has_road[2] && has_road[6] && !has_road[0] && !has_road[4])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 0);
 					}
 
 					else if(!has_road[2] && !has_road[6] && has_road[0] && has_road[4])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 1);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 1);
 					}
 
 					else if(has_road[2] && has_road[6] && has_road[0] && has_road[4])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::cross, 1);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::cross, 1);
 					}
 
 					else if(has_road[2] && has_road[4] && !has_road[0] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::curve, 0);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::curve, 0);
 					}
 
 					else if(has_road[0] && has_road[2] && !has_road[4] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::curve, 1);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::curve, 1);
 					}
 
 					else if(has_road[0] && has_road[6] && !has_road[2] && !has_road[4])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::curve, 2);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::curve, 2);
 					}
 
 					else if(has_road[4] && has_road[6] && !has_road[2] && !has_road[0])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::curve, 3);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::curve, 3);
 					}
 
 					else if(has_road[2] && has_road[4] && has_road[6] && !has_road[0])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::tcross, 0);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::tcross, 0);
 					}
 
 					else if(has_road[0] && has_road[4] && has_road[6] && !has_road[2])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::tcross, 3);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::tcross, 3);
 					}
 
 					else if(has_road[0] && has_road[2] && has_road[6] && !has_road[4])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::tcross, 2);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::tcross, 2);
 					}
 
 					else if(has_road[0] && has_road[2] && has_road[4] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::tcross, 1);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::tcross, 1);
 					}
 
 					else if(has_road[0] && !has_road[2] && !has_road[4] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 1);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 1);
 					}
 
 					else if(!has_road[0] && has_road[2] && !has_road[4] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 2);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 2);
 					}
 
 					else if(!has_road[0] && !has_road[2] && has_road[4] && !has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 3);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 3);
 					}
 
 					else if(!has_road[0] && !has_road[2] && !has_road[4] && has_road[6])
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 0);
 					}
 
 					else
 					{
-						this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
+						this->lp_tiles[i][j]->addRoad(dfv::Road::straight, 0);
 					}
 				}
 			}
@@ -681,7 +686,7 @@ bool Map::LoadBuildingMap(const std::string& filename)
 	}
 }
 
-void Map::GenerateMapImg(const unsigned int tile_size)
+void Map::generateMapImg(const unsigned int tile_size)
 {
 
 	this->map_img.create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
@@ -690,14 +695,14 @@ void Map::GenerateMapImg(const unsigned int tile_size)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles[i][j]->IsRoad())
+			if(this->lp_tiles[i][j]->isRoad())
 			{
-				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
+				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
 			}
-			if(this->lp_tiles[i][j]->HasBuilding())
+			if(this->lp_tiles[i][j]->hasBuilding())
 			{
-				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size - 1, (j+1)*tile_size - 1), sf::Color(0, 0, 0));
-				dfv::Utils::DrawRectangle(this->map_img, sf::Vector2i(i*tile_size+1, j*tile_size+1), sf::Vector2i((i+1)*tile_size - 2, (j+1)*tile_size - 2), this->lp_tiles[i][j]->GetBuildingColor());
+				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size - 1, (j+1)*tile_size - 1), sf::Color(0, 0, 0));
+				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size+1, j*tile_size+1), sf::Vector2i((i+1)*tile_size - 2, (j+1)*tile_size - 2), this->lp_tiles[i][j]->getBuildingColor());
 			}
 		}
 	}
@@ -705,7 +710,7 @@ void Map::GenerateMapImg(const unsigned int tile_size)
 	this->map_img.saveToFile("res/map/map_img.png");
 }
 
-bool Map::IsRoad(const sf::Vector2i& tile_pos) const
+/*bool Map::IsRoad(const sf::Vector2i& tile_pos) const
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
@@ -716,14 +721,14 @@ bool Map::IsRoad(const sf::Vector2i& tile_pos) const
 	{
 		return false;
 	}
-}
+}*/
 
 bool Map::isRoad(unsigned int x, unsigned int y) const
 {
 	if(x >= 0 && x < this->size &&
 	   y >= 0 && y < this->size)
 	{
-		return this->lp_tiles[x][y]->IsRoad();
+		return this->lp_tiles[x][y]->isRoad();
 	}
 	else
 	{
@@ -731,7 +736,7 @@ bool Map::isRoad(unsigned int x, unsigned int y) const
 	}
 }
 
-bool Map::HasBuilding(const sf::Vector2i& tile_pos) const
+/*bool Map::HasBuilding(const sf::Vector2i& tile_pos) const
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
@@ -742,14 +747,14 @@ bool Map::HasBuilding(const sf::Vector2i& tile_pos) const
 	{
 		return false;
 	}
-}
+}*/
 
 bool Map::hasBuilding(unsigned int x, unsigned int y) const
 {
 	if(x >= 0 && x < this->size &&
 	   y >= 0 && y < this->size)
 	{
-		return this->lp_tiles[x][y]->HasBuilding();
+		return this->lp_tiles[x][y]->hasBuilding();
 	}
 	else
 	{
@@ -757,12 +762,12 @@ bool Map::hasBuilding(unsigned int x, unsigned int y) const
 	}
 }
 
-sf::Color Map::GetBuildingColor(const sf::Vector2i& tile_pos) const
+sf::Color Map::getBuildingColor(const sf::Vector2i& tile_pos) const
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 	   tile_pos.y >= 0 && tile_pos.y < (int)this->size)
 	{
-		return this->lp_tiles[tile_pos.x][tile_pos.y]->GetBuildingColor();
+		return this->lp_tiles[tile_pos.x][tile_pos.y]->getBuildingColor();
 	}
 	else
 	{
@@ -770,18 +775,18 @@ sf::Color Map::GetBuildingColor(const sf::Vector2i& tile_pos) const
 	}
 }
 
-bool Map::ChangeRoadType(const sf::Vector2i& tile_pos)
+bool Map::changeRoadType(const sf::Vector2i& tile_pos)
 {
-	if(this->IsRoad(tile_pos))
+	if(this->isRoad(tile_pos.x, tile_pos.y))
 	{
-		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadId();
+		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->getRoadId();
 		if(road_type >= Road::count - 1)
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadId(Road::straight);
+			this->lp_tiles[tile_pos.x][tile_pos.y]->setRoadId(Road::straight);
 		}
 		else
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadId((Road::Type)(road_type + 1));
+			this->lp_tiles[tile_pos.x][tile_pos.y]->setRoadId((Road::Type)(road_type + 1));
 		}
 		return true;
 	}
@@ -791,21 +796,21 @@ bool Map::ChangeRoadType(const sf::Vector2i& tile_pos)
 	}
 }
 
-bool Map::ChangeRoadOrientation(const sf::Vector2i& tile_pos)
+bool Map::changeRoadOrientation(const sf::Vector2i& tile_pos)
 {
 	std::cout << "Changing road orientation" << std::endl;
-	if(this->IsRoad(tile_pos))
+	if(this->isRoad(tile_pos.x, tile_pos.y))
 	{
 		std::cout << "Is road" << std::endl;
-		const unsigned int road_orientation = this->lp_tiles[tile_pos.x][tile_pos.y]->GetRoadOrientation();
+		const unsigned int road_orientation = this->lp_tiles[tile_pos.x][tile_pos.y]->getRoadOrientation();
 		if(road_orientation >= 4)
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadOrientation(0);
+			this->lp_tiles[tile_pos.x][tile_pos.y]->setRoadOrientation(0);
 			std::cout << "Road orient set to 0" << std::endl;
 		}
 		else
 		{
-			this->lp_tiles[tile_pos.x][tile_pos.y]->SetRoadOrientation(road_orientation + 1);
+			this->lp_tiles[tile_pos.x][tile_pos.y]->setRoadOrientation(road_orientation + 1);
 			std::cout << "Road orient set to " << road_orientation + 1 << std::endl;
 		}
 		return true;
@@ -816,7 +821,7 @@ bool Map::ChangeRoadOrientation(const sf::Vector2i& tile_pos)
 	}
 }
 
-sf::Vector3f Map::GetMapPosFromMouse(sf::Vector2i mouse_pos)
+sf::Vector3f Map::getMapPosFromMouse(sf::Vector2i mouse_pos)
 {
 	GLint viewport[4];
 	GLdouble modelview[16];
@@ -836,7 +841,7 @@ sf::Vector3f Map::GetMapPosFromMouse(sf::Vector2i mouse_pos)
 	return sf::Vector3f(pos_x, pos_y, pos_z);
 }
 
-sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window) const
+sf::Vector3f Map::getViewPos(sf::Vector3f map_pos, const sf::Window& window) const
 {
 	GLint viewport[4];
 	GLdouble modelview[16];
@@ -858,13 +863,13 @@ sf::Vector3f Map::GetViewPos(sf::Vector3f map_pos, const sf::Window& window) con
 	return sf::Vector3f((float)win_x, viewport[3] - (float)win_y, (float)win_z);
 }
 
-const std::vector<sf::Vector3f> & Map::GetTileVertices(sf::Vector2i pos) const
+const std::vector<sf::Vector3f> & Map::getTileVertices(sf::Vector2i pos) const
 {
 	//return this->lp_tiles[pos.x][pos.y]->GetVertices();
 	//if(pos.x >= 0 && pos.x < this->size &&
 	//   pos.y >= 0 && pos.y < this->size)
 
-	return this->lp_tiles.at(pos.x).at(pos.y)->GetVertices();
+	return this->lp_tiles.at(pos.x).at(pos.y)->getVertices();
 }
 
 /*void Map::DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const
@@ -963,7 +968,7 @@ void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources
 	{
 		for(int j = rect.ymin; j < rect.ymax; j++)
 		{
-			this->lp_tiles.at(i).at(j)->Draw(camera, resources);
+			this->lp_tiles.at(i).at(j)->draw(camera, resources);
 		}
 	}
 	glEnd();
@@ -977,9 +982,9 @@ void Map::drawBuildingBoxes(dfv::RealIntRect rect) const
 	{
 		for(int j = rect.ymin; j < rect.ymax; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			if(this->lp_tiles.at(i).at(j)->hasBuilding())
 			{
-				this->lp_tiles.at(i).at(j)->DrawBuildingBox();
+				this->lp_tiles.at(i).at(j)->drawBuildingBox();
 			}
 		}
 	}
@@ -995,9 +1000,9 @@ void Map::drawBuildingOutlines(dfv::RealIntRect rect) const
 	{
 		for(int j = rect.ymin; j < rect.ymax; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			if(this->lp_tiles.at(i).at(j)->hasBuilding())
 			{
-				this->lp_tiles.at(i).at(j)->DrawBuildingOutline();
+				this->lp_tiles.at(i).at(j)->drawBuildingOutline();
 			}
 		}
 	}
@@ -1013,16 +1018,16 @@ void Map::drawBuildingFloors(dfv::RealIntRect rect) const
 	{
 		for(int j = rect.ymin; j < rect.ymax; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->HasBuilding())
+			if(this->lp_tiles.at(i).at(j)->hasBuilding())
 			{
-				this->lp_tiles.at(i).at(j)->DrawBuildingFloors();
+				this->lp_tiles.at(i).at(j)->drawBuildingFloors();
 			}
 		}
 	}
 	glEnd();
 }
 
-bool Map::SaveAsMapFormat(std::string filename)
+bool Map::saveAsMapFormat(std::string filename)
 {
 	std::ofstream file;
 	file.open(filename.c_str(), std::ios::out | std::ios::binary);
@@ -1040,24 +1045,24 @@ bool Map::SaveAsMapFormat(std::string filename)
 				// heights
 				for(unsigned int k = 0; k < 4; k++)
 				{
-					sf::Vector3f vertex = this->lp_tiles[i][j]->GetVertex(k);
+					sf::Vector3f vertex = this->lp_tiles[i][j]->getVertex(k);
 					file.write((char*)&(vertex.z), sizeof(float));
 				}
 
 				// color
-				sf::Color color = this->lp_tiles[i][j]->GetColor();
+				sf::Color color = this->lp_tiles[i][j]->getSfmlColor();
 				file.write((char*)&(color.r), sizeof(unsigned char));
 				file.write((char*)&(color.g), sizeof(unsigned char));
 				file.write((char*)&(color.b), sizeof(unsigned char));
 
 				// is road
 				unsigned int temp;
-				if(this->lp_tiles[i][j]->IsRoad())
+				if(this->lp_tiles[i][j]->isRoad())
 				{
 					temp = 2;
 					file.write((char*)&(temp), sizeof(unsigned int));
-					unsigned int road_type = this->lp_tiles[i][j]->GetRoadId();
-					unsigned int road_orientation = this->lp_tiles[i][j]->GetRoadOrientation();
+					unsigned int road_type = this->lp_tiles[i][j]->getRoadId();
+					unsigned int road_orientation = this->lp_tiles[i][j]->getRoadOrientation();
 
 					// road type
 					file.write((char*)&(road_type), sizeof(unsigned int));
@@ -1072,17 +1077,17 @@ bool Map::SaveAsMapFormat(std::string filename)
 				}
 
 				// has building
-				if(this->lp_tiles[i][j]->HasBuilding())
+				if(this->lp_tiles[i][j]->hasBuilding())
 				{
 					temp = 2;
 					file.write((char*)&(temp), sizeof(unsigned int));
 
 					// building height
-					float building_height = this->lp_tiles[i][j]->GetBuildingHeight();
+					float building_height = this->lp_tiles[i][j]->getBuildingHeight();
 					file.write((char*)&(building_height), sizeof(float));
 
 					// building color
-					sf::Color building_color = this->lp_tiles[i][j]->GetBuildingColor();
+					sf::Color building_color = this->lp_tiles[i][j]->getBuildingColor();
 					file.write((char*)&(building_color.r), sizeof(unsigned char));
 					file.write((char*)&(building_color.g), sizeof(unsigned char));
 					file.write((char*)&(building_color.b), sizeof(unsigned char));
@@ -1107,7 +1112,7 @@ bool Map::SaveAsMapFormat(std::string filename)
 	}
 }
 
-bool Map::LoadFromMapFormat(std::string filename)
+bool Map::loadFromMapFormat(std::string filename)
 {
 	std::ifstream file;
 	file.open(filename.c_str(), std::ios::in | std::ios::binary);
@@ -1121,7 +1126,7 @@ bool Map::LoadFromMapFormat(std::string filename)
 		unsigned int read_value_ui;
 
 		file.read((char*)&read_value_ui, sizeof(unsigned int));
-		this->Create(read_value_ui);
+		this->create(read_value_ui);
 
 		std::cout << "Loading map of size " << this->size << std::endl;
 
@@ -1141,7 +1146,7 @@ bool Map::LoadFromMapFormat(std::string filename)
 				file.read((char*)&t_color.b, sizeof(unsigned char));
 
 				this->lp_tiles[i][j] = new Tile;
-				this->lp_tiles[i][j]->Create(sf::Vector2f(i, j), h0, h1, h2, h3);
+				this->lp_tiles[i][j]->create(sf::Vector2f(i, j), h0, h1, h2, h3);
 				this->lp_tiles[i][j]->SetColor(t_color);
 
 				// is road
@@ -1154,8 +1159,8 @@ bool Map::LoadFromMapFormat(std::string filename)
 					unsigned int road_orientation_t;
 					file.read((char*)&road_orientation_t, sizeof(unsigned int));
 
-					this->lp_tiles[i][j]->SetAsRoad(true);
-					this->lp_tiles[i][j]->AddRoad((Road::Type)road_type_t, road_orientation_t);
+					this->lp_tiles[i][j]->setAsRoad(true);
+					this->lp_tiles[i][j]->addRoad((Road::Type)road_type_t, road_orientation_t);
 				}
 
 				unsigned int has_building_t;
@@ -1172,8 +1177,8 @@ bool Map::LoadFromMapFormat(std::string filename)
 					file.read((char*)&t_color.g, sizeof(unsigned char));
 					file.read((char*)&t_color.b, sizeof(unsigned char));
 
-					this->lp_tiles[i][j]->AddBuilding(building_height_t);
-					this->lp_tiles[i][j]->SetBuildingColor(t_color);
+					this->lp_tiles[i][j]->addBuilding(building_height_t);
+					this->lp_tiles[i][j]->setBuildingColor(t_color);
 				}
 			}
 		}
@@ -1190,7 +1195,7 @@ bool Map::LoadFromMapFormat(std::string filename)
 
 }
 
-float Map::GetHeight(const sf::Vector2f& pos) const
+float Map::getHeight(const sf::Vector2f& pos) const
 {
 	if(pos.x >= 0 && pos.x < this->size && pos.y >= 0 && pos.y < this->size)
 	{
@@ -1199,10 +1204,10 @@ float Map::GetHeight(const sf::Vector2f& pos) const
 		float y0 = floor(pos.y);
 		float y1 = floor(pos.y) + 1;
 
-		float h0 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->GetVertex(0).z;
-		float h1 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->GetVertex(1).z;
-		float h2 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->GetVertex(2).z;
-		float h3 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->GetVertex(3).z;
+		float h0 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(0).z;
+		float h1 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(1).z;
+		float h2 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(2).z;
+		float h3 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(3).z;
 
 		return (1.0/((x1-x0)*(y1-y0)))*(h0*(x1-pos.x)*(y1-pos.y)+h1*(pos.x-x0)*(y1-pos.y)+h2*(pos.x-x0)*(pos.y-y0)+h3*(x1-pos.x)*(pos.y-y0));
 	}
@@ -1230,23 +1235,23 @@ dfv::RealIntRect Map::getTileRect() const
 	return dfv::RealIntRect(0, (int)this->size, 0, (int)this->size);
 }
 
-void Map::DrawSky() const
+void Map::drawSky() const
 {
-	this->sky.Draw();
+	this->sky.draw();
 }
 
-void Map::SetLight(const sf::Vector3f& position) const
+void Map::setLight(const sf::Vector3f& position) const
 {
 	GLfloat light_position[] = { position.x, position.y, position.z, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 
-bool Map::AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation)
+bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation)
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 			tile_pos.y >= 0 && tile_pos.y < (int)this->size)
 	{
-		this->lp_tiles[tile_pos.x][tile_pos.y]->AddRoad(type, orientation);
+		this->lp_tiles[tile_pos.x][tile_pos.y]->addRoad(type, orientation);
 		return true;
 	}
 	else
@@ -1255,7 +1260,7 @@ bool Map::AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 	}
 }
 
-void Map::GenerateBuildingList()
+void Map::generateBuildingList()
 {
 	this->building_list = glGenLists(1);
 	glNewList(this->building_list, GL_COMPILE);
@@ -1263,7 +1268,7 @@ void Map::GenerateBuildingList()
 	glEndList();
 }
 
-void Map::CallBuildingList() const
+void Map::callBuildingList() const
 {
 	glCallList(this->building_list);
 }
@@ -1277,9 +1282,9 @@ void Map::generateRoadList(const Camera& camera, const Resources& resources)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->IsRoad())
+			if(this->lp_tiles.at(i).at(j)->isRoad())
 			{
-				this->lp_tiles.at(i).at(j)->DrawRoad(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
 			}
 		}
 	}
@@ -1292,7 +1297,7 @@ void Map::callRoadList() const
 	glCallList(this->road_list);
 }
 
-void Map::GenerateTileList(const Camera& camera, const Resources& resources)
+void Map::generateTileList(const Camera& camera, const Resources& resources)
 {
 	this->tile_list = glGenLists(1);
 	glNewList(this->tile_list, GL_COMPILE);
@@ -1300,7 +1305,7 @@ void Map::GenerateTileList(const Camera& camera, const Resources& resources)
 	glEndList();
 }
 
-void Map::CallTileList() const
+void Map::callTileList() const
 {
 	glCallList(this->tile_list);
 }
@@ -1329,9 +1334,9 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 	{
 		for(int j = floor(rect.ymin); j < floor(rect.ymax); j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->IsRoad())
+			if(this->lp_tiles.at(i).at(j)->isRoad())
 			{
-				this->lp_tiles.at(i).at(j)->DrawRoad(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
 			}
 		}
 	}
@@ -1340,72 +1345,72 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
 {
 	rect.trim(this->getTileRect());
-	unsigned int quadrant = camera.GetQuadrant();
+	unsigned int quadrant = camera.getQuadrant();
 	if(quadrant == 0)
 	{
-		unsigned int midpoint = camera.GetPosition().y;
+		unsigned int midpoint = camera.getPosition().y;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(unsigned int i = floor(rect.xmax); i > floor(rect.xmin); i--)
 		{
 			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
 			{
-				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
 			{
-				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 		}
 	}
 	else if(quadrant == 1)
 	{
-		unsigned int midpoint = camera.GetPosition().x;
+		unsigned int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(int j = floor(rect.ymax); j > floor(rect.ymin); j--)
 		{
 			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
 			{
-				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
 			{
-				this->lp_tiles.at(i).at(j)->DrawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 		}
 	}
 	else if(quadrant == 2)
 	{
-		unsigned int midpoint = camera.GetPosition().y;
+		unsigned int midpoint = camera.getPosition().y;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(unsigned int i = floor(rect.xmin); i < floor(rect.xmax); i++)
 		{
 			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles[i][j]->drawProp(camera, resources);
 			}
 			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles[i][j]->drawProp(camera, resources);
 			}
 		}
 	}
 	else if(quadrant == 3)
 	{
-		unsigned int midpoint = camera.GetPosition().x;
+		unsigned int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= this->size) midpoint = this->size - 1;
 		for(unsigned int j = floor(rect.ymin); j < floor(rect.ymax); j++)
 		{
 			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles[i][j]->drawProp(camera, resources);
 			}
 			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
 			{
-				this->lp_tiles[i][j]->DrawProp(camera, resources);
+				this->lp_tiles[i][j]->drawProp(camera, resources);
 			}
 		}
 	}
@@ -1498,22 +1503,22 @@ void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
 	this->lp_tiles[x][y]->addProp(lp_prop);
 }
 
-unsigned int Map::GetRoadId(const sf::Vector2i& pos) const
+unsigned int Map::getRoadId(const sf::Vector2i& pos) const
 {
-	return this->lp_tiles[pos.x][pos.y]->GetRoadId();
+	return this->lp_tiles[pos.x][pos.y]->getRoadId();
 }
 
-unsigned int Map::GetRoadOrientation(const sf::Vector2i& pos) const
+unsigned int Map::getRoadOrientation(const sf::Vector2i& pos) const
 {
-	return this->lp_tiles[pos.x][pos.y]->GetRoadOrientation();
+	return this->lp_tiles[pos.x][pos.y]->getRoadOrientation();
 }
 
-bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
+bool Map::setRoadId(const sf::Vector2i& pos, unsigned int id)
 {
 	if(pos.x >= 0 && pos.x < this->size &&
 	   pos.y >= 0 && pos.y < this->size)
 	{
-		return this->lp_tiles[pos.x][pos.y]->SetRoadId(id);
+		return this->lp_tiles[pos.x][pos.y]->setRoadId(id);
 	}
 	else
 	{
@@ -1521,12 +1526,12 @@ bool Map::SetRoadId(const sf::Vector2i& pos, unsigned int id)
 	}
 }
 
-bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
+bool Map::setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 {
 	//dfv::IntRect rect = this->GetRect();
 	if(this->getTileRect().contains(pos))
 	{
-		return this->lp_tiles[pos.x][pos.y]->SetRoadOrientation(orientation);
+		return this->lp_tiles[pos.x][pos.y]->setRoadOrientation(orientation);
 	}
 	else
 	{
@@ -1543,7 +1548,7 @@ bool Map::SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 	}*/
 }
 
-bool Map::SaveAsSgmFormat(const std::string& filename) const
+bool Map::saveAsSgmFormat(const std::string& filename) const
 {
 	std::ofstream file;
 	file.open(filename.c_str(), std::ios::out | std::ios::binary);
@@ -1561,7 +1566,7 @@ bool Map::SaveAsSgmFormat(const std::string& filename) const
 			for(unsigned int j = 0; j < height; j++)
 			{
 				// tile heights
-				std::vector<sf::Vector3f> tile_vertices = this->lp_tiles[i][j]->GetVertices();
+				std::vector<sf::Vector3f> tile_vertices = this->lp_tiles[i][j]->getVertices();
 				std::vector<float> tile_heights(4);
 				for(unsigned int k = 0; k < 4; k++)
 				{
@@ -1570,7 +1575,7 @@ bool Map::SaveAsSgmFormat(const std::string& filename) const
 				}
 
 				// tile color
-				sf::Color tile_color = this->lp_tiles[i][j]->GetColor();
+				sf::Color tile_color = this->lp_tiles[i][j]->getSfmlColor();
 				unsigned char color_r = tile_color.r;
 				unsigned char color_g = tile_color.g;
 				unsigned char color_b = tile_color.b;
@@ -1585,7 +1590,7 @@ bool Map::SaveAsSgmFormat(const std::string& filename) const
 	return false;
 }
 
-bool Map::LoadFromSgmFormat(const std::string& filename)
+bool Map::loadFromSgmFormat(const std::string& filename)
 {
 	return false;
 }
@@ -1601,8 +1606,8 @@ sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
 	   y >= 0 && y < this->size)
 	{
 		std::vector<sf::Vector3f> vertices;
-		vertices = this->GetTileVertices(sf::Vector2i(x, y));
-		sf::Vector3f v = Utils::Cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
+		vertices = this->getTileVertices(sf::Vector2i(x, y));
+		sf::Vector3f v = Utils::cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
 		float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 		return sf::Vector3f(v.x/len, v.y/len, v.z/len);
 	}
@@ -1626,7 +1631,7 @@ bool Map::clearRoad(unsigned int x, unsigned int y)
 
 bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned int orientation)
 {
-	if(!this->lp_tiles[x][y]->IsRoad())
+	if(!this->lp_tiles[x][y]->isRoad())
 	{
 		unsigned int rr = rand() % 5;
 		this->lp_tiles[x][y]->SetColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
@@ -1641,7 +1646,7 @@ bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned in
 		case 5:	road_type = Road::av_cross; 	break;
 		case 6:	road_type = Road::av_tcross; 	break;
 		}
-		this->lp_tiles[x][y]->AddRoad(road_type, orientation);
+		this->lp_tiles[x][y]->addRoad(road_type, orientation);
 		return true;
 	}
 	return false;

@@ -23,13 +23,13 @@ public:
 	Minimap();
 	virtual ~Minimap();
 
-	void Create(const unsigned int size);
+	void create(const unsigned int size);
 	//void GenerateFromMap(Map* lp_map, const Camera& camera);
-	void GenerateFromMap(const Map& map, const sf::Vector2f position, unsigned int range);
-	sf::Vector2i RealPosFromMapPos(sf::Vector2i map_pos, int range);
-	void Draw(sf::RenderWindow& window, const Camera& camera) const;
-	std::string HandleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos);
-	unsigned int GetSize() const;
+	void generateFromMap(const Map& map, const sf::Vector2f position, unsigned int range);
+	sf::Vector2i realPosFromMapPos(sf::Vector2i map_pos, int range);
+	void draw(sf::RenderWindow& window, const Camera& camera) const;
+	std::string handleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos);
+	unsigned int getSize() const;
 
 private:
 	sf::Image img;

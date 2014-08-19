@@ -21,12 +21,12 @@ Prop::~Prop()
 	// TODO Auto-generated destructor stub
 }
 
-void Prop::Create(const std::vector<sf::Vector3f>& tile_vertices)
+void Prop::create(const std::vector<sf::Vector3f>& tile_vertices)
 {
 
 }
 
-void Prop::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
+void Prop::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 
 }

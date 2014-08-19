@@ -22,7 +22,7 @@ Building::~Building()
 	// TODO Auto-generated destructor stub
 }
 
-void Building::Create(const std::vector<sf::Vector3f>& base_pos, float height)
+void Building::create(const std::vector<sf::Vector3f>& base_pos, float height)
 {
 	this->height = height;
 	if(base_pos.size() != 4)
@@ -65,7 +65,7 @@ void Building::Create(const std::vector<sf::Vector3f>& base_pos, float height)
 	}
 }
 
-void Building::SetColor(const sf::Color& color)
+void Building::setColor(const sf::Color& color)
 {
 	sf::Vector3f col(color.r / 255.f, color.g / 255.f, color.b / 255.f);
 	this->colors.resize(5);
@@ -76,12 +76,12 @@ void Building::SetColor(const sf::Color& color)
 	this->colors[4] = sf::Vector3f(col.x*0.7, col.y*0.7, col.z*0.7); // roof
 }
 
-sf::Color Building::GetColor() const
+sf::Color Building::getColor() const
 {
 	return sf::Color(this->colors[0].x * 255.0, this->colors[0].y * 255.0, this->colors[0].z * 255.0);
 }
 
-void Building::Draw(const bool draw_floors) const
+void Building::draw(const bool draw_floors) const
 {
 	glBegin(GL_QUADS);
 		// roof
@@ -159,12 +159,12 @@ void Building::Draw(const bool draw_floors) const
 	glEnd();
 }
 
-float Building::GetHeight() const
+float Building::getHeight() const
 {
 	return this->height;
 }
 
-void Building::DrawBox() const
+void Building::drawBox() const
 {
 	glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
 	glNormal3f(0.0, 0.0, 1.0);
@@ -202,7 +202,7 @@ void Building::DrawBox() const
 	glVertex3f(this->roof_pos[3].x, this->roof_pos[3].y, this->roof_pos[3].z);
 }
 
-void Building::DrawOutline() const
+void Building::drawOutline() const
 {
 	glNormal3f(0.7071, -0.7071, 0.0);
 	glVertex3f(this->floor_pos[0].x, this->floor_pos[0].y, this->floor_heights.front());
@@ -222,7 +222,7 @@ void Building::DrawOutline() const
 	glVertex3f(this->base_pos[3].x, this->base_pos[3].y, this->base_pos[3].z);
 }
 
-void Building::DrawFloors() const
+void Building::drawFloors() const
 {
 	glColor3f(0.1f, 0.1f, 0.1f);
 	for(unsigned int i = 0; i < this->floor_heights.size(); i++)
@@ -246,7 +246,7 @@ void Building::DrawFloors() const
 	}
 }
 
-sf::Vector3f Building::GetColor3f() const
+sf::Vector3f Building::getColor3f() const
 {
 	return this->colors[0];
 }

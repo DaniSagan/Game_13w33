@@ -20,7 +20,7 @@ public:
 	Square();
 	virtual ~Square();
 
-	void Create();
+	void create();
 
 private:
 	std::vector<sf::Vector3f> vertices;

@@ -23,7 +23,7 @@ public:
 	Resources();
 	virtual ~Resources();
 
-	bool Load();
+	bool load();
 
 	std::vector<sf::Image> img_roads;
 	std::vector<GLuint> img_roads_handles;

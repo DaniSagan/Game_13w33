@@ -20,12 +20,12 @@ public:
 	Cube();
 	virtual ~Cube();
 
-	sf::Color GetColor() const;
-	void SetColor(sf::Color color);
-	const sf::Vector3f& GetPosition() const;
-	void SetPosition(const sf::Vector3f& position);
+	sf::Color getColor() const;
+	void setColor(sf::Color color);
+	const sf::Vector3f& getPosition() const;
+	void setPosition(const sf::Vector3f& position);
 
-	void Draw(sf::Window& window, const dfv::Camera& camera, bool top_only = false);
+	void draw(sf::Window& window, const dfv::Camera& camera, bool top_only = false);
 
 private:
 	sf::Vector3f position;

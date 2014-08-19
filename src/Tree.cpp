@@ -23,7 +23,7 @@ Tree::~Tree()
 	// TODO Auto-generated destructor stub
 }
 
-void Tree::Create(const std::vector<sf::Vector3f>& tile_vertices)
+void Tree::create(const std::vector<sf::Vector3f>& tile_vertices)
 {
 	if(tile_vertices.size() != 4)
 	{
@@ -58,7 +58,7 @@ void Tree::Create(const std::vector<sf::Vector3f>& tile_vertices)
 	this->type = rand() % 2;
 }
 
-void Tree::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
+void Tree::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 	if(this->type == 0)
 	{
@@ -69,7 +69,7 @@ void Tree::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 		glBindTexture(GL_TEXTURE_2D, resources.img_tree_2.getHandle());
 	}
 
-	float yaw = camera.GetRpy().z;
+	float yaw = camera.getRpy().z;
 	glColor4f(1.f, 1.f, 1.f, 1.0f);
 	if(yaw < 90.f)
 	{

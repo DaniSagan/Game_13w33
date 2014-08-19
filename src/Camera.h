@@ -53,15 +53,15 @@ public:
 		YawRight
 	};
 
-	sf::Vector3f GetPosition() const;
-	sf::Vector2f GetPosition2d() const;
-	void SetPosition(const sf::Vector3f& position);
-	void Move(const sf::Vector3f& v);
-	const sf::Vector3f& GetRpy() const;
-	void SetRpy(const sf::Vector3f& rpy);
-	void Rotate(const sf::Vector3f& v);
-	unsigned int GetQuadrant() const;
-	void SetView(const sf::Window& window) const;
+	sf::Vector3f getPosition() const;
+	sf::Vector2f getPosition2d() const;
+	void setPosition(const sf::Vector3f& position);
+	void move(const sf::Vector3f& v);
+	const sf::Vector3f& getRpy() const;
+	void setRpy(const sf::Vector3f& rpy);
+	void rotate(const sf::Vector3f& v);
+	unsigned int getQuadrant() const;
+	void setView(const sf::Window& window) const;
 	//dfv::IntRect GetRectFromView(const dfv::IntRect& map_rect) const;
 	void handleInput(sf::Event& event);
 	void update(float dt, float map_height, sf::Vector3f& normal);

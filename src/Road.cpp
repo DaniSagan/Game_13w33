@@ -23,7 +23,7 @@ Road::~Road()
 	// TODO Auto-generated destructor stub
 }
 
-void Road::Create(const std::vector<sf::Vector3f>& vertices, Type type,
+void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
 		unsigned int orientation)
 {
 	if(vertices.size() == 4)
@@ -35,18 +35,18 @@ void Road::Create(const std::vector<sf::Vector3f>& vertices, Type type,
 		}
 
 		this->normals.resize(4);
-		this->normals[0] = dfv::Utils::Cross(
-				dfv::Utils::Diff(this->vertices[1], this->vertices[0]),
-				dfv::Utils::Diff(this->vertices[3], this->vertices[0]));
-		this->normals[1] = dfv::Utils::Cross(
-				dfv::Utils::Diff(this->vertices[2], this->vertices[1]),
-				dfv::Utils::Diff(this->vertices[0], this->vertices[1]));
-		this->normals[2] = dfv::Utils::Cross(
-				dfv::Utils::Diff(this->vertices[3], this->vertices[2]),
-				dfv::Utils::Diff(this->vertices[1], this->vertices[2]));
-		this->normals[3] = dfv::Utils::Cross(
-				dfv::Utils::Diff(this->vertices[0], this->vertices[3]),
-				dfv::Utils::Diff(this->vertices[2], this->vertices[3]));
+		this->normals[0] = dfv::Utils::cross(
+				dfv::Utils::diff(this->vertices[1], this->vertices[0]),
+				dfv::Utils::diff(this->vertices[3], this->vertices[0]));
+		this->normals[1] = dfv::Utils::cross(
+				dfv::Utils::diff(this->vertices[2], this->vertices[1]),
+				dfv::Utils::diff(this->vertices[0], this->vertices[1]));
+		this->normals[2] = dfv::Utils::cross(
+				dfv::Utils::diff(this->vertices[3], this->vertices[2]),
+				dfv::Utils::diff(this->vertices[1], this->vertices[2]));
+		this->normals[3] = dfv::Utils::cross(
+				dfv::Utils::diff(this->vertices[0], this->vertices[3]),
+				dfv::Utils::diff(this->vertices[2], this->vertices[3]));
 
 		this->id = type;
 		this->orientation = orientation;
@@ -87,7 +87,7 @@ void Road::Create(const std::vector<sf::Vector3f>& vertices, Type type,
 	}
 }
 
-void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) const
+void Road::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 	glBindTexture(GL_TEXTURE_2D, resources.img_roads_handles[this->id]);
 	glBegin(GL_QUADS);
@@ -102,12 +102,12 @@ void Road::Draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Road::SetId(unsigned int id)
+void Road::setId(unsigned int id)
 {
 	this->id = id;
 }
 
-void Road::SetOrientation(unsigned int orientation)
+void Road::setOrientation(unsigned int orientation)
 {
 	this->orientation = orientation;
 	if(this->orientation == 0)
@@ -140,12 +140,12 @@ void Road::SetOrientation(unsigned int orientation)
 	}
 }
 
-unsigned int Road::GetOrientation() const
+unsigned int Road::getOrientation() const
 {
 	return this->orientation;
 }
 
-unsigned int Road::GetId() const
+unsigned int Road::getId() const
 {
 	return this->id;
 }

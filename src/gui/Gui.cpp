@@ -15,7 +15,7 @@ Gui::Gui():
 		quadrant(0),
 		selected_tool(none)
 {
-	this->minimap.Create(256);
+	this->minimap.create(256);
 	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
 
 	/*Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
@@ -57,14 +57,14 @@ Gui::~Gui()
 	// TODO Auto-generated destructor stub
 }
 
-void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
+void Gui::draw(sf::RenderWindow& window, const Camera& camera) const
 {
 	//this->drawShapes(window);
 
 	sf::Text text("", this->font);
 	std::stringstream ss;
 
-	ss << "FPS: " << floor(this->fps + 0.5) << ", Quadrant: " << camera.GetQuadrant() << ", RPY: " << camera.GetRpy().x << ", " << camera.GetRpy().y << ", " << camera.GetRpy().z;
+	ss << "FPS: " << floor(this->fps + 0.5) << ", Quadrant: " << camera.getQuadrant() << ", RPY: " << camera.getRpy().x << ", " << camera.getRpy().y << ", " << camera.getRpy().z;
 	text.setString(ss.str());
 	text.setCharacterSize(14.0);
 	text.setPosition(300, 5);
@@ -114,7 +114,7 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(shape);
 
 	// toolbar
-	this->minimap.Draw(window, camera);
+	this->minimap.draw(window, camera);
 
 	/*std::list<Button>::const_iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
@@ -131,22 +131,22 @@ void Gui::Draw(sf::RenderWindow& window, const Camera& camera) const
 	}
 }
 
-void Gui::SetFps(float fps)
+void Gui::setFps(float fps)
 {
 	this->fps = fps;
 }
 
-void Gui::SetQuadrant(unsigned int quadrant)
+void Gui::setQuadrant(unsigned int quadrant)
 {
 	this->quadrant = quadrant;
 }
 
-void Gui::SetMapPos(const sf::Vector3f& map_pos)
+void Gui::setMapPos(const sf::Vector3f& map_pos)
 {
 	this->map_pos = map_pos;
 }
 
-void Gui::SetSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile_vertices)
+void Gui::setSelectedTileVertices(const std::vector<sf::Vector2f>& selected_tile_vertices)
 {
 	this->selected_tile_vertices = selected_tile_vertices;
 }
@@ -263,14 +263,14 @@ std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::ve
 	std::list<Button>::iterator it;
 	for(it = this->button_list.begin(); it != this->button_list.end(); it++)
 	{
-		it->HandleInput(commands, event);
+		it->handleInput(commands, event);
 	}
 	return commands;
 }
 
-void Gui::Update(const Map& map, const sf::Vector2f& position)
+void Gui::update(const Map& map, const sf::Vector2f& position)
 {
-	this->minimap.GenerateFromMap(map, position, 64);
+	this->minimap.generateFromMap(map, position, 64);
 }
 
 void Gui::drawShapes(sf::RenderWindow& window) const

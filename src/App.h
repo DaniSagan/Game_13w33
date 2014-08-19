@@ -35,14 +35,14 @@ public:
 		Driving
 	};
 
-	void Initialize();
-	void Run();
-	void Update();
-	void HandleInput();
-	void Draw();
-	void InitOpenGL();
+	void initialize();
+	void run();
+	void update();
+	void handleInput();
+	void draw();
+	void initOpenGL();
 
-	bool ExecuteCommand(std::string cmd);
+	bool executeCommand(std::string cmd);
 
 	void createSelectedShapes();
 	void drawSelection(sf::RenderWindow& window) const;

@@ -31,30 +31,30 @@ public:
 	Map();
 	virtual ~Map();
 
-	void Create(unsigned int size);
-	void GenerateTiles();
-	void CreateFromFile(std::string filename, unsigned int water_level, float max_height);
-	void CreateRandom(const unsigned int size);
-	void Draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const;
-	unsigned int GetSize() const;
-	float GetHeight(int x, int y);
-	bool SaveHeightMap(const std::string& filename);
-	bool LoadHeightMap(const std::string& filename);
-	bool SaveBuildingMap(const std::string& filename);
-	bool LoadBuildingMap(const std::string& filename);
-	void GenerateMapImg(const unsigned int tile_size);
+	void create(unsigned int size);
+	void generateTiles();
+	void createFromFile(std::string filename, unsigned int water_level, float max_height);
+	void createRandom(const unsigned int size);
+	void draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const;
+	unsigned int getSize() const;
+	float getTileHeight(int x, int y);
+	bool saveHeightMap(const std::string& filename);
+	bool loadHeightMap(const std::string& filename);
+	bool saveBuildingMap(const std::string& filename);
+	bool loadBuildingMap(const std::string& filename);
+	void generateMapImg(const unsigned int tile_size);
 
-	bool IsRoad(const sf::Vector2i& tile_pos) const;
+	//bool IsRoad(const sf::Vector2i& tile_pos) const;
 	bool isRoad(unsigned int x, unsigned int y) const;
-	bool HasBuilding(const sf::Vector2i& tile_pos) const;
+	//bool HasBuilding(const sf::Vector2i& tile_pos) const;
 	bool hasBuilding(unsigned int x, unsigned int y) const;
-	sf::Color GetBuildingColor(const sf::Vector2i& tile_pos) const;
-	bool ChangeRoadType(const sf::Vector2i& tile_pos);
-	bool ChangeRoadOrientation(const sf::Vector2i& tile_pos);
+	sf::Color getBuildingColor(const sf::Vector2i& tile_pos) const;
+	bool changeRoadType(const sf::Vector2i& tile_pos);
+	bool changeRoadOrientation(const sf::Vector2i& tile_pos);
 
-	sf::Vector3f GetMapPosFromMouse(sf::Vector2i mouse_pos);
-	sf::Vector3f GetViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
-	const std::vector<sf::Vector3f> & GetTileVertices(sf::Vector2i pos) const;
+	sf::Vector3f getMapPosFromMouse(sf::Vector2i mouse_pos);
+	sf::Vector3f getViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
+	const std::vector<sf::Vector3f> & getTileVertices(sf::Vector2i pos) const;
 
 	/*void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void DrawBuildingBoxes(dfv::IntRect rect) const;
@@ -66,39 +66,39 @@ public:
 	void drawBuildingOutlines(dfv::RealIntRect rect) const;
 	void drawBuildingFloors(dfv::RealIntRect rect) const;
 
-	bool SaveAsMapFormat(std::string filename);
-	bool LoadFromMapFormat(std::string filename);
-	float GetHeight(const sf::Vector2f& pos) const;
+	bool saveAsMapFormat(std::string filename);
+	bool loadFromMapFormat(std::string filename);
+	float getHeight(const sf::Vector2f& pos) const;
 
 	//dfv::IntRect GetRect() const;
 	dfv::RealRect getRect() const;
 	dfv::RealIntRect getTileRect() const;
 
-	void DrawSky() const;
-	void SetLight(const sf::Vector3f& position) const;
-	bool AddRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation);
+	void drawSky() const;
+	void setLight(const sf::Vector3f& position) const;
+	bool addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation);
 
-	void GenerateBuildingList();
-	void CallBuildingList() const;
+	void generateBuildingList();
+	void callBuildingList() const;
 
 	void generateRoadList(const Camera& camera, const Resources& resources);
 	void callRoadList() const;
 
-	void GenerateTileList(const Camera& camera, const Resources& resources);
-	void CallTileList() const;
+	void generateTileList(const Camera& camera, const Resources& resources);
+	void callTileList() const;
 
 	/*void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;*/
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	//void DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
-	unsigned int GetRoadId(const sf::Vector2i& pos) const;
-	unsigned int GetRoadOrientation(const sf::Vector2i& pos) const;
-	bool SetRoadId(const sf::Vector2i& pos, unsigned int id);
-	bool SetRoadOrientation(const sf::Vector2i& pos, unsigned int orientation);
+	unsigned int getRoadId(const sf::Vector2i& pos) const;
+	unsigned int getRoadOrientation(const sf::Vector2i& pos) const;
+	bool setRoadId(const sf::Vector2i& pos, unsigned int id);
+	bool setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation);
 
-	bool SaveAsSgmFormat(const std::string& filename) const;
-	bool LoadFromSgmFormat(const std::string& filename);
+	bool saveAsSgmFormat(const std::string& filename) const;
+	bool loadFromSgmFormat(const std::string& filename);
 
 	bool isWater(unsigned int x, unsigned int y) const;
 	sf::Vector3f getNormal(unsigned int x, unsigned int y);

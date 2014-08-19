@@ -22,8 +22,8 @@ class Prop
 public:
 	Prop();
 	virtual ~Prop();
-	virtual void Create(const std::vector<sf::Vector3f>& tile_vertices);
-	virtual void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+	virtual void create(const std::vector<sf::Vector3f>& tile_vertices);
+	virtual void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
 protected:
 	OpenGLImage img;
 	std::vector<Quad> quads;

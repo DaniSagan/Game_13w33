@@ -36,38 +36,38 @@ public:
 		count
 	};
 
-	void Create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
+	void create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
 	void SetColor(sf::Color color);
-	void Draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-	void AddBuilding(float height);
-	bool HasBuilding() const;
-	void DrawBuilding(const bool draw_floors) const;
-	sf::Color GetBuildingColor() const;
-	void SetAsRoad(const bool r);
-	bool IsRoad() const;
-	float GetBuildingHeight() const;
-	void AddRoad(dfv::Road::Type type, unsigned int orientation);
-	unsigned int GetRoadId() const;
-	unsigned int GetRoadOrientation() const;
-	bool SetRoadId(unsigned int road_id);
-	bool SetRoadOrientation(unsigned int road_orientation);
+	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+	void addBuilding(float height);
+	bool hasBuilding() const;
+	void drawBuilding(const bool draw_floors) const;
+	sf::Color getBuildingColor() const;
+	void setAsRoad(const bool r);
+	bool isRoad() const;
+	float getBuildingHeight() const;
+	void addRoad(dfv::Road::Type type, unsigned int orientation);
+	unsigned int getRoadId() const;
+	unsigned int getRoadOrientation() const;
+	bool setRoadId(unsigned int road_id);
+	bool setRoadOrientation(unsigned int road_orientation);
 	void addProp(Prop* lp_prop);
-	sf::Vector3f GetVertex(const unsigned int index) const;
-	const std::vector<sf::Vector3f> & GetVertices() const;
+	sf::Vector3f getVertex(const unsigned int index) const;
+	const std::vector<sf::Vector3f> & getVertices() const;
 
-	void DrawBuildingBox() const;
-	void DrawBuildingOutline() const;
-	void DrawBuildingFloors() const;
+	void drawBuildingBox() const;
+	void drawBuildingOutline() const;
+	void drawBuildingFloors() const;
 
-	sf::Vector3f GetColor(unsigned int index) const;
-	sf::Vector3f GetNormal(unsigned int index) const;
-	sf::Vector3f GetBuildingColor3f() const;
+	sf::Vector3f getColor(unsigned int index) const;
+	sf::Vector3f getNormal(unsigned int index) const;
+	sf::Vector3f getBuildingColor3f() const;
 
-	void SetVertex(const unsigned int index, const sf::Vector3f& vertex);
-	sf::Color GetColor() const;
-	void SetBuildingColor(const sf::Color& color);
-	void DrawRoad(const Camera& camera, const Resources& resources) const;
-	void DrawProp(const Camera& camera, const Resources& resources) const;
+	void setVertex(const unsigned int index, const sf::Vector3f& vertex);
+	sf::Color getSfmlColor() const;
+	void setBuildingColor(const sf::Color& color);
+	void drawRoad(const Camera& camera, const Resources& resources) const;
+	void drawProp(const Camera& camera, const Resources& resources) const;
 
 	bool isWater() const;
 	bool clearRoad();

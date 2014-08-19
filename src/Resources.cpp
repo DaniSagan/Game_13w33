@@ -24,7 +24,7 @@ Resources::~Resources()
 	// TODO Auto-generated destructor stub
 }
 
-bool Resources::Load()
+bool Resources::load()
 {
 	/*if(!this->img_1.LoadFromFile("res/road/r0.png"))
 	{

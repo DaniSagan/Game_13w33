@@ -24,7 +24,7 @@ Minimap::~Minimap()
 	delete this->lp_pixels;
 }
 
-void Minimap::Create(const unsigned int size)
+void Minimap::create(const unsigned int size)
 {
 	this->size = size;
 	this->img.create(size, size, sf::Color(200, 200, 200));
@@ -87,29 +87,31 @@ void Minimap::Create(const unsigned int size)
 	this->img.LoadFromPixels(this->size, this->size, this->lp_pixels);
 }*/
 
-void Minimap::GenerateFromMap(const Map& map, const sf::Vector2f position, unsigned int range)
+void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsigned int range)
 {
 	this->range = range;
 	for(unsigned int i = 0; i < this->size; i++)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			sf::Vector2i rel_pos = this->RealPosFromMapPos(sf::Vector2i(i, j), this->range);
+			sf::Vector2i rel_pos = this->realPosFromMapPos(sf::Vector2i(i, j), this->range);
 			sf::Vector2i abs_pos(position.x - rel_pos.x, position.y - rel_pos.y);
 
-			if(abs_pos.x >= 0 && abs_pos.x < (int)(map.GetSize()) && abs_pos.y >= 0 && abs_pos.y < (int)(map.GetSize()))
+			if(abs_pos.x >= 0 && abs_pos.x < (int)(map.getSize()) && abs_pos.y >= 0 && abs_pos.y < (int)(map.getSize()))
 			{
-				if(map.IsRoad(abs_pos))
+				//if(map.IsRoad(abs_pos))
+				if(map.isRoad(abs_pos.x, abs_pos.y))
 				{
 					this->lp_pixels[(j * this->size + i) * 4] = 50;
 					this->lp_pixels[(j * this->size + i) * 4 + 1] = 50;
 					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
 				}
-				else if(map.HasBuilding(abs_pos))
+				//else if(map.HasBuilding(abs_pos))
+				else if(map.hasBuilding(abs_pos.x, abs_pos.y))
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = map.GetBuildingColor(abs_pos).r;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = map.GetBuildingColor(abs_pos).g;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = map.GetBuildingColor(abs_pos).b;
+					this->lp_pixels[(j * this->size + i) * 4] = map.getBuildingColor(abs_pos).r;
+					this->lp_pixels[(j * this->size + i) * 4 + 1] = map.getBuildingColor(abs_pos).g;
+					this->lp_pixels[(j * this->size + i) * 4 + 2] = map.getBuildingColor(abs_pos).b;
 				}
 				else
 				{
@@ -133,14 +135,14 @@ void Minimap::GenerateFromMap(const Map& map, const sf::Vector2f position, unsig
 	this->texture.update(this->img);
 }
 
-sf::Vector2i Minimap::RealPosFromMapPos(sf::Vector2i map_pos, int range)
+sf::Vector2i Minimap::realPosFromMapPos(sf::Vector2i map_pos, int range)
 {
 	return sf::Vector2i(
 			(range*2*map_pos.x)/size - range,
 			range - (range*2*map_pos.y)/size);
 }
 
-void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
+void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const
 {
 	sf::Sprite sprite;
 	//sf::Texture texture;
@@ -152,7 +154,7 @@ void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(sprite);
 
 	sf::ConvexShape shape;
-	float ang = -(camera.GetRpy().z + 90.f) * 3.1416 / 180.0;
+	float ang = -(camera.getRpy().z + 90.f) * 3.1416 / 180.0;
 	shape.setPointCount(3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setPoint(0, sf::Vector2f(this->size / 2.0 + 15.0*cos(ang), this->size / 2.0 - 15.0*sin(ang)));
@@ -164,11 +166,11 @@ void Minimap::Draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(shape);
 }
 
-std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos)
+std::string Minimap::handleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos)
 {
-	sf::Vector2i pos(camera.GetPosition().x, camera.GetPosition().y);
-	sf::Vector2i rel_pos = this->RealPosFromMapPos(mouse_pos, this->range);
-	sf::Vector2i abs_pos(camera.GetPosition().x - rel_pos.x, camera.GetPosition().y - rel_pos.y);
+	sf::Vector2i pos(camera.getPosition().x, camera.getPosition().y);
+	sf::Vector2i rel_pos = this->realPosFromMapPos(mouse_pos, this->range);
+	sf::Vector2i abs_pos(camera.getPosition().x - rel_pos.x, camera.getPosition().y - rel_pos.y);
 
 	//std::cout << "mouse_pos: " << abs_pos.x << ", " << abs_pos.y << std::endl;
 
@@ -198,7 +200,7 @@ std::string Minimap::HandleInput(const Camera& camera, const sf::Event& event, c
 	return res;
 }
 
-unsigned int Minimap::GetSize() const
+unsigned int Minimap::getSize() const
 {
 	return this->size;
 }

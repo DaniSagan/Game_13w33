@@ -22,17 +22,17 @@ public:
 	Building();
 	virtual ~Building();
 
-	void Create(const std::vector<sf::Vector3f>& base_pos, float height);
-	void SetColor(const sf::Color& color);
-	sf::Color GetColor() const;
-	void Draw(const bool draw_floors) const;
-	float GetHeight() const;
+	void create(const std::vector<sf::Vector3f>& base_pos, float height);
+	void setColor(const sf::Color& color);
+	sf::Color getColor() const;
+	void draw(const bool draw_floors) const;
+	float getHeight() const;
 
-	void DrawBox() const;
-	void DrawOutline() const;
-	void DrawFloors() const;
+	void drawBox() const;
+	void drawOutline() const;
+	void drawFloors() const;
 
-	sf::Vector3f GetColor3f() const;
+	sf::Vector3f getColor3f() const;
 
 private:
 	std::vector<sf::Vector3f> base_pos;

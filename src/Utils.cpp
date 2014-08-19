@@ -186,16 +186,16 @@ void Quad::create(const std::vector<sf::Vector3f>& vertices)
 		this->vertices[i] = vertices[i];
 	}
 	this->normals.resize(4);
-	this->normals[0] = Utils::Cross(this->vertices[1] - this->vertices[0],
+	this->normals[0] = Utils::cross(this->vertices[1] - this->vertices[0],
 			                        this->vertices[3] - this->vertices[0]);
 	//this->normals[0] = this->normals[0] / Utils::Length(this->normals[0]);
-	this->normals[1] = Utils::Cross(this->vertices[2] - this->vertices[1],
+	this->normals[1] = Utils::cross(this->vertices[2] - this->vertices[1],
 				                    this->vertices[0] - this->vertices[1]);
 	//this->normals[1] = this->normals[1] / Utils::Length(this->normals[1]);
-	this->normals[2] = Utils::Cross(this->vertices[3] - this->vertices[2],
+	this->normals[2] = Utils::cross(this->vertices[3] - this->vertices[2],
 									this->vertices[1] - this->vertices[2]);
 	//this->normals[2] = this->normals[0] / Utils::Length(this->normals[2]);
-	this->normals[3] = Utils::Cross(this->vertices[0] - this->vertices[3],
+	this->normals[3] = Utils::cross(this->vertices[0] - this->vertices[3],
 									this->vertices[2] - this->vertices[3]);
 	//this->normals[3] = this->normals[3] / Utils::Length(this->normals[3]);
 }
@@ -221,27 +221,27 @@ Utils::~Utils()
 	// TODO Auto-generated destructor stub
 }
 
-float Utils::Dot(const sf::Vector3f& v1, const sf::Vector3f& v2)
+float Utils::dot(const sf::Vector3f& v1, const sf::Vector3f& v2)
 {
 	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
 }
 
-sf::Vector3f Utils::Cross(const sf::Vector3f& v1, const sf::Vector3f& v2)
+sf::Vector3f Utils::cross(const sf::Vector3f& v1, const sf::Vector3f& v2)
 {
 	return sf::Vector3f(v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v1.x*v2.z, v1.x*v2.y - v1.y*v2.x);
 }
 
-sf::Vector3f Utils::Diff(const sf::Vector3f& v1, const sf::Vector3f& v2)
+sf::Vector3f Utils::diff(const sf::Vector3f& v1, const sf::Vector3f& v2)
 {
 	return sf::Vector3f(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 }
 
-sf::Vector2f Utils::Diff(const sf::Vector2f& v1, const sf::Vector2f& v2)
+sf::Vector2f Utils::diff(const sf::Vector2f& v1, const sf::Vector2f& v2)
 {
 	return sf::Vector2f(v1.x - v2.x, v1.y - v2.y);
 }
 
-void Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
+void Utils::drawRectangle(sf::Image& img, const sf::Vector2i& top_left,
 		const sf::Vector2i& bottom_right, const sf::Color& color)
 {
 	unsigned int width = bottom_right.x - top_left.x + 1;
@@ -256,17 +256,17 @@ void Utils::DrawRectangle(sf::Image& img, const sf::Vector2i& top_left,
 	}
 }
 
-float Utils::Length(const sf::Vector3f v)
+float Utils::length(const sf::Vector3f v)
 {
 	return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
-float Utils::Length(const sf::Vector2f v)
+float Utils::length(const sf::Vector2f v)
 {
 	return sqrt(v.x*v.x + v.y*v.y);
 }
 
-void Utils::TrimRect(IntRect& rect, const IntRect& limits)
+void Utils::trimRect(IntRect& rect, const IntRect& limits)
 {
 	if(rect.Left < limits.Left) rect.Left = limits.Left;
 	if(rect.Right > limits.Right) rect.Right = limits.Right;
@@ -274,7 +274,7 @@ void Utils::TrimRect(IntRect& rect, const IntRect& limits)
 	if(rect.Bottom < limits.Bottom) rect.Bottom = limits.Bottom;
 }
 
-void Utils::TrimRect(IntRect& rect, int left, int right, int top,
+void Utils::trimRect(IntRect& rect, int left, int right, int top,
 		int bottom)
 {
 	if(rect.Left < left) rect.Left = left;
@@ -283,7 +283,7 @@ void Utils::TrimRect(IntRect& rect, int left, int right, int top,
 	if(rect.Bottom < bottom) rect.Bottom = bottom;
 }
 
-IntRect Utils::CreateRect(const sf::Vector2i& position, int radius)
+IntRect Utils::createRect(const sf::Vector2i& position, int radius)
 {
 	IntRect rect;
 	rect.Left = position.x - radius;
@@ -294,22 +294,22 @@ IntRect Utils::CreateRect(const sf::Vector2i& position, int radius)
 	return rect;
 }
 
-sf::Vector2i Utils::ToVector2i(const sf::Vector2f& v)
+sf::Vector2i Utils::toVector2i(const sf::Vector2f& v)
 {
 	return sf::Vector2i(floor(v.x), floor(v.y));
 }
 
-sf::Vector2f Utils::ToVector2f(const sf::Vector2i& v)
+sf::Vector2f Utils::toVector2f(const sf::Vector2i& v)
 {
 	return sf::Vector2f(v.x, v.y);
 }
 
-sf::Vector2f Utils::GetVector2d(const sf::Vector3f& v)
+sf::Vector2f Utils::getVector2d(const sf::Vector3f& v)
 {
 	return sf::Vector2f(v.x, v.y);
 }
 
-std::vector<std::string> Utils::StringTokenize(const std::string& str,
+std::vector<std::string> Utils::stringTokenize(const std::string& str,
 		const std::string& delimiters)
 {
 	std::vector<std::string> tokens;
@@ -335,7 +335,7 @@ std::vector<std::string> Utils::StringTokenize(const std::string& str,
 	return tokens;
 }
 
-std::string Utils::ToString(const IntRect& rect)
+std::string Utils::toString(const IntRect& rect)
 {
 	std::stringstream ss;
 	ss << "L:" << rect.Left << ", ";
@@ -345,7 +345,7 @@ std::string Utils::ToString(const IntRect& rect)
 	return ss.str();
 }
 
-bool Utils::RectContains(const IntRect& rect, const sf::Vector2i& pos)
+bool Utils::rectContains(const IntRect& rect, const sf::Vector2i& pos)
 {
 	return pos.x >= rect.Left && pos.x <= rect.Right &&
 			pos.y <= rect.Bottom && pos.y >= rect.Top;

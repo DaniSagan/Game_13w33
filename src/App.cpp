@@ -18,7 +18,7 @@ App::App():
 		frame_time(0),
 		moving_mode(Free)
 {
-	this->Initialize();
+	this->initialize();
 	//this->Run();
 }
 
@@ -27,85 +27,86 @@ App::~App()
 	// TODO Auto-generated destructor stub
 }
 
-void App::Initialize()
+void App::initialize()
 {
 	srand(0);
 
 	this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
 	this->window.setVerticalSyncEnabled(true);
-	this->InitOpenGL();
+	this->initOpenGL();
 
-	this->map.LoadFromMapFormat("res/map/world1_test.map");
-	//this->map.CreateRandom(512);
-	Tree* lp_tree = new Tree();
+	//this->map.LoadFromMapFormat("res/map/world1_test.map");
+	this->map.createRandom(512);
+	/*Tree* lp_tree = new Tree();
 	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
 	lp_tree->Create(tile_vertices);
-	this->map.addProp(167, 196, lp_tree);
+	this->map.addProp(167, 196, lp_tree);*/
 
+	Tree* lp_tree = new Tree();
 	for(unsigned int i = 0; i < 50000; i++)
 	{
-		unsigned int x = rand() % this->map.GetSize();
-		unsigned int y = rand() % this->map.GetSize();
+		unsigned int x = rand() % this->map.getSize();
+		unsigned int y = rand() % this->map.getSize();
 		if(!this->map.isWater(x, y) && !this->map.hasBuilding(x, y) && !this->map.isRoad(x, y))
 		{
 			lp_tree = new Tree();
-			std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(x, y));
-			lp_tree->Create(tile_vertices);
+			std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
+			lp_tree->create(tile_vertices);
 			this->map.addProp(x, y, lp_tree);
 		}
 	}
 
-	this->camera.SetPosition(sf::Vector3f(this->map.GetSize() / 2, this->map.GetSize() / 2, 5.f));
-	this->camera.SetRpy(sf::Vector3f(-90.0, 0.0, 0.0));
-	this->resources.Load();
+	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
+	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
+	this->resources.load();
 
-	this->map.GenerateTileList(this->camera, this->resources);
-	this->map.GenerateBuildingList();
+	this->map.generateTileList(this->camera, this->resources);
+	this->map.generateBuildingList();
 	this->map.generateRoadList(this->camera, this->resources);
 
 }
 
-void App::Run()
+void App::run()
 {
 	while(this->window.isOpen())
 	{
-		this->HandleInput();
-		this->Update();
-		this->Draw();
+		this->handleInput();
+		this->update();
+		this->draw();
 	}
 }
 
-void App::Update()
+void App::update()
 {
 	++this->frame;
 	this->frame_time = this->clock.restart().asSeconds();
 
-	sf::Vector2f camera_pos = this->camera.GetPosition2d();
+	sf::Vector2f camera_pos = this->camera.getPosition2d();
 	sf::Vector3f normal = this->map.getNormal(camera_pos.x, camera_pos.y);
 	this->camera.update(this->frame_time,
-						this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y)),
+						this->map.getHeight(sf::Vector2f(this->camera.getPosition().x, this->camera.getPosition().y)),
 						normal);
 
-	this->gui.SetFps(1.0 / this->frame_time);
-	this->gui.SetQuadrant(this->camera.GetQuadrant());
-	this->gui.Update(this->map, this->camera.GetPosition2d());
+	this->gui.setFps(1.0 / this->frame_time);
+	this->gui.setQuadrant(this->camera.getQuadrant());
+	this->gui.update(this->map, this->camera.getPosition2d());
 
 	// window vertices of selected tile;
 	sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
 	if(tile_pos.x < 0) tile_pos.x = 0;
-	if(tile_pos.x >= (int)this->map.GetSize()) tile_pos.x = this->map.GetSize() - 1;
+	if(tile_pos.x >= (int)this->map.getSize()) tile_pos.x = this->map.getSize() - 1;
 	if(tile_pos.y < 0) tile_pos.y = 0;
-	if(tile_pos.y >= (int)this->map.GetSize()) tile_pos.y = this->map.GetSize() - 1;
+	if(tile_pos.y >= (int)this->map.getSize()) tile_pos.y = this->map.getSize() - 1;
 
-	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(tile_pos);
+	std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(tile_pos);
 	std::vector<sf::Vector2f> sel_vertices(4);
 	try
 	{
 		for(unsigned int k = 0; k < 4; k++)
 		{
-			sel_vertices.at(k) = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices.at(k), this->window));
+			sel_vertices.at(k) = dfv::Utils::getVector2d(this->map.getViewPos(tile_vertices.at(k), this->window));
 		}
-		this->gui.SetSelectedTileVertices(sel_vertices);
+		this->gui.setSelectedTileVertices(sel_vertices);
 	}
 	catch(...)
 	{
@@ -145,7 +146,7 @@ void App::Update()
 	//std::cout << "Map pos: " << this->map_pos.x << ", " << this->map_pos.y << std::endl;
 }
 
-void App::HandleInput()
+void App::handleInput()
 {
 	this->mouse_pos = sf::Vector2i(sf::Mouse::getPosition(this->window));
 	sf::Event event;
@@ -153,7 +154,7 @@ void App::HandleInput()
 	while(this->window.pollEvent(event))
 	{
 		this->gui.handleInput(event, this->command);
-		if(this->ExecuteCommand(this->command)) break;
+		if(this->executeCommand(this->command)) break;
 		this->camera.handleInput(event);
 
 		if(event.type == sf::Event::Closed)
@@ -173,7 +174,7 @@ void App::HandleInput()
 			}*/
 			if(event.key.code == sf::Keyboard::P)
 			{
-				this->map.SaveAsMapFormat("res/map/world1.map");
+				this->map.saveAsMapFormat("res/map/world1.map");
 			}
 			else if(event.key.code == sf::Keyboard::O)
 			{
@@ -186,10 +187,10 @@ void App::HandleInput()
 		}
 		else if(event.type == sf::Event::MouseWheelMoved)
 		{
-			float height = this->map.GetHeight(sf::Vector2f(this->camera.GetPosition().x, this->camera.GetPosition().y));
-			this->camera.Move(sf::Vector3f(0.f,
+			float height = this->map.getHeight(sf::Vector2f(this->camera.getPosition().x, this->camera.getPosition().y));
+			this->camera.move(sf::Vector3f(0.f,
 										   0.f,
-							               -0.02f * (float)event.mouseWheel.delta * (this->camera.GetPosition().z - height)));
+							               -0.02f * (float)event.mouseWheel.delta * (this->camera.getPosition().z - height)));
 		}
 		else if(event.type == sf::Event::MouseButtonPressed)
 		{
@@ -224,30 +225,30 @@ void App::HandleInput()
 
 }
 
-void App::Draw()
+void App::draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	this->window.setActive();
-	this->camera.SetView(this->window);
+	this->camera.setView(this->window);
 
-	this->map.DrawSky();
+	this->map.drawSky();
 
-	this->map.SetLight(sf::Vector3f(400.f, -200.f, 400.f));
+	this->map.setLight(sf::Vector3f(400.f, -200.f, 400.f));
 
 	//dfv::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
 	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
-	if(this->camera.GetRpy().x > -120.f)
+	if(this->camera.getRpy().x > -120.f)
 	{
-		this->map.CallTileList();
+		this->map.callTileList();
 	}
-	this->map_pos = this->map.GetMapPosFromMouse(this->mouse_pos);
+	this->map_pos = this->map.getMapPosFromMouse(this->mouse_pos);
 	this->createSelectedShapes();
 
 	//sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
 	//dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
 	//dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
 	dfv::RealIntRect road_rect;
-	road_rect.setFromCenterRadius(dfv::Utils::ToVector2i(this->camera.GetPosition2d()), 50);
+	road_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 50);
 	//road_rect.trim(this->map.getRect());
 	road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 	//this->map.DrawRoads(road_rect, this->camera, this->resources);
@@ -260,16 +261,16 @@ void App::Draw()
 			30);*/
 
 	dfv::RealIntRect outlines_rect;
-	outlines_rect.setFromCenterRadius(dfv::Utils::ToVector2i(this->camera.GetPosition2d()), 30);
+	outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
 	outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 
 	//dfv::Utils::TrimRect(outlines_rect, view_rect);
 
-	this->map.CallBuildingList();
+	this->map.callBuildingList();
 	glDisable(GL_CULL_FACE);
 	this->map.drawBuildingOutlines(outlines_rect);
 
-	this->gui.SetMapPos(this->map_pos);
+	this->gui.setMapPos(this->map_pos);
 	this->map.drawBuildingFloors(outlines_rect);
 
 	glDisable(GL_LIGHTING);
@@ -283,14 +284,14 @@ void App::Draw()
 	this->window.pushGLStates();
 
 	this->drawSelection(this->window);
-	this->gui.Draw(this->window, this->camera);
+	this->gui.draw(this->window, this->camera);
 
 
 	this->window.popGLStates();
 	this->window.display();
 }
 
-void App::InitOpenGL()
+void App::initOpenGL()
 {
 	glClearDepth(1.0f);
 	glClearColor(0.5f, 0.6f, 0.95f, 0.f);
@@ -320,9 +321,9 @@ void App::InitOpenGL()
 	glEnable(GL_CULL_FACE);
 }
 
-bool App::ExecuteCommand(std::string cmd)
+bool App::executeCommand(std::string cmd)
 {
-	std::vector<std::string> tokens = dfv::Utils::StringTokenize(cmd, " ");
+	std::vector<std::string> tokens = dfv::Utils::stringTokenize(cmd, " ");
 	if(tokens.size() == 0) return false;
 
 	try
@@ -338,7 +339,7 @@ bool App::ExecuteCommand(std::string cmd)
 			{
 				filename = "res/map/world1_test.map";
 			}
-			this->map.SaveAsMapFormat(filename);
+			this->map.saveAsMapFormat(filename);
 			std::cout << "Map saved in file " << filename << std::endl;
 			return true;
 		}
@@ -391,7 +392,7 @@ bool App::ExecuteCommand(std::string cmd)
 				{
 					this->map.clearRoad(it->x, it->y);
 				}
-				this->map.GenerateTileList(this->camera, this->resources);
+				this->map.generateTileList(this->camera, this->resources);
 				return true;
 			}
 			else if(tokens.at(1) == std::string("building"))
@@ -401,7 +402,7 @@ bool App::ExecuteCommand(std::string cmd)
 				{
 					this->map.clearBuilding(it->x, it->y);
 				}
-				this->map.GenerateBuildingList();
+				this->map.generateBuildingList();
 				return true;
 			}
 			else if(tokens.at(1) == std::string("prop"))
@@ -411,7 +412,7 @@ bool App::ExecuteCommand(std::string cmd)
 				{
 					this->map.clearProp(it->x, it->y);
 				}
-				this->map.GenerateBuildingList();
+				this->map.generateBuildingList();
 				return true;
 			}
 		}
@@ -426,7 +427,7 @@ bool App::ExecuteCommand(std::string cmd)
 				{
 					this->map.buildRoad(it->x, it->y, id, orientation);
 				}
-				this->map.GenerateTileList(this->camera, this->resources);
+				this->map.generateTileList(this->camera, this->resources);
 				return true;
 			}
 		}
@@ -450,11 +451,11 @@ void App::createSelectedShapes()
 	{
 		sf::Vector2i pos(it->x, it->y);
 		//std::cout << pos.x << ", " << pos.y << std::endl;
-		std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(pos);
+		std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
 		std::vector<sf::Vector2f> sel_vertices(4);
 		for(unsigned int k = 0; k < 4; k++)
 		{
-			sel_vertices.at(k) = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[k], window));
+			sel_vertices.at(k) = dfv::Utils::getVector2d(this->map.getViewPos(tile_vertices[k], window));
 		}
 		this->selected_shapes.at(i).setPointCount(4);
 		for(unsigned int k = 0; k < 4; k++)
@@ -477,7 +478,7 @@ void App::drawSelection(sf::RenderWindow& window) const
 
 sf::Vector2i App::getCameraTile() const
 {
-	sf::Vector2f camera_pos = this->camera.GetPosition2d();
+	sf::Vector2f camera_pos = this->camera.getPosition2d();
 	sf::Vector2i pos(floor(camera_pos.x), floor(camera_pos.y));
 	return pos;
 }

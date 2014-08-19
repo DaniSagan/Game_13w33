@@ -20,7 +20,7 @@ public:
 	ComandParser();
 	virtual ~ComandParser();
 
-	bool Parse(
+	bool parse(
 			const std::string& command,
 			std::string& function_name,
 			std::vector<float> params);

@@ -21,7 +21,7 @@ ComandParser::~ComandParser()
 	// TODO Auto-generated destructor stub
 }
 
-bool ComandParser::Parse(const std::string& command, std::string& function_name,
+bool ComandParser::parse(const std::string& command, std::string& function_name,
 		std::vector<float> params)
 {
 	return true;

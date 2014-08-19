@@ -19,8 +19,8 @@ class Tree: public Prop
 public:
 	Tree();
 	virtual ~Tree();
-	void Create(const std::vector<sf::Vector3f>& tile_vertices);
-	void Draw(const Camera& camera, const Resources& resources) const;
+	void create(const std::vector<sf::Vector3f>& tile_vertices);
+	void draw(const Camera& camera, const Resources& resources) const;
 	void drawQuad(const unsigned int index, const dfv::Resources& resources) const;
 protected:
 	//std::vector<sf::Vector3f> vertices;
