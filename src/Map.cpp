@@ -1204,12 +1204,20 @@ float Map::getHeight(const sf::Vector2f& pos) const
 		float y0 = floor(pos.y);
 		float y1 = floor(pos.y) + 1;
 
-		float h0 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(0).z;
+		/*float h0 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(0).z;
 		float h1 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(1).z;
 		float h2 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(2).z;
-		float h3 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(3).z;
+		float h3 = this->lp_tiles[floor(pos.x)][floor(pos.y)]->getVertex(3).z;*/
 
-		return (1.0/((x1-x0)*(y1-y0)))*(h0*(x1-pos.x)*(y1-pos.y)+h1*(pos.x-x0)*(y1-pos.y)+h2*(pos.x-x0)*(pos.y-y0)+h3*(x1-pos.x)*(pos.y-y0));
+		Tile* lp_tile = this->lp_tiles.at(floor(pos.x)).at(floor(pos.y));
+		float h00 = lp_tile->getVertex(0).z;
+		float h10 = lp_tile->getVertex(1).z;
+		float h11 = lp_tile->getVertex(2).z;
+		float h01 = lp_tile->getVertex(3).z;
+
+		//return (1.0/((x1-x0)*(y1-y0)))*(h0*(x1-pos.x)*(y1-pos.y)+h1*(pos.x-x0)*(y1-pos.y)+h2*(pos.x-x0)*(pos.y-y0)+h3*(x1-pos.x)*(pos.y-y0));
+
+		return Utils::interpolate2d(x0, x1, y0, y1, h00, h01, h10, h11, pos.x, pos.y);
 	}
 	return 0;
 	/*else

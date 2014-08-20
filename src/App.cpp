@@ -29,6 +29,11 @@ App::~App()
 
 void App::initialize()
 {
+	if(!this->test())
+	{
+		std::cout << "ERROR: there are test not passed." << std::endl;
+	}
+
 	srand(0);
 
 	this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
@@ -482,6 +487,15 @@ sf::Vector2i App::getCameraTile() const
 	sf::Vector2f camera_pos = this->camera.getPosition2d();
 	sf::Vector2i pos(floor(camera_pos.x), floor(camera_pos.y));
 	return pos;
+}
+
+bool App::test()
+{
+	if(!Utils::test())
+	{
+		return false;
+	}
+	return true;
 }
 
 } /* namespace dfv */

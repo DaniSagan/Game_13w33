@@ -48,6 +48,8 @@ public:
 	void drawSelection(sf::RenderWindow& window) const;
 	sf::Vector2i getCameraTile() const;
 
+	bool test();
+
 private:
 	sf::RenderWindow window;
 	sf::Clock clock;

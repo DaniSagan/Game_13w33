@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <iostream>
 #include <cmath>
 #include <string>
 #include <sstream>
@@ -141,6 +142,11 @@ public:
 			const std::string& delimiters);
 	static std::string toString(const IntRect& rect);
 	static bool rectContains(const IntRect& rect, const sf::Vector2i& pos);
+	static float interpolate2d(float x1, float x2, float y1, float y2,
+			                   float z11, float z12, float z21, float z22,
+			                   float x, float y);
+
+	static bool test();
 };
 
 } /* namespace dfv */

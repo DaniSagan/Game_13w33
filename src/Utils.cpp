@@ -351,7 +351,41 @@ bool Utils::rectContains(const IntRect& rect, const sf::Vector2i& pos)
 			pos.y <= rect.Bottom && pos.y >= rect.Top;
 }
 
+float Utils::interpolate2d(float x0, float x1, float y0, float y1, float z00,
+		float z01, float z10, float z11, float x, float y)
+{
+	const float a = (x1-x0)*(y1-y0);
+	const float a00 = (x-x0)*(y-y0);
+	const float a01 = (x-x0)*(y1-y);
+	const float a10 = (x1-x)*(y-y0);
+	const float a11 = (x1-x)*(y1-y);
+	return (a11*z00 + a10*z01 + a01*z10 + a00*z11) / a;
+}
 
+bool Utils::test()
+{
+	bool everything_ok = true;
+	bool test_interpolate2d =
+			interpolate2d(0.0, 1.0, 0.0, 1.0,
+				  1.0, 2.0, 3.0, 4.0,
+				  0.0, 0.0) == 1.0;
+
+	std::cout << interpolate2d(0.0, 1.0, 0.0, 1.0,
+			  1.0, 2.0, 3.0, 4.0,
+			  0.0, 0.0) << std::endl;
+
+	if(test_interpolate2d)
+	{
+		std::cout << "test_interpolate2d passed" << std::endl;
+	}
+	else
+	{
+		std::cout << "test_interpolate2d NOT passed" << std::endl;
+		everything_ok = false;
+	}
+
+	return everything_ok;
+}
 
 } /* namespace dfv */
 

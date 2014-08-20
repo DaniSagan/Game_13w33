@@ -44,9 +44,7 @@ public:
 	bool loadBuildingMap(const std::string& filename);
 	void generateMapImg(const unsigned int tile_size);
 
-	//bool IsRoad(const sf::Vector2i& tile_pos) const;
 	bool isRoad(unsigned int x, unsigned int y) const;
-	//bool HasBuilding(const sf::Vector2i& tile_pos) const;
 	bool hasBuilding(unsigned int x, unsigned int y) const;
 	sf::Color getBuildingColor(const sf::Vector2i& tile_pos) const;
 	bool changeRoadType(const sf::Vector2i& tile_pos);
@@ -55,11 +53,6 @@ public:
 	sf::Vector3f getMapPosFromMouse(sf::Vector2i mouse_pos);
 	sf::Vector3f getViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
 	const std::vector<sf::Vector3f> & getTileVertices(sf::Vector2i pos) const;
-
-	/*void DrawTiles(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
-	void DrawBuildingBoxes(dfv::IntRect rect) const;
-	void DrawBuildingOutlines(dfv::IntRect rect) const;
-	void DrawBuildingFloors(dfv::IntRect rect) const;*/
 
 	void drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawBuildingBoxes(dfv::RealIntRect rect) const;
@@ -87,9 +80,7 @@ public:
 	void generateTileList(const Camera& camera, const Resources& resources);
 	void callTileList() const;
 
-	/*void DrawRoads(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;*/
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
-	//void DrawProps(dfv::IntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
 	unsigned int getRoadId(const sf::Vector2i& pos) const;
