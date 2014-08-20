@@ -37,7 +37,7 @@ public:
 	};
 
 	void create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
-	void SetColor(sf::Color color);
+	void setColor(sf::Color color);
 	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
 	void addBuilding(float height);
 	bool hasBuilding() const;
@@ -70,6 +70,7 @@ public:
 	void drawProp(const Camera& camera, const Resources& resources) const;
 
 	bool isWater() const;
+	bool isBeach() const;
 	bool clearRoad();
 	bool clearBuilding();
 	bool clearProp();

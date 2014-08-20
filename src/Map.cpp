@@ -71,7 +71,7 @@ void Map::generateTiles()
 					this->heights[i+1][j],
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
-			this->lp_tiles[i][j]->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+			this->lp_tiles[i][j]->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		}
 	}
 }
@@ -120,7 +120,7 @@ void Map::createFromFile(std::string filename, unsigned int water_level, float m
 					this->heights[i+1][j],
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
-			lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
+			lp_tile->setColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
 			if(rand() % 5 < 4)
 			{
@@ -146,7 +146,7 @@ void Map::createFromFile(std::string filename, unsigned int water_level, float m
 				{
 					unsigned int rr = rand() % 5;
 					// road
-					this->lp_tiles[i][j]->SetColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
+					this->lp_tiles[i][j]->setColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
 				}
 			}
 			if(this->heights[i][j] < 1.1f &&
@@ -155,7 +155,7 @@ void Map::createFromFile(std::string filename, unsigned int water_level, float m
 			   this->heights[i][j+1] < 1.1f)
 			{
 				// beach
-				this->lp_tiles[i][j]->SetColor(sf::Color(200 + rand() % 10, 200 + rand() % 10, 110 + rand() % 10));
+				this->lp_tiles[i][j]->setColor(sf::Color(200 + rand() % 10, 200 + rand() % 10, 110 + rand() % 10));
 			}
 		}
 	}
@@ -181,7 +181,7 @@ void Map::createRandom(const unsigned int size)
 			float y2 = y - 400;
 			//float x3 = x + 500;
 			//float y3 = y - 400;
-			this->heights[i][j] = 6.0 * (pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 2.0) -
+			this->heights[i][j] = 5.0 * (2.0 * pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 4.0) -
 										  0.4 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
 										  0.3 * pow(sin(0.04 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
 										  0.1 * pow(sin(0.1 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
@@ -216,7 +216,7 @@ void Map::createRandom(const unsigned int size)
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
 			//lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
-			lp_tile->SetColor(sf::Color(16 + rand() % 20, 144 + rand() % 20, 16 + rand() % 20));
+			lp_tile->setColor(sf::Color(16 + rand() % 20, 144 + rand() % 20, 16 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
 			/*if(rand() % 5 < 4)
 			{
@@ -255,7 +255,7 @@ void Map::createRandom(const unsigned int size)
 			   this->heights[i][j+1] < 1.1f)
 			{
 				// beach
-				this->lp_tiles[i][j]->SetColor(sf::Color(200 + rand() % 10, 200 + rand() % 10, 110 + rand() % 10));
+				this->lp_tiles[i][j]->setColor(sf::Color(200 + rand() % 10, 200 + rand() % 10, 110 + rand() % 10));
 			}
 		}
 	}
@@ -569,7 +569,7 @@ bool Map::loadBuildingMap(const std::string& filename)
 					this->lp_tiles[i][j]->setAsRoad(true);
 					//this->lp_tiles[i][j]->AddRoad(dfv::Road::straight, 0);
 					unsigned int ra = rand() % 5;
-					this->lp_tiles[i][j]->SetColor(sf::Color(50 + ra, 50 + ra, 50 + ra));
+					this->lp_tiles[i][j]->setColor(sf::Color(50 + ra, 50 + ra, 50 + ra));
 				}
 				if(gg > 0)
 				{
@@ -1147,7 +1147,7 @@ bool Map::loadFromMapFormat(std::string filename)
 
 				this->lp_tiles[i][j] = new Tile;
 				this->lp_tiles[i][j]->create(sf::Vector2f(i, j), h0, h1, h2, h3);
-				this->lp_tiles[i][j]->SetColor(t_color);
+				this->lp_tiles[i][j]->setColor(t_color);
 
 				// is road
 				unsigned int is_road_t;
@@ -1597,7 +1597,7 @@ bool Map::loadFromSgmFormat(const std::string& filename)
 
 bool Map::isWater(unsigned int x, unsigned int y) const
 {
-	return this->lp_tiles[x][y]->isWater();
+	return this->lp_tiles.at(x).at(y)->isWater();
 }
 
 sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
@@ -1634,7 +1634,7 @@ bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned in
 	if(!this->lp_tiles[x][y]->isRoad())
 	{
 		unsigned int rr = rand() % 5;
-		this->lp_tiles[x][y]->SetColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
+		this->lp_tiles[x][y]->setColor(sf::Color(50 + rr, 50 + rr, 50 + rr));
 		Road::Type road_type;
 		switch(id)
 		{

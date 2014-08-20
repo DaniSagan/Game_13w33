@@ -52,26 +52,30 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 
 }
 
-void Tile::SetColor(sf::Color color)
+void Tile::setColor(sf::Color color)
 {
 	this->color.x = (float)color.r / 255.f;
 	this->color.y = (float)color.g / 255.f;
 	this->color.z = (float)color.b / 255.f;
 
+	const float water_threshold = 1.0f;
+	const float sand_threshold = 1.1f;
+	const float snow_threshold = 15.0f;
+
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		if(this->vertices[i].z < 1.0)
+		if(this->vertices[i].z < water_threshold)
 		{
 			this->colors[i] = sf::Vector3f(0.1f, 0.1f, 0.5f);
 		}
-		else if(this->vertices[i].z < 1.1f)
+		else if(this->vertices[i].z < sand_threshold)
 		{
 			float rr1 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			float rr2 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			float rr3 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f + rr1, 0.9f + rr2, 0.4f + rr3);
 		}
-		else if(this->vertices[i].z > 19.0)
+		else if(this->vertices[i].z > snow_threshold)
 		{
 			this->colors[i] = sf::Vector3f(0.9f, 0.9f, 0.95f);
 		}
@@ -302,13 +306,24 @@ bool Tile::isWater() const
 			this->vertices[3].z < threshold);
 }
 
+bool Tile::isBeach() const
+{
+	float threshold = 1.2;
+	bool is_water = this->isWater();
+	return ((this->vertices[0].z < threshold ||
+			 this->vertices[1].z < threshold ||
+			 this->vertices[2].z < threshold ||
+			 this->vertices[3].z < threshold) &&
+			 !is_water);
+}
+
 bool Tile::clearRoad()
 {
 	if(this->lp_road != NULL)
 	{
 		delete this->lp_road;
 		this->lp_road = NULL;
-		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
 	else
@@ -324,7 +339,7 @@ bool Tile::clearBuilding()
 	{
 		delete this->lp_building;
 		this->lp_building = NULL;
-		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
 	else
@@ -340,7 +355,7 @@ bool Tile::clearProp()
 	{
 		delete this->lp_prop;
 		this->lp_prop = NULL;
-		this->SetColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
 	else
