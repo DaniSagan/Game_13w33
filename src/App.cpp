@@ -36,7 +36,7 @@ void App::initialize()
 	this->initOpenGL();
 
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
-	this->map.createRandom(512);
+	this->map.createRandom(700);
 	/*Tree* lp_tree = new Tree();
 	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
 	lp_tree->Create(tile_vertices);
@@ -306,7 +306,8 @@ void App::initOpenGL()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	GLfloat mat_specular[] = { 0.2, 0.2, 0.2, 0.2 };
+	//GLfloat mat_specular[] = { 0.2, 0.2, 0.2, 0.2 };
+	GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 0.0 };
 	GLfloat mat_shininess[] = { 128.0 };
 	GLfloat light_position[] = { 400.0, 0.0, 400.0, 0.0 };
 	glShadeModel (GL_SMOOTH);

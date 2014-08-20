@@ -181,7 +181,7 @@ void Map::createRandom(const unsigned int size)
 			float y2 = y - 400;
 			//float x3 = x + 500;
 			//float y3 = y - 400;
-			this->heights[i][j] = 5.0 * (pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 2.0) -
+			this->heights[i][j] = 6.0 * (pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 2.0) -
 										  0.4 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
 										  0.3 * pow(sin(0.04 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
 										  0.1 * pow(sin(0.1 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
