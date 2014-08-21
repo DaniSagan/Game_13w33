@@ -75,6 +75,8 @@ public:
 	bool clearBuilding();
 	bool clearProp();
 
+	Quad getQuad() const;
+
 private:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;

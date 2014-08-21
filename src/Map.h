@@ -20,6 +20,7 @@
 #include "Sky.h"
 #include "Prop.h"
 #include "Tree.h"
+#include "Model.h"
 
 
 namespace dfv
@@ -99,6 +100,8 @@ public:
 	bool clearBuilding(unsigned int x, unsigned int y);
 	bool clearProp(unsigned int x, unsigned int y);
 	sf::Vector2i getTileFromMapPos(sf::Vector3f map_pos) const;
+
+	Model test_model;
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;
@@ -109,6 +112,8 @@ private:
 	GLuint tile_list;
 	GLuint road_list;
 	unsigned int population;
+
+
 };
 
 } /* namespace dfv */

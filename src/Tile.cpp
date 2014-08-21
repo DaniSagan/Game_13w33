@@ -299,7 +299,7 @@ void Tile::drawProp(const Camera& camera, const Resources& resources) const
 
 bool Tile::isWater() const
 {
-	float threshold = 1.1;
+	float threshold = 1.0;
 	return (this->vertices[0].z < threshold ||
 			this->vertices[1].z < threshold ||
 			this->vertices[2].z < threshold ||
@@ -308,13 +308,12 @@ bool Tile::isWater() const
 
 bool Tile::isBeach() const
 {
-	float threshold = 1.2;
-	bool is_water = this->isWater();
+	float threshold = 1.1;
 	return ((this->vertices[0].z < threshold ||
 			 this->vertices[1].z < threshold ||
 			 this->vertices[2].z < threshold ||
 			 this->vertices[3].z < threshold) &&
-			 !is_water);
+			 !this->isWater());
 }
 
 bool Tile::clearRoad()
@@ -364,4 +363,13 @@ bool Tile::clearProp()
 	}
 }
 
+Quad Tile::getQuad() const
+{
+	Quad res;
+	res.create(this->vertices);
+	return res;
+}
+
 } /* namespace dfv */
+
+

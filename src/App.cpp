@@ -259,6 +259,7 @@ void App::draw()
 	//this->map.DrawRoads(road_rect, this->camera, this->resources);
 
 	this->map.drawRoads(road_rect, this->camera, this->resources);
+	this->map.test_model.draw();
 	//this->map.callRoadList();
 
 	/*dfv::IntRect outlines_rect = dfv::Utils::CreateRect(

@@ -200,14 +200,56 @@ void Quad::create(const std::vector<sf::Vector3f>& vertices)
 	//this->normals[3] = this->normals[3] / Utils::Length(this->normals[3]);
 }
 
+void Quad::create(const sf::Vector3f & v0,
+				  const sf::Vector3f & v1,
+				  const sf::Vector3f & v2,
+				  const sf::Vector3f & v3)
+{
+	this->vertices.resize(4);
+	this->vertices[0] = v0;
+	this->vertices[1] = v1;
+	this->vertices[2] = v2;
+	this->vertices[3] = v3;
+
+	this->normals.resize(4);
+	this->normals[0] = Utils::cross(this->vertices[1] - this->vertices[0],
+									this->vertices[3] - this->vertices[0]);
+	this->normals[1] = Utils::cross(this->vertices[2] - this->vertices[1],
+									this->vertices[0] - this->vertices[1]);
+	this->normals[2] = Utils::cross(this->vertices[3] - this->vertices[2],
+									this->vertices[1] - this->vertices[2]);
+	this->normals[3] = Utils::cross(this->vertices[0] - this->vertices[3],
+									this->vertices[2] - this->vertices[3]);
+}
+
 sf::Vector3f Quad::getVertex(const unsigned int index) const
 {
-	return this->vertices[index];
+	return this->vertices.at(index);
 }
 
 sf::Vector3f Quad::getNormal(const unsigned int vertex_index) const
 {
-	return this->normals[vertex_index];
+	return this->normals.at(vertex_index);
+}
+
+sf::Vector3f Quad::getNormal() const
+{
+	assert(this->vertices.size() == 4);
+	return Utils::cross(Utils::diff(this->vertices[1], this->vertices[0]),
+						Utils::diff(this->vertices[3], this->vertices[0]));
+}
+
+void Quad::draw() const
+{
+	assert(this->vertices.size() == 4);
+	sf::Vector3f normal = this->getNormal();
+	glNormal3f(normal.x, normal.y, normal.z);
+	std::vector<sf::Vector3f>::const_iterator it;
+	for(it = this->vertices.begin(); it != this->vertices.end(); it++)
+	{
+		glVertex3f(it->x, it->y, it->z);
+	}
+
 }
 
 Utils::Utils()

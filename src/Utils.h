@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
+#include <cassert>
 
 namespace dfv
 {
@@ -103,8 +104,14 @@ class Quad
 public:
 	Quad();
 	void create(const std::vector<sf::Vector3f>& vertices);
+	void create(const sf::Vector3f & v0,
+			    const sf::Vector3f & v1,
+			    const sf::Vector3f & v2,
+			    const sf::Vector3f & v3);
 	sf::Vector3f getVertex(const unsigned int index) const;
 	sf::Vector3f getNormal(const unsigned int vertex_index) const;
+	sf::Vector3f getNormal() const;
+	void draw() const;
 protected:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;

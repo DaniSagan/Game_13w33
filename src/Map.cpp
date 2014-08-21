@@ -261,6 +261,13 @@ void Map::createRandom(const unsigned int size)
 	}
 	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 	std::cout << "No. of buildings: " << building_count << std::endl;
+
+	Quad base;
+	base.create(sf::Vector3f(0.1, 0.1, 0.0),
+			    sf::Vector3f(0.7, 0.1, 0.0),
+			    sf::Vector3f(0.9, 0.8, 0.0),
+			    sf::Vector3f(0.1, 0.5, 0.0));
+	this->test_model.create(this->lp_tiles.at(100).at(100)->getQuad(), base, 10);
 }
 
 void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
@@ -281,6 +288,7 @@ void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 
 	GLfloat light_position[] = { 400.0, -200.0, 400.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
 
 	// If facing down, draw the entire map
 	if(camera.getRpy().x > -20.f)
@@ -429,6 +437,10 @@ void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 		}
 
 	}
+
+
+	//this->test_model.draw();
+
 
 	//this->sky.Draw();
 
