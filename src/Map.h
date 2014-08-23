@@ -59,6 +59,8 @@ public:
 	void drawBuildingBoxes(dfv::RealIntRect rect) const;
 	void drawBuildingOutlines(dfv::RealIntRect rect) const;
 	void drawBuildingFloors(dfv::RealIntRect rect) const;
+	void drawStructureBoxes(dfv::RealIntRect rect) const;
+	void drawStructureOutlines(dfv::RealIntRect rect) const;
 
 	bool saveAsMapFormat(std::string filename);
 	bool loadFromMapFormat(std::string filename);
@@ -81,9 +83,13 @@ public:
 	void generateTileList(const Camera& camera, const Resources& resources);
 	void callTileList() const;
 
+	void generateStructureBoxList(const Camera& camera, const Resources& resources);
+	void callStructureBoxList() const;
+
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
+	bool hasProp(const unsigned int x, const unsigned int y) const;
 	unsigned int getRoadId(const sf::Vector2i& pos) const;
 	unsigned int getRoadOrientation(const sf::Vector2i& pos) const;
 	bool setRoadId(const sf::Vector2i& pos, unsigned int id);
@@ -93,6 +99,7 @@ public:
 	bool loadFromSgmFormat(const std::string& filename);
 
 	bool isWater(unsigned int x, unsigned int y) const;
+	bool isBeach(unsigned int x, unsigned int y) const;
 	sf::Vector3f getNormal(unsigned int x, unsigned int y);
 
 	bool clearRoad(unsigned int x, unsigned int y);
@@ -100,6 +107,13 @@ public:
 	bool clearBuilding(unsigned int x, unsigned int y);
 	bool clearProp(unsigned int x, unsigned int y);
 	sf::Vector2i getTileFromMapPos(sf::Vector3f map_pos) const;
+
+	void addStructure(const unsigned int x, const unsigned int y,
+			          Quad base, const unsigned int floor_count);
+	bool hasStructure(const unsigned int x, const unsigned int y) const;
+
+	float getAvgHeight(const unsigned int x, const unsigned int y) const;
+	float getMaxInclination(const unsigned int x, const unsigned int y) const;
 
 	Model test_model;
 private:
@@ -112,7 +126,7 @@ private:
 	GLuint tile_list;
 	GLuint road_list;
 	unsigned int population;
-
+	GLuint structure_box_list;
 
 };
 

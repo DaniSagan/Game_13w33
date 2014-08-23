@@ -18,6 +18,7 @@
 //#include "Minimap.h"
 #include "gui/Button.h"
 #include "gui/Gui.h"
+#include "Utils.h"
 
 namespace dfv
 {
@@ -47,6 +48,7 @@ public:
 	void createSelectedShapes();
 	void drawSelection(sf::RenderWindow& window) const;
 	sf::Vector2i getCameraTile() const;
+	void generateLists();
 
 	bool test();
 

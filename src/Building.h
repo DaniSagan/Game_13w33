@@ -12,6 +12,7 @@
 #include <SFML/OpenGL.hpp>
 #include <iostream>
 #include <vector>
+#include "Model.h"
 
 namespace dfv
 {
@@ -41,6 +42,7 @@ private:
 	std::vector<sf::Vector2f> floor_pos;
 	std::vector<float> floor_heights;
 	float height;
+	Model model;
 };
 
 } /* namespace dfv */

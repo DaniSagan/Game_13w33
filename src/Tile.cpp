@@ -14,7 +14,8 @@ Tile::Tile():
 		lp_building(NULL),
 		is_road(false),
 		lp_road(NULL),
-		lp_prop(NULL)
+		lp_prop(NULL),
+		has_structure(false)
 {
 	// TODO Auto-generated constructor stub
 
@@ -117,6 +118,11 @@ bool Tile::hasBuilding() const
 	return this->lp_building != NULL;
 }
 
+bool Tile::hasProp() const
+{
+	return this->lp_prop != NULL;
+}
+
 void Tile::drawBuilding(const bool draw_floors) const
 {
 	if(this->lp_building != NULL)
@@ -164,6 +170,7 @@ void Tile::addRoad(dfv::Road::Type type, unsigned int orientation)
 	this->is_road = true;
 	this->lp_road = new Road;
 	this->lp_road->create(this->vertices, type, orientation);
+	this->setColor(sf::Color(32, 32, 32));
 }
 
 unsigned int Tile::getRoadId() const
@@ -368,6 +375,40 @@ Quad Tile::getQuad() const
 	Quad res;
 	res.create(this->vertices);
 	return res;
+}
+
+void Tile::createStructure(Quad base, unsigned int floor_count)
+{
+	Model model;
+	model.create(this->getQuad(), base, floor_count);
+	this->structure.setModel(model);
+	this->has_structure = true;
+}
+
+void Tile::destroyStructure()
+{
+	this->has_structure = false;
+}
+
+void Tile::drawStructureBox() const
+{
+	if(this->has_structure)
+	{
+		this->structure.drawBox();
+	}
+}
+
+void Tile::drawStructureOutline() const
+{
+	if(this->has_structure)
+	{
+		this->structure.drawOutline();
+	}
+}
+
+bool Tile::hasStructure() const
+{
+	return this->has_structure;
 }
 
 } /* namespace dfv */

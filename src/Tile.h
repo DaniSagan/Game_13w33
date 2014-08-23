@@ -17,6 +17,8 @@
 #include "Camera.h"
 #include "Road.h"
 #include "Prop.h"
+#include "Structure.h"
+#include "Model.h"
 
 namespace dfv
 {
@@ -41,6 +43,7 @@ public:
 	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
 	void addBuilding(float height);
 	bool hasBuilding() const;
+	bool hasProp() const;
 	void drawBuilding(const bool draw_floors) const;
 	sf::Color getBuildingColor() const;
 	void setAsRoad(const bool r);
@@ -77,6 +80,12 @@ public:
 
 	Quad getQuad() const;
 
+	void createStructure(Quad base, unsigned int floor_count);
+	void destroyStructure();
+	void drawStructureBox() const;
+	void drawStructureOutline() const;
+	bool hasStructure() const;
+
 private:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
@@ -86,6 +95,9 @@ private:
 	bool is_road;
 	dfv::Road* lp_road;
 	dfv::Prop* lp_prop;
+
+	bool has_structure;
+	Structure structure;
 };
 
 } /* namespace dfv */

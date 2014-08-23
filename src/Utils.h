@@ -112,6 +112,8 @@ public:
 	sf::Vector3f getNormal(const unsigned int vertex_index) const;
 	sf::Vector3f getNormal() const;
 	void draw() const;
+	float getAvgHeight() const;
+	float getMaxInclination() const;
 protected:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
@@ -152,6 +154,7 @@ public:
 	static float interpolate2d(float x1, float x2, float y1, float y2,
 			                   float z11, float z12, float z21, float z22,
 			                   float x, float y);
+	static float pitch(sf::Vector3f v);
 
 	static bool test();
 };

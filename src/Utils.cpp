@@ -252,6 +252,21 @@ void Quad::draw() const
 
 }
 
+float Quad::getAvgHeight() const
+{
+	return 0.25 * (this->vertices.at(0).z + this->vertices.at(1).z + this->vertices.at(2).z + this->vertices.at(3).z);
+}
+
+float Quad::getMaxInclination() const
+{
+	std::vector<float> inc(4);
+	inc.at(0) = Utils::pitch(this->vertices[0]-this->vertices[1]);
+	inc.at(1) = Utils::pitch(this->vertices[1]-this->vertices[2]);
+	inc.at(2) = Utils::pitch(this->vertices[2]-this->vertices[3]);
+	inc.at(3) = Utils::pitch(this->vertices[3]-this->vertices[0]);
+	return *(std::max_element(inc.begin(), inc.end()));
+}
+
 Utils::Utils()
 {
 	// TODO Auto-generated constructor stub
@@ -402,6 +417,11 @@ float Utils::interpolate2d(float x0, float x1, float y0, float y1, float z00,
 	const float a10 = (x1-x)*(y-y0);
 	const float a11 = (x1-x)*(y1-y);
 	return (a11*z00 + a10*z01 + a01*z10 + a00*z11) / a;
+}
+
+float Utils::pitch(sf::Vector3f v)
+{
+	return std::abs(atan(v.z/(sqrt(v.x*v.x+v.y*v.y))));
 }
 
 bool Utils::test()

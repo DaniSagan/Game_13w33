@@ -182,14 +182,14 @@ void Map::createRandom(const unsigned int size)
 			//float x3 = x + 500;
 			//float y3 = y - 400;
 			this->heights[i][j] = 5.0 * (2.0 * pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 4.0) -
-										  0.4 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
+										  0.9 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
 										  0.3 * pow(sin(0.04 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
 										  0.1 * pow(sin(0.1 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
 										  0.1 * pow((sin(0.1* x) + sin(0.1*y)), 2.0) +
 										  0.05 * pow((sin(0.23* x + 89.0) + sin(0.345*y - 123.0)), 2.0) +
 										  0.03 * pow((sin(0.32* x - 121.3) + sin(0.4*y + 57.56)), 2.0) +
 										  0.01 * pow((sin(0.41* x - 11.0) + sin(0.52*y + 570.0)), 2.0));
-			this->heights[i][j] = 0.1 * this->heights[i][j] * this->heights[i][j] + 0.9f;
+			this->heights[i][j] = 0.1 * pow(this->heights[i][j], 2) + 0.80f;
 			if(this->heights[i][j] < 1.0)
 			{
 				this->heights[i][j] = 0.99;
@@ -216,7 +216,7 @@ void Map::createRandom(const unsigned int size)
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
 			//lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
-			lp_tile->setColor(sf::Color(16 + rand() % 20, 144 + rand() % 20, 16 + rand() % 20));
+			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
 			/*if(rand() % 5 < 4)
 			{
@@ -255,7 +255,7 @@ void Map::createRandom(const unsigned int size)
 			   this->heights[i][j+1] < 1.1f)
 			{
 				// beach
-				this->lp_tiles[i][j]->setColor(sf::Color(200 + rand() % 10, 200 + rand() % 10, 110 + rand() % 10));
+				this->lp_tiles[i][j]->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
 			}
 		}
 	}
@@ -1039,6 +1039,36 @@ void Map::drawBuildingFloors(dfv::RealIntRect rect) const
 	glEnd();
 }
 
+void Map::drawStructureBoxes(dfv::RealIntRect rect) const
+{
+	rect.trim(this->getTileRect());
+	glBegin(GL_QUADS);
+	glColor3f(0.6, 0.6, 0.6);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			this->lp_tiles.at(i).at(j)->drawStructureBox();
+		}
+	}
+	glEnd();
+}
+
+void Map::drawStructureOutlines(dfv::RealIntRect rect) const
+{
+	rect.trim(this->getTileRect());
+	glBegin(GL_QUADS);
+	glColor3f(0.1, 0.1, 0.1);
+	for(int i = rect.xmin; i < rect.xmax; i++)
+	{
+		for(int j = rect.ymin; j < rect.ymax; j++)
+		{
+			this->lp_tiles.at(i).at(j)->drawStructureOutline();
+		}
+	}
+	glEnd();
+}
+
 bool Map::saveAsMapFormat(std::string filename)
 {
 	std::ofstream file;
@@ -1271,7 +1301,7 @@ bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
 			tile_pos.y >= 0 && tile_pos.y < (int)this->size)
 	{
-		this->lp_tiles[tile_pos.x][tile_pos.y]->addRoad(type, orientation);
+		this->lp_tiles.at(tile_pos.x).at(tile_pos.y)->addRoad(type, orientation);
 		return true;
 	}
 	else
@@ -1327,7 +1357,21 @@ void Map::generateTileList(const Camera& camera, const Resources& resources)
 
 void Map::callTileList() const
 {
+	//std::cout << "Calling tile list" << std::endl;
 	glCallList(this->tile_list);
+}
+
+void Map::generateStructureBoxList(const Camera& camera, const Resources& resources)
+{
+	this->structure_box_list = glGenLists(1);
+	glNewList(this->structure_box_list, GL_COMPILE);
+	this->drawStructureBoxes(this->getTileRect());
+	glEndList();
+}
+
+void Map::callStructureBoxList() const
+{
+	glCallList(this->structure_box_list);
 }
 
 
@@ -1350,6 +1394,7 @@ void Map::callTileList() const
 void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
 {
 	rect.trim(this->getTileRect());
+	glColor3f(1.f, 1.f, 1.f);
 	for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
 	{
 		for(int j = floor(rect.ymin); j < floor(rect.ymax); j++)
@@ -1366,18 +1411,23 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 {
 	rect.trim(this->getTileRect());
 	unsigned int quadrant = camera.getQuadrant();
+	if(rect.xmin < 0 || rect.xmax >= int(this->size) ||
+	   rect.ymin < 0 || rect.ymax >= int(this->size) )
+	{
+		return;
+	}
 	if(quadrant == 0)
 	{
-		unsigned int midpoint = camera.getPosition().y;
+		int midpoint = camera.getPosition().y;
 		if(midpoint < 0) midpoint = 0;
-		if(midpoint >= this->size) midpoint = this->size - 1;
-		for(unsigned int i = floor(rect.xmax); i > floor(rect.xmin); i--)
+		if(midpoint >= int(this->size)) midpoint = this->size - 1;
+		for(int i = floor(rect.xmax); i > floor(rect.xmin); i--)
 		{
-			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
+			for(int j = floor(rect.ymin); j < midpoint; j++)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
-			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
+			for(int j = floor(rect.ymax); j >= midpoint; j--)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
@@ -1385,16 +1435,16 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 	}
 	else if(quadrant == 1)
 	{
-		unsigned int midpoint = camera.getPosition().x;
+		int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
-		if(midpoint >= this->size) midpoint = this->size - 1;
+		if(midpoint >= int(this->size)) midpoint = this->size - 1;
 		for(int j = floor(rect.ymax); j > floor(rect.ymin); j--)
 		{
-			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
+			for(int i = floor(rect.xmin); i < midpoint; i++)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
-			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
+			for(int i = floor(rect.xmax); i >= midpoint; i--)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
@@ -1402,35 +1452,35 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 	}
 	else if(quadrant == 2)
 	{
-		unsigned int midpoint = camera.getPosition().y;
+		int midpoint = camera.getPosition().y;
 		if(midpoint < 0) midpoint = 0;
-		if(midpoint >= this->size) midpoint = this->size - 1;
-		for(unsigned int i = floor(rect.xmin); i < floor(rect.xmax); i++)
+		if(midpoint >= int(this->size)) midpoint = this->size - 1;
+		for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
 		{
 			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
 			{
-				this->lp_tiles[i][j]->drawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
 			{
-				this->lp_tiles[i][j]->drawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 		}
 	}
 	else if(quadrant == 3)
 	{
-		unsigned int midpoint = camera.getPosition().x;
+		int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
-		if(midpoint >= this->size) midpoint = this->size - 1;
+		if(midpoint >= int(this->size)) midpoint = this->size - 1;
 		for(unsigned int j = floor(rect.ymin); j < floor(rect.ymax); j++)
 		{
-			for(unsigned int i = floor(rect.xmin); i < midpoint; i++)
+			for(int i = floor(rect.xmin); i < midpoint; i++)
 			{
-				this->lp_tiles[i][j]->drawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
-			for(unsigned int i = floor(rect.xmax); i >= midpoint; i--)
+			for(int i = floor(rect.xmax); i >= midpoint; i--)
 			{
-				this->lp_tiles[i][j]->drawProp(camera, resources);
+				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
 		}
 	}
@@ -1520,7 +1570,12 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 
 void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
 {
-	this->lp_tiles[x][y]->addProp(lp_prop);
+	this->lp_tiles.at(x).at(y)->addProp(lp_prop);
+}
+
+bool Map::hasProp(const unsigned int x, const unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->hasProp();
 }
 
 unsigned int Map::getRoadId(const sf::Vector2i& pos) const
@@ -1620,6 +1675,11 @@ bool Map::isWater(unsigned int x, unsigned int y) const
 	return this->lp_tiles.at(x).at(y)->isWater();
 }
 
+bool Map::isBeach(unsigned int x, unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->isBeach();
+}
+
 sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
 {
 	if(x >= 0 && x < this->size &&
@@ -1688,7 +1748,7 @@ bool Map::clearProp(unsigned int x, unsigned int y)
 {
 	try
 	{
-		return this->lp_tiles[x][y]->clearProp();
+		return this->lp_tiles.at(x).at(y)->clearProp();
 	}
 	catch(...)
 	{
@@ -1699,6 +1759,27 @@ bool Map::clearProp(unsigned int x, unsigned int y)
 sf::Vector2i Map::getTileFromMapPos(sf::Vector3f map_pos) const
 {
 	return sf::Vector2i(floor(map_pos.x), floor(map_pos.y));
+}
+
+void Map::addStructure(const unsigned int x, const unsigned int y,
+			           Quad base, const unsigned int floor_count)
+{
+	this->lp_tiles.at(x).at(y)->createStructure(base, floor_count);
+}
+
+bool Map::hasStructure(const unsigned int x, const unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->hasStructure();
+}
+
+float Map::getAvgHeight(const unsigned int x, const unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->getQuad().getAvgHeight();
+}
+
+float Map::getMaxInclination(const unsigned int x, const unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->getQuad().getMaxInclination();
 }
 
 } /* namespace dfv */

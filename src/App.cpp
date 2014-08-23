@@ -47,12 +47,43 @@ void App::initialize()
 	lp_tree->Create(tile_vertices);
 	this->map.addProp(167, 196, lp_tree);*/
 
+	// create roads
+	for(unsigned int i = 0; i < this->map.getSize(); i++)
+	{
+		for(unsigned int j = 0; j < this->map.getSize(); j++)
+		{
+			if(!this->map.isWater(i, j) &&
+			   !this->map.isBeach(i, j) &&
+			   this->map.getMaxInclination(i, j) < 0.25f &&
+			   this->map.getAvgHeight(i, j) < 5.f)
+			{
+				sf::Vector2i pos(i, j);
+				if((i%4 == 0) && !(j%4==0))
+				{
+					this->map.addRoad(pos, Road::straight, 0);
+				}
+				else if(!(i%4 == 0) && (j%4==0))
+				{
+					this->map.addRoad(pos, Road::straight, 1);
+				}
+				else if((i%4 == 0) && (j%4==0))
+				{
+					this->map.addRoad(pos, Road::cross, 0);
+				}
+			}
+		}
+	}
+
+	// generate random trees
 	Tree* lp_tree = new Tree();
-	for(unsigned int i = 0; i < 50000; i++)
+	for(unsigned int i = 0; i < 100000; i++)
 	{
 		unsigned int x = rand() % this->map.getSize();
 		unsigned int y = rand() % this->map.getSize();
-		if(!this->map.isWater(x, y) && !this->map.hasBuilding(x, y) && !this->map.isRoad(x, y))
+		if(!this->map.isWater(x, y) &&
+		   !this->map.isBeach(x, y) &&
+		   !this->map.hasBuilding(x, y) &&
+		   !this->map.isRoad(x, y))
 		{
 			lp_tree = new Tree();
 			std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
@@ -61,13 +92,42 @@ void App::initialize()
 		}
 	}
 
+	// generate random structures
+	unsigned int building_count = 0;
+	for(unsigned int i = 0; i < 2000000; i++)
+	{
+		unsigned int x = rand() % this->map.getSize();
+		unsigned int y = rand() % this->map.getSize();
+		if(!this->map.isWater(x, y) &&
+		   !this->map.isBeach(x, y) &&
+		   !this->map.hasBuilding(x, y) &&
+		   !this->map.isRoad(x, y) &&
+		   !this->map.hasProp(x, y) &&
+		   !this->map.hasStructure(x, y) &&
+		   this->map.getMaxInclination(x, y) < 0.2f &&
+		   this->map.getAvgHeight(x, y) < 5.f)
+		{
+			Quad quad;
+			sf::Vector3f v0(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
+			sf::Vector3f v1(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
+			sf::Vector3f v2(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
+			sf::Vector3f v3(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
+			quad.create(v0, v1, v2, v3);
+			this->map.addStructure(x, y, quad, (rand() % 5) * (rand() % 5));
+			building_count++;
+		}
+	}
+	std::cout << "Buildings created: " << building_count << std::endl;
+
 	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
 	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
 	this->resources.load();
 
-	this->map.generateTileList(this->camera, this->resources);
-	this->map.generateBuildingList();
-	this->map.generateRoadList(this->camera, this->resources);
+	this->generateLists();
+	//this->map.generateTileList(this->camera, this->resources);
+	//this->map.generateBuildingList();
+	//this->map.generateRoadList(this->camera, this->resources);
+	//this->map.generateStructureBoxList(this->camera, this->resources);
 
 }
 
@@ -236,16 +296,17 @@ void App::draw()
 	this->window.setActive();
 	this->camera.setView(this->window);
 
+	//std::cout << "drawing sky" << std::endl;
 	this->map.drawSky();
 
 	this->map.setLight(sf::Vector3f(400.f, -200.f, 400.f));
 
 	//dfv::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
 	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
-	if(this->camera.getRpy().x > -120.f)
-	{
+	//if(this->camera.getRpy().x > -120.f)
+	//{
 		this->map.callTileList();
-	}
+	//}
 	this->map_pos = this->map.getMapPosFromMouse(this->mouse_pos);
 	this->createSelectedShapes();
 
@@ -258,8 +319,10 @@ void App::draw()
 	road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 	//this->map.DrawRoads(road_rect, this->camera, this->resources);
 
+	//std::cout << "drawing roads" << std::endl;
 	this->map.drawRoads(road_rect, this->camera, this->resources);
-	this->map.test_model.draw();
+	//this->map.test_model.drawBox();
+	//this->map.test_model.drawOutlines();
 	//this->map.callRoadList();
 
 	/*dfv::IntRect outlines_rect = dfv::Utils::CreateRect(
@@ -272,20 +335,26 @@ void App::draw()
 
 	//dfv::Utils::TrimRect(outlines_rect, view_rect);
 
-	this->map.callBuildingList();
+	//this->map.callBuildingList();
+	//glDisable(GL_CULL_FACE);
+	//this->map.drawBuildingOutlines(outlines_rect);
+
+	//std::cout << "drawing structures" << std::endl;
+	this->map.callStructureBoxList();
 	glDisable(GL_CULL_FACE);
-	this->map.drawBuildingOutlines(outlines_rect);
+	this->map.drawStructureOutlines(outlines_rect);
 
 	this->gui.setMapPos(this->map_pos);
-	this->map.drawBuildingFloors(outlines_rect);
+	//this->map.drawBuildingFloors(outlines_rect);
 
+	//std::cout << "drawing props" << std::endl;
 	glDisable(GL_LIGHTING);
 	this->map.drawProps(road_rect, this->camera, this->resources);
 	glEnable(GL_LIGHTING);
 
 	glEnable(GL_CULL_FACE);
 
-
+	//std::cout << "drawing selection" << std::endl;
 
 	this->window.pushGLStates();
 
@@ -314,13 +383,15 @@ void App::initOpenGL()
 
 	//GLfloat mat_specular[] = { 0.2, 0.2, 0.2, 0.2 };
 	GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 0.0 };
-	GLfloat mat_shininess[] = { 128.0 };
+	GLfloat mat_shininess[] = { 64.0 };
 	GLfloat light_position[] = { 400.0, 0.0, 400.0, 0.0 };
+	GLfloat ambient[] = {0.1, 0.1, 0.15, 1.0};
 	glShadeModel (GL_SMOOTH);
 
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -488,6 +559,15 @@ sf::Vector2i App::getCameraTile() const
 	sf::Vector2f camera_pos = this->camera.getPosition2d();
 	sf::Vector2i pos(floor(camera_pos.x), floor(camera_pos.y));
 	return pos;
+}
+
+void App::generateLists()
+{
+	std::cout << "generating lists" << std::endl;
+	this->map.generateTileList(this->camera, this->resources);
+	this->map.generateBuildingList();
+	this->map.generateRoadList(this->camera, this->resources);
+	this->map.generateStructureBoxList(this->camera, this->resources);
 }
 
 bool App::test()

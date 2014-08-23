@@ -20,7 +20,8 @@ public:
 	Model();
 	virtual ~Model();
 
-	void draw() const;
+	void drawBox() const;
+	void drawOutlines() const;
 	//void addBaseVertex(const sf::Vector2f & vertex);
 	void create(const Quad & tile_quad,
 			    const Quad & base_quad,
@@ -31,6 +32,7 @@ private:
 	//std::vector<sf::Vector3f> vertices;
 	Quad base_quad;
 	std::vector<Quad> facade_quads;
+	std::vector<Quad> outline_quads;
 	unsigned int floor_count;
 
 };
