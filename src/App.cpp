@@ -19,7 +19,6 @@ App::App():
 		moving_mode(Free)
 {
 	this->initialize();
-	//this->Run();
 }
 
 App::~App()
@@ -42,10 +41,6 @@ void App::initialize()
 
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
 	this->map.createRandom(700);
-	/*Tree* lp_tree = new Tree();
-	std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(sf::Vector2i(167, 196));
-	lp_tree->Create(tile_vertices);
-	this->map.addProp(167, 196, lp_tree);*/
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -108,6 +103,7 @@ void App::initialize()
 		   this->map.getAvgHeight(x, y) < 5.f)
 		{
 			Quad quad;
+			sf::Vector2f mid_point(430, 430);
 			sf::Vector3f v0(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
 			sf::Vector3f v1(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
 			sf::Vector3f v2(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
@@ -124,10 +120,6 @@ void App::initialize()
 	this->resources.load();
 
 	this->generateLists();
-	//this->map.generateTileList(this->camera, this->resources);
-	//this->map.generateBuildingList();
-	//this->map.generateRoadList(this->camera, this->resources);
-	//this->map.generateStructureBoxList(this->camera, this->resources);
 
 }
 
@@ -178,37 +170,6 @@ void App::update()
 		std::cout << "Error getting view pos vertices" << std::endl;
 	}
 
-	/*std::vector<sf::ConvexShape> selected_shapes(this->selected_tiles.size());
-	std::vector<sf::Vector2u>::iterator it;
-	unsigned int i = 0;
-	for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
-	{
-		sf::Vector2i pos(it->x, it->y);
-		try
-		{
-			std::vector<sf::Vector3f> tile_vertices = this->map.GetTileVertices(pos);
-			std::vector<sf::Vector2f> sel_vertices(4);
-			for(unsigned int k = 0; k < 4; k++)
-			{
-				sel_vertices.at(k) = dfv::Utils::GetVector2d(this->map.GetViewPos(tile_vertices[k], window));
-			}
-			selected_shapes.at(i).setPointCount(4);
-			for(unsigned int k = 0; k < 4; k++)
-			{
-				selected_shapes.at(i).setPoint(k, sel_vertices.at(k));
-			}
-			selected_shapes.at(i).setFillColor(sf::Color(255, 0, 0, 64));
-		}
-		catch(...)
-		{
-			std::cout << "Index out of range" << std::endl;
-		}
-		i++;
-	}
-
-	this->gui.setSelectedShapes(selected_shapes);*/
-
-	//std::cout << "Map pos: " << this->map_pos.x << ", " << this->map_pos.y << std::endl;
 }
 
 void App::handleInput()
@@ -233,10 +194,6 @@ void App::handleInput()
 		}
 		else if(event.type == sf::Event::KeyPressed)
 		{
-			/*if(event.key.code == sf::Keyboard::N)
-			{
-				this->walking = !this->walking;
-			}*/
 			if(event.key.code == sf::Keyboard::P)
 			{
 				this->map.saveAsMapFormat("res/map/world1.map");
@@ -246,7 +203,6 @@ void App::handleInput()
 				std::string cmd;
 				std::cout << "cmd> ";
 				std::getline(std::cin, cmd);
-				//this->commands.push_back(cmd);
 				this->command = cmd;
 			}
 		}
@@ -261,12 +217,10 @@ void App::handleInput()
 		{
 			if(event.mouseButton.button == sf::Mouse::Left)
 			{
-				//sf::Vector3f v = this->map.GetMapPosFromMouse(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 				this->select_from = this->map.getTileFromMapPos(this->map_pos);//sf::Vector2i(floor(v.x), floor(v.y));
 				std::cout << "select_from:" << this->select_from.x << ", " << this->select_from.y << std::endl;
 				this->selected_tiles.clear();
 				this->selected_tiles.push_back(this->select_from);
-				//this->createSelectedShapes();
 			}
 			else if(event.mouseButton.button == sf::Mouse::Right)
 			{
@@ -284,10 +238,6 @@ void App::handleInput()
 			}
 		}
 	}
-
-	//this->gui.HandleInput(event, this->commands);
-
-
 }
 
 void App::draw()
@@ -296,71 +246,40 @@ void App::draw()
 	this->window.setActive();
 	this->camera.setView(this->window);
 
-	//std::cout << "drawing sky" << std::endl;
 	this->map.drawSky();
+	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
 
-	this->map.setLight(sf::Vector3f(400.f, -200.f, 400.f));
-
-	//dfv::IntRect view_rect = this->camera.GetRectFromView(this->map.GetRect());
 	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
-	//if(this->camera.getRpy().x > -120.f)
-	//{
-		this->map.callTileList();
-	//}
+	this->map.callTileList();
 	this->map_pos = this->map.getMapPosFromMouse(this->mouse_pos);
 	this->createSelectedShapes();
 
-	//sf::Vector2i position = dfv::Utils::ToVector2i(this->camera.GetPosition2d());
-	//dfv::IntRect road_rect = dfv::Utils::CreateRect(position, 50);
-	//dfv::Utils::TrimRect(road_rect, this->camera.GetRectFromView(this->map.GetRect()));
 	dfv::RealIntRect road_rect;
 	road_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 50);
-	//road_rect.trim(this->map.getRect());
 	road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
-	//this->map.DrawRoads(road_rect, this->camera, this->resources);
 
-	//std::cout << "drawing roads" << std::endl;
 	this->map.drawRoads(road_rect, this->camera, this->resources);
-	//this->map.test_model.drawBox();
-	//this->map.test_model.drawOutlines();
-	//this->map.callRoadList();
-
-	/*dfv::IntRect outlines_rect = dfv::Utils::CreateRect(
-			dfv::Utils::ToVector2i(this->camera.GetPosition2d()),
-			30);*/
 
 	dfv::RealIntRect outlines_rect;
 	outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
 	outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 
-	//dfv::Utils::TrimRect(outlines_rect, view_rect);
-
-	//this->map.callBuildingList();
-	//glDisable(GL_CULL_FACE);
-	//this->map.drawBuildingOutlines(outlines_rect);
-
-	//std::cout << "drawing structures" << std::endl;
 	this->map.callStructureBoxList();
 	glDisable(GL_CULL_FACE);
 	this->map.drawStructureOutlines(outlines_rect);
 
 	this->gui.setMapPos(this->map_pos);
-	//this->map.drawBuildingFloors(outlines_rect);
 
-	//std::cout << "drawing props" << std::endl;
 	glDisable(GL_LIGHTING);
 	this->map.drawProps(road_rect, this->camera, this->resources);
 	glEnable(GL_LIGHTING);
 
 	glEnable(GL_CULL_FACE);
 
-	//std::cout << "drawing selection" << std::endl;
-
 	this->window.pushGLStates();
 
 	this->drawSelection(this->window);
 	this->gui.draw(this->window, this->camera);
-
 
 	this->window.popGLStates();
 	this->window.display();
@@ -381,10 +300,9 @@ void App::initOpenGL()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//GLfloat mat_specular[] = { 0.2, 0.2, 0.2, 0.2 };
 	GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 0.0 };
-	GLfloat mat_shininess[] = { 64.0 };
-	GLfloat light_position[] = { 400.0, 0.0, 400.0, 0.0 };
+	GLfloat mat_shininess[] = { 0.5 };
+	GLfloat light_position[] = { 800.0, 0.0, 800.0, 0.0 };
 	GLfloat ambient[] = {0.1, 0.1, 0.15, 1.0};
 	glShadeModel (GL_SMOOTH);
 
@@ -528,7 +446,6 @@ void App::createSelectedShapes()
 	for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 	{
 		sf::Vector2i pos(it->x, it->y);
-		//std::cout << pos.x << ", " << pos.y << std::endl;
 		std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
 		std::vector<sf::Vector2f> sel_vertices(4);
 		for(unsigned int k = 0; k < 4; k++)

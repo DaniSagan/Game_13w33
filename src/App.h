@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <random>
 #include "Map.h"
 #include "Resources.h"
 //#include "Minimap.h"

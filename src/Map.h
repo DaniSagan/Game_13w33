@@ -13,6 +13,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <random>
 #include <SFML/OpenGL.hpp>
 #include "Camera.h"
 #include "Tile.h"

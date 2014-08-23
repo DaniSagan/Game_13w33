@@ -22,31 +22,19 @@ Model::~Model()
 
 void Model::drawBox() const
 {
-	//glBegin(GL_QUADS);
-	//glColor3f(0.5, 0.5, 0.5);
 	for(auto q: this->facade_quads)
 	{
 		q.draw();
 	}
-
-	//glEnd();
 }
 
 void Model::drawOutlines() const
 {
-	//glBegin(GL_QUADS);
-	//glColor3f(0.1, 0.1, 0.1);
 	for(auto q: this->outline_quads)
 	{
 		q.draw();
 	}
-	//glEnd();
 }
-
-/*void Model::addBaseVertex(const sf::Vector2f& vertex)
-{
-	this->base_vertices.push_back(vertex);
-}*/
 
 void Model::create(const Quad & tile_quad,
 				   const Quad & base_quad,
@@ -87,8 +75,6 @@ void Model::create(const Quad & tile_quad,
 	this->facade_quads.push_back(q);
 
 	// Create building outlines
-
-
 	std::vector<sf::Vector3f> vh = {sf::Vector3f(v0.x, v0.y, 0.0),
 								    sf::Vector3f(v1.x, v1.y, 0.0),
 								    sf::Vector3f(v2.x, v2.y, 0.0),
@@ -116,48 +102,6 @@ void Model::create(const Quad & tile_quad,
 			this->outline_quads.push_back(q);
 		}
 	}
-
-	/*
-	sf::Vector3f vh0(v0.x, v0.y, 0.0);
-	sf::Vector3f vh1(v1.x, v1.y, 0.0);
-	sf::Vector3f vh2(v2.x, v2.y, 0.0);
-	sf::Vector3f vh3(v3.x, v3.y, 0.0);
-
-	sf::Vector3f vv0 = vh0 + margin*(vh0-vh1)/Utils::length(vh0-vh1) + margin*(vh0-vh3)/Utils::length(vh0-vh3);
-	sf::Vector3f vv1 = vh1 + margin*(vh1-vh2)/Utils::length(vh1-vh2) + margin*(vh1-vh0)/Utils::length(vh1-vh0);
-	sf::Vector3f vv2 = vh2 + margin*(vh2-vh3)/Utils::length(vh2-vh3) + margin*(vh2-vh1)/Utils::length(vh2-vh1);
-	sf::Vector3f vv3 = vh3 + margin*(vh3-vh0)/Utils::length(vh3-vh0) + margin*(vh3-vh2)/Utils::length(vh3-vh2);
-
-	for(unsigned int i = 0; i < this->floor_count; i++)
-	{
-		v0 = vv0 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v1 = vv1 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v2 = vv1 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		v3 = vv0 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		q.create(v0, v1, v2, v3);
-		this->outline_quads.push_back(q);
-
-		v0 = vv1 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v1 = vv2 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v2 = vv2 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		v3 = vv1 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		q.create(v0, v1, v2, v3);
-		this->outline_quads.push_back(q);
-
-		v0 = vv2 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v1 = vv3 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v2 = vv3 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		v3 = vv2 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		q.create(v0, v1, v2, v3);
-		this->outline_quads.push_back(q);
-
-		v0 = vv3 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v1 = vv0 + sf::Vector3f(0.0, 0.0, max_height + street_height);
-		v2 = vv0 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		v3 = vv3 + sf::Vector3f(0.0, 0.0, max_height + street_height + line_width);
-		q.create(v0, v1, v2, v3);
-		this->outline_quads.push_back(q);
-	}*/
 }
 
 } /* namespace dfv */
