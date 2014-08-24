@@ -1,4 +1,19 @@
 /*
+ *  Hyperopolis: Megacities building game.
+    Copyright (C) 2014  Daniel Fernández Villanueva
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * App.cpp
  *
  *  Created on: Aug 11, 2013
@@ -109,7 +124,16 @@ void App::initialize()
 			sf::Vector3f v2(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
 			sf::Vector3f v3(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
 			quad.create(v0, v1, v2, v3);
-			this->map.addStructure(x, y, quad, (rand() % 5) * (rand() % 5));
+			unsigned int floor_count = (rand() % 5) * (rand() % 5);
+			if(rand() % 50 == 0)
+			{
+				floor_count *= 2;
+			}
+			if(rand() % 50 == 0)
+			{
+				floor_count *= 2;
+			}
+			this->map.addStructure(x, y, quad, floor_count);
 			building_count++;
 		}
 	}

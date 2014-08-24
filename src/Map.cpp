@@ -1,4 +1,20 @@
 /*
+ *  Hyperopolis: Megacities building game.
+    Copyright (C) 2014  Daniel Fernández Villanueva
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
  * Map.cpp
  *
  *  Created on: Aug 11, 2013
@@ -259,7 +275,7 @@ void Map::createRandom(const unsigned int size)
 			}
 		}
 	}
-	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
+	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 	std::cout << "No. of buildings: " << building_count << std::endl;
 
 	Quad base;
@@ -976,9 +992,9 @@ void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources
 {
 	rect.trim(this->getTileRect());
 	glBegin(GL_QUADS);
-	for(int i = rect.xmin; i < rect.xmax; i++)
+	for(int i = rect.xmin; i <= rect.xmax; i++)
 	{
-		for(int j = rect.ymin; j < rect.ymax; j++)
+		for(int j = rect.ymin; j <= rect.ymax; j++)
 		{
 			this->lp_tiles.at(i).at(j)->draw(camera, resources);
 		}
@@ -1044,9 +1060,9 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 	rect.trim(this->getTileRect());
 	glBegin(GL_QUADS);
 	glColor3f(0.6, 0.6, 0.6);
-	for(int i = rect.xmin; i < rect.xmax; i++)
+	for(int i = rect.xmin; i <= rect.xmax; i++)
 	{
-		for(int j = rect.ymin; j < rect.ymax; j++)
+		for(int j = rect.ymin; j <= rect.ymax; j++)
 		{
 			this->lp_tiles.at(i).at(j)->drawStructureBox();
 		}
@@ -1059,9 +1075,9 @@ void Map::drawStructureOutlines(dfv::RealIntRect rect) const
 	rect.trim(this->getTileRect());
 	glBegin(GL_QUADS);
 	glColor3f(0.1, 0.1, 0.1);
-	for(int i = rect.xmin; i < rect.xmax; i++)
+	for(int i = rect.xmin; i <= rect.xmax; i++)
 	{
-		for(int j = rect.ymin; j < rect.ymax; j++)
+		for(int j = rect.ymin; j <= rect.ymax; j++)
 		{
 			this->lp_tiles.at(i).at(j)->drawStructureOutline();
 		}
@@ -1282,7 +1298,7 @@ dfv::RealRect Map::getRect() const
 
 dfv::RealIntRect Map::getTileRect() const
 {
-	return dfv::RealIntRect(0, (int)this->size, 0, (int)this->size);
+	return dfv::RealIntRect(0, (int)this->size - 1, 0, (int)this->size - 1);
 }
 
 void Map::drawSky() const
@@ -1395,9 +1411,9 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 {
 	rect.trim(this->getTileRect());
 	glColor3f(1.f, 1.f, 1.f);
-	for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
+	for(int i = floor(rect.xmin); i <= floor(rect.xmax); i++)
 	{
-		for(int j = floor(rect.ymin); j < floor(rect.ymax); j++)
+		for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
 		{
 			if(this->lp_tiles.at(i).at(j)->isRoad())
 			{
@@ -1411,11 +1427,7 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 {
 	rect.trim(this->getTileRect());
 	unsigned int quadrant = camera.getQuadrant();
-	if(rect.xmin < 0 || rect.xmax >= int(this->size) ||
-	   rect.ymin < 0 || rect.ymax >= int(this->size) )
-	{
-		return;
-	}
+
 	if(quadrant == 0)
 	{
 		int midpoint = camera.getPosition().y;
@@ -1435,6 +1447,7 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 	}
 	else if(quadrant == 1)
 	{
+		// TODO fix props not rendering when x > 650
 		int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= int(this->size)) midpoint = this->size - 1;
@@ -1457,11 +1470,11 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 		if(midpoint >= int(this->size)) midpoint = this->size - 1;
 		for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
 		{
-			for(unsigned int j = floor(rect.ymin); j < midpoint; j++)
+			for(int j = floor(rect.ymin); j < midpoint; j++)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
-			for(unsigned int j = floor(rect.ymax); j >= midpoint; j--)
+			for(int j = floor(rect.ymax); j >= midpoint; j--)
 			{
 				this->lp_tiles.at(i).at(j)->drawProp(camera, resources);
 			}
