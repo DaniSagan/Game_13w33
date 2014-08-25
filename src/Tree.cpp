@@ -46,9 +46,9 @@ void Tree::create(const std::vector<sf::Vector3f>& tile_vertices)
 		throw std::invalid_argument("tile_vertices must have 4 elements");
 	}
 
-	sf::Vector3f mid_point((tile_vertices[0].x + tile_vertices[2].x) / 2.0,
-			               (tile_vertices[0].y + tile_vertices[2].y) / 2.0,
-			               (tile_vertices[0].z + tile_vertices[2].z) / 2.0);
+	sf::Vector3f mid_point((tile_vertices[1].x + tile_vertices[3].x) / 2.0,
+			               (tile_vertices[1].y + tile_vertices[3].y) / 2.0,
+			               (tile_vertices[1].z + tile_vertices[3].z) / 2.0);
 	std::vector<sf::Vector3f> quad_vertices(4);
 	this->quads.resize(4);
 	quad_vertices[0] = tile_vertices[0];
