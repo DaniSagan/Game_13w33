@@ -39,7 +39,7 @@ App::App():
 
 App::~App()
 {
-	// TODO Auto-generated destructor stub
+
 }
 
 void App::initialize()
@@ -210,16 +210,28 @@ void App::update()
 void App::handleInput()
 {
 	this->mouse_pos = sf::Vector2i(sf::Mouse::getPosition(this->window));
+
+	std::string server_cmd = this->cmd_server.getCmd();
+	if(server_cmd != std::string(""))
+	{
+		std::cout << "Command received!: " << server_cmd << std::endl;
+		this->executeCommand(server_cmd);
+	}
+
 	sf::Event event;
 	this->command.clear();
 	while(this->window.pollEvent(event))
 	{
 		this->gui.handleInput(event, this->command);
 		if(this->executeCommand(this->command)) break;
+
+
+
 		this->camera.handleInput(event);
 
 		if(event.type == sf::Event::Closed)
 		{
+			this->cmd_server.terminate();
 			this->window.close();
 		}
 		else if (event.type == sf::Event::Resized)
@@ -452,7 +464,7 @@ bool App::executeCommand(std::string cmd)
 			if(tokens.at(1) == std::string("road"))
 			{
 				unsigned int id = std::stoi(tokens.at(2));
-				unsigned int orientation = std::stoi(tokens.at(2));
+				unsigned int orientation = std::stoi(tokens.at(3));
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 				{

@@ -60,7 +60,8 @@ CmdServer::CmdServer(const int portno):
 
 CmdServer::~CmdServer()
 {
-
+	close(this->newsockfd);
+	close(this->sockfd);
 }
 
 bool CmdServer::init()
@@ -109,6 +110,7 @@ void CmdServer::runThread()
 			}
 			std::cout << "Message: " << this->buffer << std::endl;
 			this->cmd = std::string(this->buffer);
+			this->cmd_received = true;
 		}
 	}
 }
@@ -125,6 +127,12 @@ std::string CmdServer::getCmd()
 		return std::string("");
 	}
 
+}
+
+void CmdServer::terminate()
+{
+	close(this->newsockfd);
+	close(this->sockfd);
 }
 
 } /* namespace dfv */

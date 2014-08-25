@@ -47,6 +47,7 @@ public:
 	void run();
 	void runThread();
 	std::string getCmd();
+	void terminate();
 
 private:
 	int sockfd;
