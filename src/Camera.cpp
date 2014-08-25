@@ -193,9 +193,15 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	//std::cout << "roll:" << roll << std::endl;
 
 	float height = this->getPosition().z - map_height;
-	if(height < 0.04f)
+	float base_height = 0.05f / cos(pitch*3.141592f/180.f);
+	/*if(height < 0.04f)
 	{
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.04f + map_height));
+	}*/
+
+	if(height < base_height)
+	{
+		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, base_height + map_height));
 	}
 	//float vel = dt * 0.1f * (16*height + 16.0);
 	float vel = 0.1 * (16.0*height + 16.0);
@@ -286,7 +292,7 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		this->setRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->getRpy().z));
 		this->rotate(sf::Vector3f(0.f, 0.f, rot*180.0/3.1416));
 		this->move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
-		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.05f + map_height));
+		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, base_height + map_height));
 	}
 
 	// Normalize camera angles
