@@ -31,7 +31,8 @@ App::App():
 		road_id(0),
 		road_orientation(0),
 		frame_time(0),
-		moving_mode(Free)
+		moving_mode(Free),
+		cmd_server(5005)
 {
 	this->initialize();
 }
@@ -53,6 +54,16 @@ void App::initialize()
 	this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
 	this->window.setVerticalSyncEnabled(true);
 	this->initOpenGL();
+
+	// Initialize comand server
+	if(!this->cmd_server.init())
+	{
+		std::cout << "ERROR: could not initialize command server." << std::endl;
+	}
+	else
+	{
+		this->cmd_server.run();
+	}
 
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
 	this->map.createRandom(700);

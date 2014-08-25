@@ -30,12 +30,14 @@
 #include <string>
 #include <cmath>
 #include <random>
+#include <thread>
 #include "Map.h"
 #include "Resources.h"
 //#include "Minimap.h"
 #include "gui/Button.h"
 #include "gui/Gui.h"
 #include "Utils.h"
+#include "CmdServer.h"
 
 namespace dfv
 {
@@ -96,6 +98,7 @@ private:
 
 	sf::Vector2i select_from;
 	sf::Vector2i select_to;
+	CmdServer cmd_server;
 };
 
 } /* namespace dfv */
