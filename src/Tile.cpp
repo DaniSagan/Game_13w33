@@ -31,7 +31,8 @@ Tile::Tile():
 		is_road(false),
 		lp_road(NULL),
 		lp_prop(NULL),
-		has_structure(false)
+		lp_structure(NULL)
+		//has_structure(false)
 {
 	// TODO Auto-generated constructor stub
 
@@ -41,18 +42,28 @@ Tile::~Tile()
 {
 	if(lp_building != NULL) delete this->lp_building;
 	if(lp_road != NULL) delete this->lp_road;
+	if(lp_structure != NULL) delete this->lp_structure;
 }
 
 void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 {
 	this->vertices.resize(4);
-	this->vertices[0] = sf::Vector3f(pos.x, pos.y, h0);
-	this->vertices[1] = sf::Vector3f(pos.x + 1.0, pos.y, h1);
-	this->vertices[2] = sf::Vector3f(pos.x + 1.0, pos.y + 1.0, h2);
-	this->vertices[3] = sf::Vector3f(pos.x , pos.y + 1.0, h3);
+	this->vertices.at(0) = sf::Vector3f(pos.x, pos.y, h0);
+	this->vertices.at(1) = sf::Vector3f(pos.x + 1.0, pos.y, h1);
+	this->vertices.at(2) = sf::Vector3f(pos.x + 1.0, pos.y + 1.0, h2);
+	this->vertices.at(3) = sf::Vector3f(pos.x , pos.y + 1.0, h3);
 
 	this->normals.resize(4);
-	this->normals[0] = dfv::Utils::cross(
+	this->normals.at(0) = Utils::cross(this->vertices.at(1)-this->vertices.at(0),
+									   this->vertices.at(3)-this->vertices.at(0));
+	this->normals.at(1) = Utils::cross(this->vertices.at(2)-this->vertices.at(1),
+									   this->vertices.at(0)-this->vertices.at(1));
+	this->normals.at(2) = Utils::cross(this->vertices.at(3)-this->vertices.at(2),
+									   this->vertices.at(1)-this->vertices.at(2));
+	this->normals.at(3) = Utils::cross(this->vertices.at(0)-this->vertices.at(3),
+									   this->vertices.at(2)-this->vertices.at(3));
+
+	/*this->normals[0] = dfv::Utils::cross(
 			dfv::Utils::diff(this->vertices[1], this->vertices[0]),
 			dfv::Utils::diff(this->vertices[3], this->vertices[0]));
 	this->normals[1] = dfv::Utils::cross(
@@ -63,7 +74,7 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 			dfv::Utils::diff(this->vertices[1], this->vertices[2]));
 	this->normals[3] = dfv::Utils::cross(
 			dfv::Utils::diff(this->vertices[0], this->vertices[3]),
-			dfv::Utils::diff(this->vertices[2], this->vertices[3]));
+			dfv::Utils::diff(this->vertices[2], this->vertices[3]));*/
 
 	this->colors.resize(4);
 
@@ -397,34 +408,38 @@ void Tile::createStructure(Quad base, unsigned int floor_count)
 {
 	Model model;
 	model.create(this->getQuad(), base, floor_count);
-	this->structure.setModel(model);
-	this->has_structure = true;
+	this->lp_structure = new Structure;
+	this->lp_structure->setModel(model);
+	//this->has_structure = true;
 }
 
 void Tile::destroyStructure()
 {
-	this->has_structure = false;
+	//this->has_structure = false;
+	delete this->lp_structure;
+	this->lp_structure = NULL;
 }
 
 void Tile::drawStructureBox() const
 {
-	if(this->has_structure)
+	if(this->lp_structure != NULL)
 	{
-		this->structure.drawBox();
+		this->lp_structure->drawBox();
 	}
 }
 
 void Tile::drawStructureOutline() const
 {
-	if(this->has_structure)
+	if(this->lp_structure != NULL)
 	{
-		this->structure.drawOutline();
+		this->lp_structure->drawOutline();
 	}
 }
 
 bool Tile::hasStructure() const
 {
-	return this->has_structure;
+	//return this->has_structure;
+	return this->lp_structure != NULL;
 }
 
 } /* namespace dfv */

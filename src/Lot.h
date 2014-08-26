@@ -24,6 +24,9 @@
 #ifndef LOT_H_
 #define LOT_H_
 
+#include <SFML/Graphics.hpp>
+#include "Tile.h"
+
 namespace dfv
 {
 
@@ -32,6 +35,9 @@ class Lot
 public:
 	Lot();
 	virtual ~Lot();
+
+private:
+	std::vector<Tile*> lp_tiles;
 };
 
 } /* namespace dfv */

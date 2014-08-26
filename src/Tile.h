@@ -112,8 +112,9 @@ private:
 	dfv::Road* lp_road;
 	dfv::Prop* lp_prop;
 
-	bool has_structure;
-	Structure structure;
+	//bool has_structure;
+	//Structure structure;
+	Structure* lp_structure;
 };
 
 } /* namespace dfv */
