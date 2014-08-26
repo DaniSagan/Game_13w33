@@ -41,36 +41,19 @@ Tree::~Tree()
 
 void Tree::create(const std::vector<sf::Vector3f>& tile_vertices)
 {
-	if(tile_vertices.size() != 4)
-	{
-		throw std::invalid_argument("tile_vertices must have 4 elements");
-	}
+	assert(tile_vertices.size() == 4);
 
-	sf::Vector3f mid_point((tile_vertices[1].x + tile_vertices[3].x) / 2.0,
-			               (tile_vertices[1].y + tile_vertices[3].y) / 2.0,
-			               (tile_vertices[1].z + tile_vertices[3].z) / 2.0);
+	sf::Vector3f mid_point = (tile_vertices.at(1) + tile_vertices.at(3)) * 0.5f;
 	std::vector<sf::Vector3f> quad_vertices(4);
 	this->quads.resize(4);
-	quad_vertices[0] = tile_vertices[0];
-	quad_vertices[1] = mid_point;
-	quad_vertices[2] = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
-	quad_vertices[3] = tile_vertices[0] + sf::Vector3f(0.0, 0.0, 1.0);
-	this->quads[0].create(quad_vertices);
-	quad_vertices[0] = tile_vertices[1];
-	quad_vertices[1] = mid_point;
-	quad_vertices[2] = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
-	quad_vertices[3] = tile_vertices[1] + sf::Vector3f(0.0, 0.0, 1.0);
-	this->quads[1].create(quad_vertices);
-	quad_vertices[0] = tile_vertices[2];
-	quad_vertices[1] = mid_point;
-	quad_vertices[2] = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
-	quad_vertices[3] = tile_vertices[2] + sf::Vector3f(0.0, 0.0, 1.0);
-	this->quads[2].create(quad_vertices);
-	quad_vertices[0] = tile_vertices[3];
-	quad_vertices[1] = mid_point;
-	quad_vertices[2] = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
-	quad_vertices[3] = tile_vertices[3] + sf::Vector3f(0.0, 0.0, 1.0);
-	this->quads[3].create(quad_vertices);
+	for(std::size_t i = 0; i < this->quads.size(); i++)
+	{
+		quad_vertices.at(0) = tile_vertices[i];
+		quad_vertices.at(1) = mid_point;
+		quad_vertices.at(2) = mid_point + sf::Vector3f(0.0, 0.0, 1.0);
+		quad_vertices.at(3) = tile_vertices[i] + sf::Vector3f(0.0, 0.0, 1.0);
+		this->quads.at(i).create(quad_vertices);
+	}
 	this->type = rand() % 2;
 }
 
