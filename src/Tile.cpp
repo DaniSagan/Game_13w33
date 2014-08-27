@@ -31,7 +31,8 @@ Tile::Tile():
 		is_road(false),
 		lp_road(NULL),
 		lp_prop(NULL),
-		lp_structure(NULL)
+		lp_structure(NULL),
+		lp_lot(NULL)
 		//has_structure(false)
 {
 	// TODO Auto-generated constructor stub

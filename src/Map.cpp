@@ -1059,12 +1059,20 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
 	rect.trim(this->getTileRect());
 	glBegin(GL_QUADS);
-	glColor3f(0.6, 0.6, 0.6);
+	glColor3f(0.9, 0.9, 0.9);
 	for(int i = rect.xmin; i <= rect.xmax; i++)
 	{
 		for(int j = rect.ymin; j <= rect.ymax; j++)
 		{
-			this->lp_tiles.at(i).at(j)->drawStructureBox();
+			//this->lp_tiles.at(i).at(j)->drawStructureBox();
+			Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+			if(lp_lot != NULL)
+			{
+				if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
+				{
+					lp_lot->drawStructureBoxes();
+				}
+			}
 		}
 	}
 	glEnd();
@@ -1079,7 +1087,15 @@ void Map::drawStructureOutlines(dfv::RealIntRect rect) const
 	{
 		for(int j = rect.ymin; j <= rect.ymax; j++)
 		{
-			this->lp_tiles.at(i).at(j)->drawStructureOutline();
+			//this->lp_tiles.at(i).at(j)->drawStructureOutline();
+			Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+			if(lp_lot != NULL)
+			{
+				if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
+				{
+					lp_lot->drawStructureOutlines();
+				}
+			}
 		}
 	}
 	glEnd();
@@ -1310,6 +1326,10 @@ void Map::setLight(const sf::Vector3f& position) const
 {
 	GLfloat light_position[] = { position.x, position.y, position.z, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	GLfloat light_position_1[] = { -position.x, position.y, position.z, 0.0 };
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position_1);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 }
 
 bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation)
@@ -1603,8 +1623,8 @@ unsigned int Map::getRoadOrientation(const sf::Vector2i& pos) const
 
 bool Map::setRoadId(const sf::Vector2i& pos, unsigned int id)
 {
-	if(pos.x >= 0 && pos.x < this->size &&
-	   pos.y >= 0 && pos.y < this->size)
+	if(pos.x >= 0 && pos.x < int(this->size) &&
+	   pos.y >= 0 && pos.y < int(this->size))
 	{
 		return this->lp_tiles[pos.x][pos.y]->setRoadId(id);
 	}
@@ -1793,6 +1813,62 @@ float Map::getAvgHeight(const unsigned int x, const unsigned int y) const
 float Map::getMaxInclination(const unsigned int x, const unsigned int y) const
 {
 	return this->lp_tiles.at(x).at(y)->getQuad().getMaxInclination();
+}
+
+bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
+		unsigned int ymax)
+{
+	// check map boundaries
+	if(xmin < 0 || xmax >= this->getSize() ||
+	   ymin < 0 || ymax >= this->getSize())
+	{
+		return false;
+	}
+
+	// Check if any tile in the region is assigned already to a lot or a road
+	std::vector<Quad> tile_quads;
+	std::vector<sf::Vector2i> tile_indices;
+	for(unsigned int j = ymin; j <= ymax; j++)
+	{
+		for(unsigned int i = xmin; i <= xmax; i++)
+		{
+			if(this->lp_tiles.at(i).at(j)->lp_lot == NULL &&
+			   this->lp_tiles.at(i).at(j)->lp_road == NULL &&
+			   !this->lp_tiles.at(i).at(j)->isBeach() &&
+			   !this->lp_tiles.at(i).at(j)->isWater() &&
+			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 5.f &&
+			   this->lp_tiles.at(i).at(j)->getQuad().getMaxInclination() < 0.2f)
+			{
+				// add tile to the list of tiles for the lot
+				tile_quads.push_back(this->lp_tiles.at(i).at(j)->getQuad());
+				tile_indices.push_back(sf::Vector2i(i, j));
+			}
+			else
+			{
+				// if a tile is assigned to a lot then return
+				// without creating the lot
+				return false;
+			}
+		}
+	}
+
+	// everything is fine, we can create the lot
+	Lot* lp_new_lot = new Lot(tile_indices, tile_quads, tile_quads.at(0).getVertex(0));
+	for(unsigned int j = ymin; j <= ymax; j++)
+	{
+		for(unsigned int i = xmin; i <= xmax; i++)
+		{
+			// each tile has a pointer to the lot
+			this->lp_tiles.at(i).at(j)->lp_lot = lp_new_lot;
+		}
+	}
+
+	return true;
+}
+
+Lot* Map::getLot(unsigned int x, unsigned int y) const
+{
+	return this->lp_tiles.at(x).at(y)->lp_lot;
 }
 
 } /* namespace dfv */

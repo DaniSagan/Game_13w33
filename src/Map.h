@@ -43,11 +43,15 @@
 namespace dfv
 {
 
+//class Tile;
+
 class Map
 {
 public:
 	Map();
 	virtual ~Map();
+
+	//friend class Tile;
 
 	void create(unsigned int size);
 	void generateTiles();
@@ -133,6 +137,10 @@ public:
 	float getMaxInclination(const unsigned int x, const unsigned int y) const;
 
 	Model test_model;
+
+	bool addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax, unsigned int ymax);
+	Lot* getLot(unsigned int x, unsigned int y) const;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

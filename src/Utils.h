@@ -130,6 +130,8 @@ public:
 	void draw() const;
 	float getAvgHeight() const;
 	float getMaxInclination() const;
+	float getMinHeight() const;
+	float getMaxheight() const;
 protected:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
@@ -171,6 +173,8 @@ public:
 			                   float z11, float z12, float z21, float z22,
 			                   float x, float y);
 	static float pitch(sf::Vector3f v);
+	static float floatRandom(const float min, const float max);
+	static float rFunction(const float x, const float n);
 
 	static bool test();
 };

@@ -25,19 +25,42 @@
 #define LOT_H_
 
 #include <SFML/Graphics.hpp>
-#include "Tile.h"
+#include "Structure.h"
+//#include "Tile.h"
 
 namespace dfv
 {
 
+class Tile;
+
 class Lot
 {
 public:
+	//Lot(const std::vector<Tile*> & lp_tiles);
 	Lot();
+	Lot(const std::vector<sf::Vector2i> & tile_indices,
+	    const std::vector<Quad> & tile_quads,
+	    const sf::Vector3f & origin);
 	virtual ~Lot();
 
+	void addStructure(Structure* lp_structure);
+
+	void drawStructureBoxes() const;
+	void drawStructureOutlines() const;
+	bool hasStructure() const;
+
+	float getMinHeight() const;
+	float getMaxHeight() const;
+	sf::Vector3f getOrigin() const;
+	sf::Vector2f getOrigin2d() const;
+	sf::Vector2i getOriginTileIndices() const;
+
 private:
-	std::vector<Tile*> lp_tiles;
+	sf::Vector3f origin;
+	std::vector<Structure*> lp_structures;
+	//std::vector<Tile*> lp_tiles;
+	std::vector<sf::Vector2i> tile_indices;
+	std::vector<Quad> tile_quads;
 };
 
 } /* namespace dfv */

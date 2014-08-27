@@ -28,13 +28,82 @@ namespace dfv
 
 Lot::Lot()
 {
-	// TODO Auto-generated constructor stub
 
+}
+
+Lot::Lot(const std::vector<sf::Vector2i> & tile_indices,
+	     const std::vector<Quad> & tile_quads,
+	     const sf::Vector3f & origin)
+{
+	this->tile_indices = tile_indices;
+	this->tile_quads = tile_quads;
+	this->origin = origin;
 }
 
 Lot::~Lot()
 {
-	// TODO Auto-generated destructor stub
+
+}
+
+void Lot::addStructure(Structure* lp_structure)
+{
+	this->lp_structures.push_back(lp_structure);
+}
+
+void Lot::drawStructureBoxes() const
+{
+	for(auto lp_structure: this->lp_structures)
+	{
+		lp_structure->drawBox();
+	}
+}
+
+void Lot::drawStructureOutlines() const
+{
+	for(auto lp_structure: this->lp_structures)
+	{
+		lp_structure->drawOutline();
+	}
+}
+
+bool Lot::hasStructure() const
+{
+	return !this->lp_structures.empty();
+}
+
+float Lot::getMinHeight() const
+{
+	std::vector<float> vertex_heights;
+	for(Quad tile_quad: this->tile_quads)
+	{
+		vertex_heights.push_back(tile_quad.getMinHeight());
+	}
+	return *(std::min_element(vertex_heights.begin(), vertex_heights.end()));
+}
+
+float Lot::getMaxHeight() const
+{
+	std::vector<float> vertex_heights;
+	for(Quad tile_quad: this->tile_quads)
+	{
+		vertex_heights.push_back(tile_quad.getMaxheight());
+	}
+	return *(std::max_element(vertex_heights.begin(), vertex_heights.end()));
+}
+
+sf::Vector3f Lot::getOrigin() const
+{
+	return this->origin;
+}
+
+sf::Vector2f Lot::getOrigin2d() const
+{
+	return sf::Vector2f(this->origin.x, this->origin.y);
+}
+
+sf::Vector2i Lot::getOriginTileIndices() const
+{
+	return this->tile_indices.at(0);
 }
 
 } /* namespace dfv */

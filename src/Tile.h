@@ -35,9 +35,12 @@
 #include "Prop.h"
 #include "Structure.h"
 #include "Model.h"
+#include "Lot.h"
 
 namespace dfv
 {
+
+class Map;
 
 class Tile
 {
@@ -102,6 +105,8 @@ public:
 	void drawStructureOutline() const;
 	bool hasStructure() const;
 
+	friend class Map;
+
 private:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
@@ -115,6 +120,7 @@ private:
 	//bool has_structure;
 	//Structure structure;
 	Structure* lp_structure;
+	Lot* lp_lot;
 };
 
 } /* namespace dfv */

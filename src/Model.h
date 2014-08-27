@@ -43,6 +43,12 @@ public:
 	void create(const Quad & tile_quad,
 			    const Quad & base_quad,
 			    unsigned int floor_count);
+
+	void create(const float min_terrain_height,
+				const float max_terrain_height,
+				const sf::Vector2f & position,
+				const Quad & base_quad,
+				unsigned int floor_count);
 	//std::vector<sf::Vector2f> base;
 private:
 	//std::vector<sf::Vector2f> base_vertices;

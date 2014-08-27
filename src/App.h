@@ -99,6 +99,8 @@ private:
 	sf::Vector2i select_from;
 	sf::Vector2i select_to;
 	CmdServer cmd_server;
+
+	Lot test_lot;
 };
 
 } /* namespace dfv */

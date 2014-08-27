@@ -192,28 +192,25 @@ Quad::Quad()
 
 void Quad::create(const std::vector<sf::Vector3f>& vertices)
 {
-	if(vertices.size() != 4)
-	{
-		throw std::invalid_argument("parameter vertices must have 4 elements");
-	}
+	assert(vertices.size() == 4);
 	this->vertices.resize(4);
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		this->vertices[i] = vertices[i];
+		this->vertices.at(i) = vertices.at(i);
 	}
 	this->normals.resize(4);
 	this->normals[0] = Utils::cross(this->vertices[1] - this->vertices[0],
 			                        this->vertices[3] - this->vertices[0]);
-	//this->normals[0] = this->normals[0] / Utils::Length(this->normals[0]);
 	this->normals[1] = Utils::cross(this->vertices[2] - this->vertices[1],
 				                    this->vertices[0] - this->vertices[1]);
-	//this->normals[1] = this->normals[1] / Utils::Length(this->normals[1]);
 	this->normals[2] = Utils::cross(this->vertices[3] - this->vertices[2],
 									this->vertices[1] - this->vertices[2]);
-	//this->normals[2] = this->normals[0] / Utils::Length(this->normals[2]);
 	this->normals[3] = Utils::cross(this->vertices[0] - this->vertices[3],
 									this->vertices[2] - this->vertices[3]);
-	//this->normals[3] = this->normals[3] / Utils::Length(this->normals[3]);
+	this->normals.at(0) = this->normals.at(0) / Utils::length(this->normals.at(0));
+	this->normals.at(1) = this->normals.at(1) / Utils::length(this->normals.at(1));
+	this->normals.at(2) = this->normals.at(2) / Utils::length(this->normals.at(2));
+	this->normals.at(3) = this->normals.at(3) / Utils::length(this->normals.at(3));
 }
 
 void Quad::create(const sf::Vector3f & v0,
@@ -236,6 +233,10 @@ void Quad::create(const sf::Vector3f & v0,
 									this->vertices[1] - this->vertices[2]);
 	this->normals[3] = Utils::cross(this->vertices[0] - this->vertices[3],
 									this->vertices[2] - this->vertices[3]);
+	this->normals.at(0) = this->normals.at(0) / Utils::length(this->normals.at(0));
+	this->normals.at(1) = this->normals.at(1) / Utils::length(this->normals.at(1));
+	this->normals.at(2) = this->normals.at(2) / Utils::length(this->normals.at(2));
+	this->normals.at(3) = this->normals.at(3) / Utils::length(this->normals.at(3));
 }
 
 sf::Vector3f Quad::getVertex(const unsigned int index) const
@@ -251,8 +252,9 @@ sf::Vector3f Quad::getNormal(const unsigned int vertex_index) const
 sf::Vector3f Quad::getNormal() const
 {
 	assert(this->vertices.size() == 4);
-	return Utils::cross(Utils::diff(this->vertices[1], this->vertices[0]),
-						Utils::diff(this->vertices[3], this->vertices[0]));
+	sf::Vector3f v =  Utils::cross(Utils::diff(this->vertices[1], this->vertices[0]),
+								   Utils::diff(this->vertices[3], this->vertices[0]));
+	return v / Utils::length(v);
 }
 
 void Quad::draw() const
@@ -281,6 +283,26 @@ float Quad::getMaxInclination() const
 	inc.at(2) = Utils::pitch(this->vertices[2]-this->vertices[3]);
 	inc.at(3) = Utils::pitch(this->vertices[3]-this->vertices[0]);
 	return *(std::max_element(inc.begin(), inc.end()));
+}
+
+float Quad::getMinHeight() const
+{
+	std::vector<float> heights;
+	for(auto vertex: this->vertices)
+	{
+		heights.push_back(vertex.z);
+	}
+	return *(std::min_element(heights.begin(), heights.end()));
+}
+
+float Quad::getMaxheight() const
+{
+	std::vector<float> heights;
+	for(auto vertex: this->vertices)
+	{
+		heights.push_back(vertex.z);
+	}
+	return *(std::max_element(heights.begin(), heights.end()));
 }
 
 Utils::Utils()
@@ -440,6 +462,17 @@ float Utils::pitch(sf::Vector3f v)
 	return std::abs(atan(v.z/(sqrt(v.x*v.x+v.y*v.y))));
 }
 
+float Utils::floatRandom(const float min, const float max)
+{
+	return min + (max-min)*(float(rand()) / float(RAND_MAX));
+}
+
+float Utils::rFunction(const float x, const float n)
+{
+	float e = 2.7182818284;
+	return (pow(e, n*(1.f-x)) - 1.f) / (pow(e, n) - 1.f);
+}
+
 bool Utils::test()
 {
 	bool everything_ok = true;
@@ -448,9 +481,11 @@ bool Utils::test()
 				  1.0, 2.0, 3.0, 4.0,
 				  0.0, 0.0) == 1.0;
 
-	std::cout << interpolate2d(0.0, 1.0, 0.0, 1.0,
-			  1.0, 2.0, 3.0, 4.0,
-			  0.0, 0.0) << std::endl;
+	bool test_rFunction = std::abs(rFunction(0.f, 10.f) - 1.0) < 1e-10 &&
+					      std::abs(rFunction(1.f, 10.f)) < 1e-10;
+
+	std::cout << rFunction(0.f, 10.f) << std::endl;
+	std::cout << rFunction(1.f, 10.f) << std::endl;
 
 	if(test_interpolate2d)
 	{
@@ -462,8 +497,20 @@ bool Utils::test()
 		everything_ok = false;
 	}
 
+	if(test_rFunction)
+	{
+		std::cout << "test_rFunction passed" << std::endl;
+	}
+	else
+	{
+		std::cout << "test_rFunction NOT passed" << std::endl;
+		everything_ok = false;
+	}
+
 	return everything_ok;
 }
+
+
 
 } /* namespace dfv */
 

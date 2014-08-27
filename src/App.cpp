@@ -113,7 +113,38 @@ void App::initialize()
 		}
 	}
 
+	// generate lots
+	for(unsigned int i = 0; i < 5000000; i++)
+	{
+		unsigned int xmin = rand() % this->map.getSize();
+		unsigned int ymin = rand() % this->map.getSize();
+		//unsigned int size_x = (rand() % 3) + 1;
+		//unsigned int size_y = (rand() % 3) + 1;
+		unsigned int size_x = 1 + floor(2.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
+		unsigned int size_y = 1 + floor(2.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
+		//std::cout << xmin << ", " << ymin << ", " << size_x << ", " << size_y << std::endl;
+		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
+		{
+			Model model;
+			Lot* lp_lot = this->map.getLot(xmin, ymin);
+			Quad base_quad;
+			std::vector<sf::Vector3f> base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.f, 0.3*size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.f, 0.3*size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
+			base_quad.create(base_vertices);
+			unsigned int floor_count = floor(40.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 3));
+			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
+
+			Structure* lp_structure = new Structure();
+			lp_structure->setModel(model);
+			lp_lot->addStructure(lp_structure);
+			//std::cout << "Model created" << std::endl;
+		}
+	}
+
 	// generate random structures
+	/*
 	unsigned int building_count = 0;
 	for(unsigned int i = 0; i < 2000000; i++)
 	{
@@ -149,6 +180,7 @@ void App::initialize()
 		}
 	}
 	std::cout << "Buildings created: " << building_count << std::endl;
+	*/
 
 	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
 	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
@@ -222,12 +254,18 @@ void App::handleInput()
 	this->command.clear();
 	while(this->window.pollEvent(event))
 	{
+		this->camera.handleInput(event);
+
 		this->gui.handleInput(event, this->command);
+		if(!this->command.empty())
+		{
+			std::cout << "Command: " << this->command << std::endl;
+		}
 		if(this->executeCommand(this->command)) break;
 
 
 
-		this->camera.handleInput(event);
+
 
 		if(event.type == sf::Event::Closed)
 		{
@@ -349,17 +387,27 @@ void App::initOpenGL()
 
 	GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 0.0 };
 	GLfloat mat_shininess[] = { 0.5 };
-	GLfloat light_position[] = { 800.0, 0.0, 800.0, 0.0 };
-	GLfloat ambient[] = {0.1, 0.1, 0.15, 1.0};
+	GLfloat light_position_0[] = { 8000.0, 0.0, 8000.0, 0.0 };
+	GLfloat light_position_1[] = { -8000.0, 1000.0, 8000.0, 0.0 };
+	//GLfloat ambient[] = {0.1, 0.1, 0.15, 1.0};
+	GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
 	glShadeModel (GL_SMOOTH);
 
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position_0);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position_1);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+
+	GLfloat light1_diffuse[] = {0.2, 0.2, 0.2, 1.0}; /* bright white */
+	GLfloat light1_specular[] = {0.2, 0.2, 0.2, 1.0};
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
 }
