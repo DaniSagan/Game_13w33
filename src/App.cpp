@@ -114,6 +114,8 @@ void App::initialize()
 	}
 
 	// generate lots
+	unsigned int buildings = 0;
+	unsigned int floors = 0;
 	for(unsigned int i = 0; i < 5000000; i++)
 	{
 		unsigned int xmin = rand() % this->map.getSize();
@@ -133,15 +135,21 @@ void App::initialize()
 													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
 													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
-			unsigned int floor_count = floor(40.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 3));
+			unsigned int floor_count = floor(10.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();
 			lp_structure->setModel(model);
 			lp_lot->addStructure(lp_structure);
+
+			buildings++;
+			floors += floor_count;
 			//std::cout << "Model created" << std::endl;
 		}
 	}
+
+	std::cout << "Buildings: " << buildings << std::endl;
+	std::cout << "Floors: " << floors << std::endl;
 
 	// generate random structures
 	/*
@@ -387,8 +395,8 @@ void App::initOpenGL()
 
 	GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 0.0 };
 	GLfloat mat_shininess[] = { 0.5 };
-	GLfloat light_position_0[] = { 8000.0, 0.0, 8000.0, 0.0 };
-	GLfloat light_position_1[] = { -8000.0, 1000.0, 8000.0, 0.0 };
+	GLfloat light_position_0[] = { 800.0, -200.0, 800.0, 0.0 };
+	GLfloat light_position_1[] = { -800.0, -200.0, 800.0, 0.0 };
 	//GLfloat ambient[] = {0.1, 0.1, 0.15, 1.0};
 	GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
 	glShadeModel (GL_SMOOTH);
@@ -400,7 +408,7 @@ void App::initOpenGL()
 	glLightfv(GL_LIGHT1, GL_POSITION, light_position_1);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
 
-	GLfloat light1_diffuse[] = {0.2, 0.2, 0.2, 1.0}; /* bright white */
+	GLfloat light1_diffuse[] = {0.2, 0.2, 0.2, 1.0};
 	GLfloat light1_specular[] = {0.2, 0.2, 0.2, 1.0};
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
 	glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
@@ -410,6 +418,9 @@ void App::initOpenGL()
 	glEnable(GL_LIGHT1);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
+
+	//glEnable (GL_BLEND);
+	//glEnable (GL_POLYGON_SMOOTH);
 }
 
 bool App::executeCommand(std::string cmd)
