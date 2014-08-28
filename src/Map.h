@@ -58,6 +58,7 @@ public:
 	void createFromFile(std::string filename, unsigned int water_level, float max_height);
 	void createRandom(const unsigned int size);
 	void createFlat(const unsigned int size, float height);
+	void createValley(const unsigned int size, const float a, const float b);
 	void draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const;
 	unsigned int getSize() const;
 	float getTileHeight(int x, int y);

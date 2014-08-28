@@ -104,7 +104,7 @@ void Tile::setColor(sf::Color color)
 			float rr3 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f + rr1, 0.9f + rr2, 0.4f + rr3);
 		}
-		else if(this->vertices[i].z > snow_threshold)
+		else if(this->vertices[i].z > snow_threshold && this->lp_road == NULL)
 		{
 			this->colors[i] = sf::Vector3f(0.9f, 0.9f, 0.95f);
 		}

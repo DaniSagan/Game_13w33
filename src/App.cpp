@@ -67,7 +67,8 @@ void App::initialize()
 
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
 	//this->map.createRandom(700);
-	this->map.createFlat(850, 2.0);
+	//this->map.createFlat(850, 2.0);
+	this->map.createValley(700, 2.f, 15.f);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -76,19 +77,20 @@ void App::initialize()
 		{
 			if(!this->map.isWater(i, j) &&
 			   !this->map.isBeach(i, j) &&
-			   this->map.getMaxInclination(i, j) < 0.25f &&
-			   this->map.getAvgHeight(i, j) < 5.f)
+			   this->map.getMaxInclination(i, j) < 0.25f //&&
+			   //this->map.getAvgHeight(i, j) < 5.f)
+			   )
 			{
 				sf::Vector2i pos(i, j);
-				if((i%4 == 0) && !(j%4==0))
+				if((i%4 == 0) && !((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 0);
 				}
-				else if(!(i%4 == 0) && (j%4==0))
+				else if(!(i%4 == 0) && ((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 1);
 				}
-				else if((i%4 == 0) && (j%4==0))
+				else if((i%4 == 0) && ((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::cross, 0);
 				}
