@@ -66,7 +66,8 @@ void App::initialize()
 	}
 
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
-	this->map.createRandom(700);
+	//this->map.createRandom(700);
+	this->map.createFlat(850, 2.0);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)

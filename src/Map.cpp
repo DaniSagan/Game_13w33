@@ -276,14 +276,64 @@ void Map::createRandom(const unsigned int size)
 		}
 	}
 	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
-	std::cout << "No. of buildings: " << building_count << std::endl;
+	//std::cout << "No. of buildings: " << building_count << std::endl;
 
-	Quad base;
+	/*Quad base;
 	base.create(sf::Vector3f(0.1, 0.1, 0.0),
 			    sf::Vector3f(0.7, 0.1, 0.0),
 			    sf::Vector3f(0.9, 0.8, 0.0),
 			    sf::Vector3f(0.1, 0.5, 0.0));
-	this->test_model.create(this->lp_tiles.at(100).at(100)->getQuad(), base, 10);
+	this->test_model.create(this->lp_tiles.at(100).at(100)->getQuad(), base, 10);*/
+}
+
+void Map::createFlat(const unsigned int size, float height)
+{
+	this->size = size;
+
+	// Create height data
+	this->heights.resize(size + 1);
+	for(unsigned int i = 0; i < size + 1; i++)
+	{
+		this->heights.at(i).resize(size + 1);
+		for(unsigned int j = 0; j < size + 1; j++)
+		{
+			this->heights.at(i).at(j) = height;
+		}
+	}
+
+	// Create tile data
+	this->lp_tiles.resize(size);
+	int building_count = 0;
+	for(unsigned int i = 0; i < size; i++)
+	{
+		this->lp_tiles[i].resize(size);
+		for(unsigned int j = 0; j < size; j++)
+		{
+			float x = (float)i - (float)(size + 1)/2.0;
+			float y = (float)j - (float)(size + 1)/2.0;
+
+			dfv::Tile* lp_tile = new Tile;
+			lp_tile->create(
+					sf::Vector2f(i, j),
+					this->heights[i][j],
+					this->heights[i+1][j],
+					this->heights[i+1][j+1],
+					this->heights[i][j+1]);
+			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
+			this->lp_tiles[i][j] = lp_tile;
+
+			// If it's a beach
+			if(this->heights[i][j] < 1.1f &&
+			   this->heights[i+1][j] < 1.1f &&
+			   this->heights[i+1][j+1] < 1.1f &&
+			   this->heights[i][j+1] < 1.1f)
+			{
+				// beach
+				this->lp_tiles[i][j]->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
+			}
+		}
+	}
+	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
 void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
@@ -1836,6 +1886,7 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 			   this->lp_tiles.at(i).at(j)->lp_road == NULL &&
 			   !this->lp_tiles.at(i).at(j)->isBeach() &&
 			   !this->lp_tiles.at(i).at(j)->isWater() &&
+			   this->lp_tiles.at(i).at(j)->lp_prop == NULL &&
 			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 5.f &&
 			   this->lp_tiles.at(i).at(j)->getQuad().getMaxInclination() < 0.2f)
 			{

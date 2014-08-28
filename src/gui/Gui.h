@@ -50,6 +50,11 @@ public:
 		copy
 	};
 
+	enum Info
+	{
+		Fps
+	};
+
 	void draw(sf::RenderWindow& window, const Camera& camera) const;
 	void setFps(float fps);
 	void setQuadrant(unsigned int quadrant);
@@ -80,6 +85,8 @@ private:
 	std::vector<sf::ConvexShape> selected_shapes;
 
 	std::vector<TextButton> text_button_list;
+
+	std::map<Info, std::string> info;
 	//TextButton text_button;
 };
 
