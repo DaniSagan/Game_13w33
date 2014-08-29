@@ -473,6 +473,11 @@ float Utils::rFunction(const float x, const float n)
 	return (pow(e, n*(1.f-x)) - 1.f) / (pow(e, n) - 1.f);
 }
 
+float Utils::angle(const sf::Vector3f& v1, const sf::Vector3f& v2)
+{
+	return Utils::dot(v1, v2) / (Utils::length(v1)*Utils::length(v2));
+}
+
 bool Utils::test()
 {
 	bool everything_ok = true;

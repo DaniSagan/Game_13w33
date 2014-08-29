@@ -160,9 +160,18 @@ void Model::create(const float min_terrain_height,
 	std::vector<sf::Vector3f> vv(4);
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		vv.at(i) = vh.at(i) +
+		//float angle = Utils::dot(vh.at(i%4), vh.at((i+1)%4)) / Utils::length()
+		sf::Vector3f& v0 = vh.at(i);
+		sf::Vector3f& v1 = vh.at((i+1)%4);
+		sf::Vector3f& v2 = vh.at((i-1)%4);
+		float angle = Utils::angle(v1, v2);
+		float margin2 = margin / sin(angle);
+		/*vv.at(i) = vh.at(i) +
 				   margin*(vh.at(i%4)-vh.at((i+1)%4))/Utils::length(vh.at(i%4)-vh.at((i+1)%4)) +
-				   margin*(vh.at(i%4)-vh.at((i-1)%4))/Utils::length(vh.at(i%4)-vh.at((i-1)%4));
+				   margin*(vh.at(i%4)-vh.at((i-1)%4))/Utils::length(vh.at(i%4)-vh.at((i-1)%4));*/
+		vv.at(i) = v0 +
+				   margin2 * (v0-v1) / Utils::length(v0-v1) +
+				   margin2 * (v0-v2) / Utils::length(v0-v2);
 	}
 
 	assert(std::abs(floor_count) < 10000);

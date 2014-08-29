@@ -175,6 +175,7 @@ public:
 	static float pitch(sf::Vector3f v);
 	static float floatRandom(const float min, const float max);
 	static float rFunction(const float x, const float n);
+	static float angle(const sf::Vector3f& v1, const sf::Vector3f& v2);
 
 	static bool test();
 };
