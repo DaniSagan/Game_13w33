@@ -33,6 +33,9 @@
 #include "Button.h"
 #include "TextButton.h"
 
+#include "Assets.h"
+#include "Text.h"
+
 namespace dfv
 {
 
@@ -87,6 +90,9 @@ private:
 	std::vector<TextButton> text_button_list;
 
 	std::map<Info, std::string> info;
+
+	Assets assets;
+	Text test_text;
 	//TextButton text_button;
 };
 

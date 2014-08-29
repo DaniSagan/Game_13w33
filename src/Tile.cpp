@@ -411,6 +411,7 @@ void Tile::createStructure(Quad base, unsigned int floor_count)
 	model.create(this->getQuad(), base, floor_count);
 	this->lp_structure = new Structure;
 	this->lp_structure->setModel(model);
+	this->setColor({220, 220, 220});
 	//this->has_structure = true;
 }
 

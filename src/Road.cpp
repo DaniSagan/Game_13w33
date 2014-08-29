@@ -46,7 +46,7 @@ void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
 	this->vertices.resize(4);
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		this->vertices[i] = vertices[i] + sf::Vector3f(0.0, 0.0, 0.02f);
+		this->vertices[i] = vertices[i] + sf::Vector3f(0.0, 0.0, 0.01f);
 	}
 	this->normals.resize(4);
 	this->normals[0] = dfv::Utils::cross(

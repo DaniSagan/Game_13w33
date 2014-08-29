@@ -49,7 +49,7 @@ void App::initialize()
 		std::cout << "ERROR: there are test not passed." << std::endl;
 	}
 
-	srand(0);
+	srand(time(NULL));
 
 	this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
 	this->window.setVerticalSyncEnabled(true);
@@ -68,7 +68,8 @@ void App::initialize()
 	//this->map.LoadFromMapFormat("res/map/world1_test.map");
 	//this->map.createRandom(700);
 	//this->map.createFlat(850, 2.0);
-	this->map.createValley(700, 2.f, 15.f);
+	//this->map.createFlat(64, 2.0);
+	this->map.createValley(64, 2.f, 15.f);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -100,7 +101,7 @@ void App::initialize()
 
 	// generate random trees
 	Tree* lp_tree = new Tree();
-	for(unsigned int i = 0; i < 100000; i++)
+	for(unsigned int i = 0; i < 2000; i++)
 	{
 		unsigned int x = rand() % this->map.getSize();
 		unsigned int y = rand() % this->map.getSize();
@@ -138,7 +139,7 @@ void App::initialize()
 													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
 													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
-			unsigned int floor_count = floor(10.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			unsigned int floor_count = floor(20.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();
@@ -153,45 +154,6 @@ void App::initialize()
 
 	std::cout << "Buildings: " << buildings << std::endl;
 	std::cout << "Floors: " << floors << std::endl;
-
-	// generate random structures
-	/*
-	unsigned int building_count = 0;
-	for(unsigned int i = 0; i < 2000000; i++)
-	{
-		unsigned int x = rand() % this->map.getSize();
-		unsigned int y = rand() % this->map.getSize();
-		if(!this->map.isWater(x, y) &&
-		   !this->map.isBeach(x, y) &&
-		   !this->map.hasBuilding(x, y) &&
-		   !this->map.isRoad(x, y) &&
-		   !this->map.hasProp(x, y) &&
-		   !this->map.hasStructure(x, y) &&
-		   this->map.getMaxInclination(x, y) < 0.2f &&
-		   this->map.getAvgHeight(x, y) < 5.f)
-		{
-			Quad quad;
-			sf::Vector2f mid_point(430, 430);
-			sf::Vector3f v0(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
-			sf::Vector3f v1(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0 + (float(rand()) / float(RAND_MAX))*0.4, 0.0);
-			sf::Vector3f v2(1.0 - (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
-			sf::Vector3f v3(0.0 + (float(rand()) / float(RAND_MAX))*0.4, 1.0 - (float(rand()) / float(RAND_MAX))*0.4, 0.0);
-			quad.create(v0, v1, v2, v3);
-			unsigned int floor_count = (rand() % 5) * (rand() % 5);
-			if(rand() % 50 == 0)
-			{
-				floor_count *= 2;
-			}
-			if(rand() % 50 == 0)
-			{
-				floor_count *= 2;
-			}
-			this->map.addStructure(x, y, quad, floor_count);
-			building_count++;
-		}
-	}
-	std::cout << "Buildings created: " << building_count << std::endl;
-	*/
 
 	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
 	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
@@ -222,6 +184,7 @@ void App::update()
 						this->map.getHeight(sf::Vector2f(this->camera.getPosition().x, this->camera.getPosition().y)),
 						normal);
 
+	// update gui data
 	this->gui.setFps(1.0 / this->frame_time);
 	this->gui.setQuadrant(this->camera.getQuadrant());
 	this->gui.update(this->map, this->camera.getPosition2d());

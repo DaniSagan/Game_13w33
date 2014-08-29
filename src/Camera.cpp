@@ -181,19 +181,19 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 {
 	this->map_normal = normal;
 	//std::cout << "normal: " << normal.x << ", " << normal.y << ", " << normal.z << std::endl;
-	sf::Vector3f vdirx(sin(this->rpy.z*3.1416/180.0), cos(this->rpy.z*3.1416/180.0), 0.0);
-	sf::Vector3f vdiry(sin((this->rpy.z-90)*3.141592/180.0), cos((this->rpy.z-90)*3.141592/180.0), 0.0);
+	sf::Vector3f vdirx(sin(this->rpy.z*M_PI/180.0), cos(this->rpy.z*M_PI/180.0), 0.0);
+	sf::Vector3f vdiry(sin((this->rpy.z-90)*M_PI/180.0), cos((this->rpy.z-90)*M_PI/180.0), 0.0);
 	//std::cout << "vdirx: " << vdirx.x << ", " << vdirx.y << ", " << vdirx.z << std::endl;
 	//std::cout << "vdiry: " << vdiry.x << ", " << vdiry.y << ", " << vdiry.z << std::endl;
 
-	float pitch = acos(Utils::dot(vdirx, normal)) * 180.0/3.141592 - 90.0;
-	float roll = acos(Utils::dot(vdiry, normal)) * 180.0/3.141592 - 90.0;
+	float pitch = acos(Utils::dot(vdirx, normal)) * 180.0/M_PI - 90.0;
+	float roll = acos(Utils::dot(vdiry, normal)) * 180.0/M_PI - 90.0;
 
 	//std::cout << "pitch:" << pitch << std::endl;
 	//std::cout << "roll:" << roll << std::endl;
 
 	float height = this->getPosition().z - map_height;
-	float base_height = 0.05f / cos(pitch*3.141592f/180.f);
+	float base_height = 0.05f / cos(pitch*M_PI/180.f);
 	/*if(height < 0.04f)
 	{
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.04f + map_height));
@@ -205,8 +205,8 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	}
 	//float vel = dt * 0.1f * (16*height + 16.0);
 	float vel = 0.1 * (16.0*height + 16.0);
-	float ang = this->getRpy().z * 3.1416 / 180.0;
-	float angx = this->getRpy().x * 3.1416 / 180.0;
+	float ang = this->getRpy().z * M_PI / 180.0;
+	float angx = this->getRpy().x * M_PI / 180.0;
 
 	if(this->mode == Free)
 	{
@@ -290,7 +290,7 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		this->curr_pitch += 2.0f*(pitch - this->curr_pitch)*dt;
 		this->curr_roll += 2.0f*(roll - this->curr_roll)*dt;
 		this->setRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->getRpy().z));
-		this->rotate(sf::Vector3f(0.f, 0.f, rot*180.0/3.1416));
+		this->rotate(sf::Vector3f(0.f, 0.f, rot*180.0/M_PI));
 		this->move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, base_height + map_height));
 	}
@@ -318,7 +318,7 @@ unsigned int Camera::getCarGear() const
 
 float Camera::getMotorRPM() const
 {
-	return this->car.getMotorW() * 60 / (2*3.1416);
+	return this->car.getMotorW() * 60 / (2*M_PI);
 }
 
 float Camera::getCarTorque() const

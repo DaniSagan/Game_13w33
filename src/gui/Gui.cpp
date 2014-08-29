@@ -29,10 +29,12 @@ namespace dfv
 Gui::Gui():
 		fps(0),
 		quadrant(0),
-		selected_tool(none)
+		selected_tool(none),
+		test_text(nullptr)
 {
 	this->minimap.create(256);
 	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
+	assert(this->assets.load());
 
 	/*Button b1("res/gui/button_road.png", sf::Vector2f(0, 0));
 	b1.SetCommand(std::string("button_road_cmd"));
@@ -63,6 +65,14 @@ Gui::Gui():
 	tb3.setText(std::string("Clear buildings"));
 	tb3.setCommand(std::string("clear building"));
 	this->text_button_list.push_back(tb3);
+
+	this->test_text.bg_color = sf::Color(32, 32, 32, 192);
+	this->test_text.position = sf::Vector2f(400.f, 400.f);
+	this->test_text.text = std::string("This is a test text.");
+	this->test_text.txt_size = 20.f;
+	this->test_text.size = {200.f, 50.f};
+	this->test_text.visible = false;
+	//this->test_text.margin = 5.f;
 
 	//this->text_button.setPosition(sf::Vector2f(1.f, 1.f));
 	//this->text_button.setText(std::string("Test"));
@@ -145,6 +155,8 @@ void Gui::draw(sf::RenderWindow& window, const Camera& camera) const
 	{
 		it->onDraw(window, this->font);
 	}
+
+	this->test_text.draw(window, assets);
 }
 
 void Gui::setFps(float fps)

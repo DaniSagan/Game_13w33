@@ -1962,6 +1962,7 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 		{
 			// each tile has a pointer to the lot
 			this->lp_tiles.at(i).at(j)->lp_lot = lp_new_lot;
+			this->lp_tiles.at(i).at(j)->setColor(sf::Color(180+(rand()%10), 180+(rand()%10), 180+(rand()%10)));
 		}
 	}
 
