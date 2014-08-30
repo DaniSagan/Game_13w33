@@ -11,6 +11,7 @@
 #include "GameState.h"
 #include "gui/Text.h"
 #include "gui/Clickable.h"
+#include "gui/Picture.h"
 
 namespace dfv
 {
