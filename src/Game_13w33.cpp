@@ -16,9 +16,12 @@
 */
 
 #include "App.h"
+#include <SFML/Graphics.hpp>
 
-int main() {
-	dfv::App app;
+int main()
+{
+	sf::RenderWindow window({1024, 1024 * 9 / 16}, "Hyperopolis");
+	dfv::App app(window);
 	app.run();
 	return 0;
 }

@@ -25,7 +25,8 @@
 namespace dfv
 {
 
-App::App():
+App::App(sf::RenderWindow& _window):
+		window(_window),
 		frame(0),
 		walking(false),
 		road_id(0),
@@ -69,7 +70,7 @@ void App::initialize()
 	//this->map.createRandom(700);
 	//this->map.createFlat(850, 2.0);
 	//this->map.createFlat(64, 2.0);
-	this->map.createValley(64, 2.f, 15.f);
+	this->map.createFlat(64, 2.f);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -139,7 +140,7 @@ void App::initialize()
 													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
 													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
-			unsigned int floor_count = floor(20.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			unsigned int floor_count = floor(10.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();

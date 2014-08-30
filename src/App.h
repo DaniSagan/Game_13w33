@@ -45,7 +45,7 @@ namespace dfv
 class App
 {
 public:
-	App();
+	App(sf::RenderWindow& _window);
 	virtual ~App();
 
 	enum MovingMode
@@ -72,7 +72,7 @@ public:
 	bool test();
 
 private:
-	sf::RenderWindow window;
+	sf::RenderWindow& window;
 	sf::Clock clock;
 	dfv::Camera camera;
 	dfv::Map map;
