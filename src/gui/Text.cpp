@@ -47,9 +47,17 @@ void Text::draw(sf::RenderWindow& window, const Assets& assets) const
 	}
 }
 
-std::string& Text::handleInput(std::string& cmd) const
+std::string& Text::handleInput(std::string& cmd, sf::Event& event)
 {
 	return cmd;
+}
+
+GuiRect Text::getRect() const
+{
+	return GuiRect(this->position.x,
+				   this->position.y,
+				   this->position.x + this->size.x,
+				   this->position.y + this->size.y);
 }
 
 } /* namespace dfv */

@@ -20,7 +20,8 @@ public:
 	virtual ~Text();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
-	virtual std::string& handleInput(std::string& cmd) const;
+	virtual std::string& handleInput(std::string& cmd, sf::Event& event);
+	virtual GuiRect getRect() const;
 
 	sf::Vector2f position;
 	sf::Vector2f size;

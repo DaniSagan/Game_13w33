@@ -15,13 +15,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "App.h"
+//#include "App.h"
+#include "GameEngine.h"
+#include "StartMenuState.h"
 #include <SFML/Graphics.hpp>
 
 int main()
 {
-	sf::RenderWindow window({1024, 1024 * 9 / 16}, "Hyperopolis");
+	dfv::GameEngine game_engine;
+	game_engine.changeState(dfv::StartMenuState::getInstance());
+	while(game_engine.isRunning())
+	{
+		game_engine.handleInput();
+		game_engine.update();
+		game_engine.draw();
+	}
+
+	/*sf::RenderWindow window({1024, 1024 * 9 / 16}, "Hyperopolis");
 	dfv::App app(window);
-	app.run();
+	app.run();*/
 	return 0;
 }

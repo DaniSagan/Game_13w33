@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Assets.h"
+#include "../Utils.h"
 
 namespace dfv
 {
@@ -21,7 +22,9 @@ public:
 	virtual ~Component();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
-	virtual std::string& handleInput(std::string& cmd) const;
+	virtual std::string& handleInput(std::string& cmd, sf::Event& event);
+
+	void addComponent(Component* component);
 
 protected:
 	Component* lp_parent;

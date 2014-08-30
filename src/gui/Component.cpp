@@ -31,9 +31,18 @@ void Component::draw(sf::RenderWindow& window, const Assets& assets) const
 	}
 }
 
-std::string& Component::handleInput(std::string& cmd) const
+std::string& Component::handleInput(std::string& cmd, sf::Event& event)
 {
+	for(Component* lp_component: this->lp_children)
+	{
+		cmd = lp_component->handleInput(cmd, event);
+	}
 	return cmd;
+}
+
+void Component::addComponent(Component* component)
+{
+	this->lp_children.push_back(component);
 }
 
 } /* namespace dfv */
