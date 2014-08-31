@@ -36,7 +36,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createRandom(700);
 	//this->map.createFlat(850, 2.0);
 	//this->map.createFlat(64, 2.0);
-	this->map.createFlat(800, 2.f);
+	this->map.createFlat(900, 2.f);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
