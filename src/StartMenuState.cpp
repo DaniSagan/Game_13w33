@@ -65,11 +65,27 @@ void StartMenuState::executeCmd(std::string& cmd, GameEngine* lp_game_engine)
 	}
 	else if(cmd == std::string("start"))
 	{
-		lp_game_engine->changeState(PlayState::getInstance());
+		//lp_game_engine->changeState(PlayState::getInstance());
+		static_cast<Panel*>(this->gui.getById(START_NEW_MENU))->visible = true;
 	}
 	else if(cmd == std::string("start_new_close"))
 	{
 		static_cast<Panel*>(this->gui.getById(START_NEW_MENU))->visible = false;
+	}
+	else if(cmd == std::string("generate_new"))
+	{
+		try
+		{
+			int s = std::stoi(static_cast<Text*>(this->gui.getById(SIZE_EDIT))->text);
+			assert(s > 0 && s < 10000);
+		}
+		catch(...)
+		{
+			cmd.clear();
+			return;
+		}
+		lp_game_engine->changeState(PlayState::getInstance());
+		//static_cast<Panel*>(this->gui.getById(START_NEW_MENU))->visible = false;
 	}
 	cmd.clear();
 }
@@ -85,7 +101,7 @@ StartMenuState::StartMenuState():
 	lp_logo->loadFromFile("res/gui/logo.png");
 	lp_logo->setPosition(sf::Vector2f(50.f, 50.f));
 
-	Clickable* lp_start_button = new Clickable(lp_bg_img);
+	Clickable* lp_start_button = new Clickable(lp_bg_img, START_NEW_BUTTON);
 	lp_start_button->text = "Start new";
 	lp_start_button->txt_size = 24.f;
 	lp_start_button->size = {200.f, 50.f};
@@ -118,17 +134,42 @@ StartMenuState::StartMenuState():
 	Panel* lp_new_menu = new Panel(lp_bg_img, START_NEW_MENU);
 	lp_new_menu->size = {300.f, 200.f};
 	lp_new_menu->setPosition({300.f, 300.f});
-	lp_new_menu->visible = true;
+	lp_new_menu->visible = false;
 	lp_new_menu->color = sf::Color(64, 64, 64, 192);
 
 	Clickable* lp_close_button = new Clickable(lp_new_menu);
 	lp_close_button->bg_color = sf::Color(255, 0, 0, 128);
 	lp_close_button->bg_over_color = sf::Color(255, 0, 0, 255);
-	lp_close_button->size = sf::Vector2f(15.f, 15.f);
+	lp_close_button->size = sf::Vector2f(25.f, 25.f);
 	lp_close_button->cmd = std::string("start_new_close");
 	lp_close_button->setPosition({2.f, 2.f});
 
+	Text* lp_size_text = new Text(lp_new_menu);
+	lp_size_text->text = std::string("Map size:");
+	lp_size_text->setPosition(sf::Vector2f(25.f, 100.f));
+	lp_size_text->txt_color = sf::Color::White;
+	lp_size_text->txt_size = 14.f;
+	lp_size_text->bg_color = sf::Color(0, 0, 0, 0);
+	lp_size_text->size = sf::Vector2f(50.f, 25.f);
 
+	Editable* lp_size_edit = new Editable(lp_new_menu, SIZE_EDIT);
+	lp_size_edit->setPosition(sf::Vector2f(100.f, 100.f));
+	lp_size_edit->size = sf::Vector2f(100.f, 25.f);
+	lp_size_edit->text = "100";
+	lp_size_edit->txt_color = sf::Color::White;
+	lp_size_edit->txt_size = 14.f;
+	lp_size_edit->bg_color = sf::Color(32, 32, 32, 192);
+	lp_size_edit->active_color = sf::Color(32, 32, 32, 255);
+
+	Clickable* lp_generate_new = new Clickable(lp_new_menu, GENERATE_NEW_BUTTON);
+	lp_generate_new->bg_color = sf::Color(64, 64, 64, 128);
+	lp_generate_new->bg_over_color = sf::Color(64, 64, 64, 255);
+	lp_generate_new->text = std::string("Generate");
+	lp_generate_new->txt_color = sf::Color::White;
+	lp_generate_new->txt_size = 14.f;
+	lp_generate_new->size = sf::Vector2f(75.f, 25.f);
+	lp_generate_new->cmd = std::string("generate_new");
+	lp_generate_new->setPosition({200.f, 100.f});
 
 
 }

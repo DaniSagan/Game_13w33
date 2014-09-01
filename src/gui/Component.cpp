@@ -29,7 +29,7 @@ Component::Component(Component* lp_parent, int id):
 			Component* lp_temp_comp = lp_parent;
 			while(lp_temp_comp ->lp_parent != nullptr)
 			{
-				lp_temp_comp = lp_parent->lp_parent;
+				lp_temp_comp = lp_temp_comp->lp_parent;
 			}
 			lp_temp_comp->lp_components[id] = this;
 		}

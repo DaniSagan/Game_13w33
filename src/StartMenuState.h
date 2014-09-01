@@ -13,6 +13,7 @@
 #include "gui/Clickable.h"
 #include "gui/Picture.h"
 #include "gui/Panel.h"
+#include "gui/Editable.h"
 
 namespace dfv
 {
@@ -21,6 +22,8 @@ class StartMenuState: public GameState
 {
 public:
 	virtual ~StartMenuState();
+
+	friend class PlayState;
 
 	void init(GameEngine* lp_game_engine);
 	void cleanup();
@@ -45,7 +48,10 @@ private:
 	Component gui;
 	enum GuiComponents
 	{
-		START_NEW_MENU = 0
+		START_NEW_BUTTON = 0,
+		START_NEW_MENU,
+		SIZE_EDIT,
+		GENERATE_NEW_BUTTON
 	};
 };
 

@@ -6,6 +6,7 @@
  */
 
 #include "PlayState.h"
+#include "StartMenuState.h"
 
 namespace dfv
 {
@@ -36,7 +37,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createRandom(700);
 	//this->map.createFlat(850, 2.0);
 	//this->map.createFlat(64, 2.0);
-	this->map.createFlat(200, 2.f);
+	unsigned int map_size = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
+	this->map.createFlat(map_size, 2.f);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -68,7 +70,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	// generate random trees
 	Tree* lp_tree = new Tree();
-	for(unsigned int i = 0; i < 200000; i++)
+	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/10; i++)
 	{
 		unsigned int x = rand() % this->map.getSize();
 		unsigned int y = rand() % this->map.getSize();
