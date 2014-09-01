@@ -16,7 +16,7 @@ namespace dfv
 class Clickable: public Text
 {
 public:
-	Clickable(Component* parent);
+	Clickable(Component* parent, int id=-1);
 	virtual ~Clickable();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
@@ -24,6 +24,7 @@ public:
 
 	sf::Color bg_over_color;
 	std::string cmd;
+	void (*onClick)();
 
 protected:
 	bool mouse_over;

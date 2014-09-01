@@ -38,11 +38,11 @@ Map::Map():
 
 Map::~Map()
 {
-	for(unsigned int i = 0; i < this->lp_tiles.size(); i++)
+	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
 	{
-		for(unsigned int j = 0; j < this->lp_tiles.size(); j++)
+		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
 		{
-			delete this->lp_tiles[i][j];
+			delete this->lp_tiles.at(i).at(j);
 		}
 	}
 }
@@ -52,20 +52,20 @@ void Map::create(unsigned int size)
 	this->size = size;
 
 	this->heights.resize(size + 1);
-	for(unsigned int i = 0; i < this->heights.size(); i++)
+	for(std::size_t i = 0; i < this->heights.size(); i++)
 	{
 		this->heights[i].resize(size + 1);
-		for(unsigned int j = 0; j < this->heights.size(); j++)
+		for(std::size_t j = 0; j < this->heights.size(); j++)
 		{
-			this->heights[i][j] = 0.f;
+			this->heights.at(i).at(j) = 0.f;
 		}
 	}
 
 	this->lp_tiles.resize(size);
-	for(unsigned int i = 0; i < this->lp_tiles.size(); i++)
+	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
 	{
 		this->lp_tiles[i].resize(size + 1);
-		for(unsigned int j = 0; j < this->lp_tiles.size(); j++)
+		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
 		{
 			this->lp_tiles[i][j] = NULL;
 		}
@@ -1589,7 +1589,7 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 		int midpoint = camera.getPosition().y;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= int(this->size)) midpoint = this->size - 1;
-		for(int i = floor(rect.xmin); i < floor(rect.xmax); i++)
+		for(int i = floor(rect.xmin); i <= floor(rect.xmax); i++)
 		{
 			for(int j = floor(rect.ymin); j < midpoint; j++)
 			{
@@ -1606,7 +1606,7 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 		int midpoint = camera.getPosition().x;
 		if(midpoint < 0) midpoint = 0;
 		if(midpoint >= int(this->size)) midpoint = this->size - 1;
-		for(unsigned int j = floor(rect.ymin); j < floor(rect.ymax); j++)
+		for(unsigned int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
 		{
 			for(int i = floor(rect.xmin); i < midpoint; i++)
 			{

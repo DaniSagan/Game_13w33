@@ -12,6 +12,7 @@
 #include "gui/Text.h"
 #include "gui/Clickable.h"
 #include "gui/Picture.h"
+#include "gui/Panel.h"
 
 namespace dfv
 {
@@ -42,6 +43,10 @@ private:
 	static StartMenuState start_menu_state;
 
 	Component gui;
+	enum GuiComponents
+	{
+		START_NEW_MENU = 0
+	};
 };
 
 } /* namespace dfv */

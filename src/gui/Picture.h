@@ -16,14 +16,13 @@ namespace dfv
 class Picture: public Component
 {
 public:
-	Picture(Component* parent);
+	Picture(Component* parent, int id=-1);
 	virtual ~Picture();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
 
 	bool loadFromFile(std::string filename);
 
-	sf::Vector2f position;
 	bool visible;
 protected:
 	sf::Texture texture;

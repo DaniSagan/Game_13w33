@@ -67,6 +67,10 @@ void StartMenuState::executeCmd(std::string& cmd, GameEngine* lp_game_engine)
 	{
 		lp_game_engine->changeState(PlayState::getInstance());
 	}
+	else if(cmd == std::string("start_new_close"))
+	{
+		static_cast<Panel*>(this->gui.getById(START_NEW_MENU))->visible = false;
+	}
 	cmd.clear();
 }
 
@@ -76,54 +80,54 @@ StartMenuState::StartMenuState():
 {
 	Picture* lp_bg_img = new Picture(&(this->gui));
 	lp_bg_img->loadFromFile("res/gui/start_bg_1.png");
-	this->gui.addComponent(lp_bg_img);
 
 	Picture* lp_logo = new Picture(lp_bg_img);
 	lp_logo->loadFromFile("res/gui/logo.png");
-	lp_logo->position = sf::Vector2f(50.f, 50.f);
-	this->gui.addComponent(lp_logo);
-
-	/*Text* lp_title = new Text(lp_bg_img);
-	lp_title->text = "HYPEROPOLIS";
-	lp_title->txt_size = 50.f;
-	lp_title->position = {100.f, 100.f};
-	lp_title->size = {500.f, 200.f};
-	lp_title->txt_color = sf::Color::White;
-	lp_title->bg_color = sf::Color(0, 0, 0, 0);
-	this->gui.addComponent(lp_title);*/
+	lp_logo->setPosition(sf::Vector2f(50.f, 50.f));
 
 	Clickable* lp_start_button = new Clickable(lp_bg_img);
 	lp_start_button->text = "Start new";
 	lp_start_button->txt_size = 24.f;
 	lp_start_button->size = {200.f, 50.f};
-	lp_start_button->position = {1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*3.f};
+	lp_start_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*3.f});
 	lp_start_button->txt_color = sf::Color::White;
 	lp_start_button->bg_color = sf::Color(64, 64, 64, 192);
 	lp_start_button->bg_over_color = sf::Color(64, 64, 64, 255);
 	lp_start_button->cmd = std::string("start");
-	this->gui.addComponent(lp_start_button);
 
 	Clickable* lp_load_button = new Clickable(lp_bg_img);
 	lp_load_button->text = "Load city";
 	lp_load_button->txt_size = 24.f;
-	lp_load_button->position = {1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*2.f};
+	lp_load_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*2.f});
 	lp_load_button->size = {200.f, 50.f};
 	lp_load_button->txt_color = sf::Color::White;
 	lp_load_button->bg_color = sf::Color(64, 64, 64, 192);
 	lp_load_button->bg_over_color = sf::Color(64, 64, 64, 255);
 	lp_load_button->cmd = std::string("load");
-	this->gui.addComponent(lp_load_button);
 
 	Clickable* lp_quit_button = new Clickable(lp_bg_img);
 	lp_quit_button->text = "Quit game";
 	lp_quit_button->txt_size = 24.f;
-	lp_quit_button->position = {1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*1.f};
+	lp_quit_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*1.f});
 	lp_quit_button->size = {200.f, 50.f};
 	lp_quit_button->txt_color = sf::Color::White;
 	lp_quit_button->bg_color = sf::Color(64, 64, 64, 192);
 	lp_quit_button->bg_over_color = sf::Color(64, 64, 64, 255);
 	lp_quit_button->cmd = std::string("quit");
-	this->gui.addComponent(lp_quit_button);
+
+	Panel* lp_new_menu = new Panel(lp_bg_img, START_NEW_MENU);
+	lp_new_menu->size = {300.f, 200.f};
+	lp_new_menu->setPosition({300.f, 300.f});
+	lp_new_menu->visible = true;
+	lp_new_menu->color = sf::Color(64, 64, 64, 192);
+
+	Clickable* lp_close_button = new Clickable(lp_new_menu);
+	lp_close_button->bg_color = sf::Color(255, 0, 0, 128);
+	lp_close_button->bg_over_color = sf::Color(255, 0, 0, 255);
+	lp_close_button->size = sf::Vector2f(15.f, 15.f);
+	lp_close_button->cmd = std::string("start_new_close");
+	lp_close_button->setPosition({2.f, 2.f});
+
 
 
 

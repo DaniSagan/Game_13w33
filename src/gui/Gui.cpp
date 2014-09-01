@@ -48,7 +48,7 @@ Gui::Gui():
 	b3.SetCommand(std::string("button_copy_cmd"));
 	this->button_list.push_back(b3);*/
 
-	TextButton tb1;
+	/*TextButton tb1;
 	tb1.setPosition(sf::Vector2f(0.0, 0.0));
 	tb1.setText(std::string("Clear props"));
 	tb1.setCommand(std::string("clear prop"));
@@ -67,11 +67,11 @@ Gui::Gui():
 	this->text_button_list.push_back(tb3);
 
 	this->test_text.bg_color = sf::Color(32, 32, 32, 192);
-	this->test_text.position = sf::Vector2f(400.f, 400.f);
+	this->test_text.setPosition(sf::Vector2f(400.f, 400.f));
 	this->test_text.text = std::string("This is a test text.");
 	this->test_text.txt_size = 20.f;
 	this->test_text.size = {200.f, 50.f};
-	this->test_text.visible = false;
+	this->test_text.visible = false;*/
 	//this->test_text.margin = 5.f;
 
 	//this->text_button.setPosition(sf::Vector2f(1.f, 1.f));

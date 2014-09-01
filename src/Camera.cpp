@@ -163,16 +163,19 @@ void Camera::setView(const sf::Window& window) const
 
 void Camera::handleInput(sf::Event& event)
 {
-	if(event.key.code == sf::Keyboard::N)
+	if(event.type == sf::Event::KeyPressed)
 	{
-		this->mode = Free;
-	}
-	else if(event.key.code == sf::Keyboard::M)
-	{
-		if(this->mode != Driving)
+		if(event.key.code == sf::Keyboard::N)
 		{
-			this->mode = Driving;
-			this->car.init();
+			this->mode = Free;
+		}
+		else if(event.key.code == sf::Keyboard::M)
+		{
+			if(this->mode != Driving)
+			{
+				this->mode = Driving;
+				this->car.init();
+			}
 		}
 	}
 }

@@ -10,13 +10,12 @@
 namespace dfv
 {
 
-Clickable::Clickable(Component* parent):
-		Text(parent),
+Clickable::Clickable(Component* parent, int id):
+		Text(parent, id),
 		bg_over_color(sf::Color(0, 0, 0, 0)),
 		cmd(std::string("")),
 		mouse_over(false)
 {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -47,8 +46,8 @@ void Clickable::draw(sf::RenderWindow& window, const Assets& assets) const
 	{
 		rect.setFillColor(this->bg_color);
 	}
-	rect.setPosition(this->position);
-	text.setPosition(this->position + sf::Vector2f((this->size.x - txt_rect.width) / 2.0,
+	rect.setPosition(this->getAbsPosition());
+	text.setPosition(this->getAbsPosition() + sf::Vector2f((this->size.x - txt_rect.width) / 2.0,
 			         (this->size.y - txt_rect.height) / 2.0 - txt_rect.top));
 
 	window.draw(rect);
@@ -57,6 +56,10 @@ void Clickable::draw(sf::RenderWindow& window, const Assets& assets) const
 
 std::string& Clickable::handleInput(std::string& cmd, sf::Event& event)
 {
+	if(!this->visible)
+	{
+		return cmd;
+	}
 	if(event.type == sf::Event::MouseButtonPressed)
 	{
 		if(event.mouseButton.button == sf::Mouse::Left)
@@ -79,6 +82,10 @@ std::string& Clickable::handleInput(std::string& cmd, sf::Event& event)
 		{
 			this->mouse_over = false;
 		}
+	}
+	for(Component* lp_component: this->lp_children)
+	{
+		lp_component->handleInput(cmd, event);
 	}
 	return cmd;
 }

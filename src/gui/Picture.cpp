@@ -10,8 +10,8 @@
 namespace dfv
 {
 
-Picture::Picture(Component* parent):
-		Component(parent),
+Picture::Picture(Component* parent, int id):
+		Component(parent, id),
 		visible(true)
 {
 }
@@ -29,7 +29,7 @@ void Picture::draw(sf::RenderWindow& window, const Assets& assets) const
 	}
 	sf::Sprite sprite;
 	sprite.setTexture(this->texture);
-	sprite.setPosition(this->position);
+	sprite.setPosition(this->getAbsPosition());
 	window.draw(sprite);
 	for(Component* lp_component: this->lp_children)
 	{
