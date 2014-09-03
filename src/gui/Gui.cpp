@@ -32,7 +32,7 @@ Gui::Gui():
 		selected_tool(none),
 		test_text(nullptr)
 {
-	this->minimap.create(256);
+	this->minimap.create(128);
 	this->font.loadFromFile("res/font/Ubuntu-L.ttf");
 	assert(this->assets.load());
 
@@ -93,13 +93,13 @@ void Gui::draw(sf::RenderWindow& window, const Camera& camera) const
 	ss << "FPS: " << floor(this->fps + 0.5) << ", Quadrant: " << camera.getQuadrant() << ", RPY: " << camera.getRpy().x << ", " << camera.getRpy().y << ", " << camera.getRpy().z;
 	text.setString(ss.str());
 	text.setCharacterSize(14.0);
-	text.setPosition(300, 5);
+	text.setPosition(5, 35);
 	window.draw(text);
 
 	ss.str(std::string(""));
 	ss << "Map pos: " << this->map_pos.x << ", " << this->map_pos.y << "," << this->map_pos.z;
 	text.setString(ss.str());
-	text.setPosition(300, 20);
+	text.setPosition(5, 50);
 	window.draw(text);
 
 	if(camera.getMode() == Camera::Driving)

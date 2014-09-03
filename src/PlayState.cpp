@@ -89,6 +89,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 	// generate lots
 	unsigned int buildings = 0;
 	unsigned int floors = 0;
+	unsigned int homes = 0;
+	unsigned int population = 0;
 	for(unsigned int i = 0; i < 5000000; i++)
 	{
 		unsigned int xmin = rand() % this->map.getSize();
@@ -117,18 +119,29 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 			buildings++;
 			floors += floor_count;
+			homes += floor_count * size_x * size_y * 2;
 			//std::cout << "Model created" << std::endl;
 		}
 	}
 
 	std::cout << "Buildings: " << buildings << std::endl;
 	std::cout << "Floors: " << floors << std::endl;
+	std::cout << "Homes: " << homes << std::endl;
+	std::cout << "Population: " << floor(float(homes)*2.61) << std::endl;
 
 	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
 	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
 	this->resources.load();
 
 	this->generateLists();
+
+	Text* lp_stats_text = new Text(&this->gui_root);
+	lp_stats_text->text = std::string("Saganopolis ---- Population: XXXXXXXXX ---- Buildings: XXXXXX");
+	lp_stats_text->setPosition(sf::Vector2f(0.f, 0.f));
+	lp_stats_text->txt_color = sf::Color::White;
+	lp_stats_text->txt_size = 18.f;
+	lp_stats_text->bg_color = sf::Color(0, 0, 0, 128);
+	lp_stats_text->size = sf::Vector2f(lp_game_engine->window.getSize().x, 25.f);
 }
 
 void PlayState::cleanup()
@@ -309,6 +322,7 @@ void PlayState::draw(GameEngine* lp_game_engine)
 
 	this->drawSelection(lp_game_engine->window);
 	this->gui.draw(lp_game_engine->window, this->camera);
+	this->gui_root.draw(lp_game_engine->window, lp_game_engine->assets);
 
 	lp_game_engine->window.popGLStates();
 	lp_game_engine->window.display();
@@ -545,7 +559,8 @@ PlayState::PlayState():
 		road_orientation(0),
 		frame_time(0),
 		moving_mode(Free),
-		cmd_server(5005)
+		cmd_server(5005),
+		gui_root(nullptr)
 {
 	// TODO Auto-generated constructor stub
 

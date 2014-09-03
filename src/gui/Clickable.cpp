@@ -47,8 +47,10 @@ void Clickable::draw(sf::RenderWindow& window, const Assets& assets) const
 		rect.setFillColor(this->bg_color);
 	}
 	rect.setPosition(this->getAbsPosition());
-	text.setPosition(this->getAbsPosition() + sf::Vector2f((this->size.x - txt_rect.width) / 2.0,
-			         (this->size.y - txt_rect.height) / 2.0 - txt_rect.top));
+	sf::Vector2f text_position = this->getAbsPosition() +
+			sf::Vector2f((this->size.x - txt_rect.width) / 2.0,
+	         	 	 	 (this->size.y - txt_rect.height) / 2.0 - txt_rect.top);
+	text.setPosition(floor(text_position.x), floor(text_position.y));
 
 	window.draw(rect);
 	window.draw(text);

@@ -137,6 +137,14 @@ StartMenuState::StartMenuState():
 	lp_new_menu->visible = false;
 	lp_new_menu->color = sf::Color(64, 64, 64, 192);
 
+	Text* lp_start_new_title = new Text(lp_new_menu);
+	lp_start_new_title->text = std::string("Start new city");
+	lp_start_new_title->setPosition(sf::Vector2f(29.f, 2.f));
+	lp_start_new_title->txt_color = sf::Color::White;
+	lp_start_new_title->txt_size = 18.f;
+	lp_start_new_title->bg_color = sf::Color(0, 0, 0, 128);
+	lp_start_new_title->size = sf::Vector2f(300.f - 31.f, 25.f);
+
 	Clickable* lp_close_button = new Clickable(lp_new_menu);
 	lp_close_button->bg_color = sf::Color(255, 0, 0, 128);
 	lp_close_button->bg_over_color = sf::Color(255, 0, 0, 255);
@@ -162,8 +170,8 @@ StartMenuState::StartMenuState():
 	lp_size_edit->active_color = sf::Color(32, 32, 32, 255);
 
 	Clickable* lp_generate_new = new Clickable(lp_new_menu, GENERATE_NEW_BUTTON);
-	lp_generate_new->bg_color = sf::Color(64, 64, 64, 128);
-	lp_generate_new->bg_over_color = sf::Color(64, 64, 64, 255);
+	lp_generate_new->bg_color = sf::Color(32, 32, 32, 128);
+	lp_generate_new->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_generate_new->text = std::string("Generate");
 	lp_generate_new->txt_color = sf::Color::White;
 	lp_generate_new->txt_size = 14.f;

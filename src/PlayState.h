@@ -20,6 +20,10 @@
 #include "Resources.h"
 #include "gui/Button.h"
 #include "gui/Gui.h"
+#include "gui/Component.h"
+#include "gui/Text.h"
+#include "gui/Clickable.h"
+#include "gui/Editable.h"
 #include "Utils.h"
 #include "CmdServer.h"
 
@@ -90,6 +94,8 @@ private:
 	sf::Vector2i select_from;
 	sf::Vector2i select_to;
 	CmdServer cmd_server;
+
+	Component gui_root;
 };
 
 } /* namespace dfv */
