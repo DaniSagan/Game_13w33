@@ -441,7 +441,15 @@ void Tile::drawStructureOutline() const
 bool Tile::hasStructure() const
 {
 	//return this->has_structure;
-	return this->lp_structure != NULL;
+	if(this->lp_lot != NULL)
+	{
+		return this->lp_lot->hasStructure();
+	}
+	else
+	{
+		return false;
+	}
+	//return this->lp_structure != NULL;
 }
 
 } /* namespace dfv */

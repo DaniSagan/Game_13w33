@@ -1903,7 +1903,15 @@ void Map::addStructure(const unsigned int x, const unsigned int y,
 
 bool Map::hasStructure(const unsigned int x, const unsigned int y) const
 {
-	return this->lp_tiles.at(x).at(y)->hasStructure();
+	if(x >= 0 && x < this->size &&
+	   y >= 0 && y < this->size)
+	{
+		return this->lp_tiles.at(x).at(y)->hasStructure();
+	}
+	else
+	{
+		return false;
+	}
 }
 
 float Map::getAvgHeight(const unsigned int x, const unsigned int y) const

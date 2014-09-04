@@ -55,12 +55,20 @@ public:
 	sf::Vector2f getOrigin2d() const;
 	sf::Vector2i getOriginTileIndices() const;
 
+	void setInhabitants(unsigned int value);
+	unsigned int getInhabitants() const;
+
+	void setJobs(unsigned int value);
+	unsigned int getJobs() const;
+
 private:
 	sf::Vector3f origin;
 	std::vector<Structure*> lp_structures;
 	//std::vector<Tile*> lp_tiles;
 	std::vector<sf::Vector2i> tile_indices;
 	std::vector<Quad> tile_quads;
+	unsigned int inhabitants;
+	unsigned int jobs;
 };
 
 } /* namespace dfv */

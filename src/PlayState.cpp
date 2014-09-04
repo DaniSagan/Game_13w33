@@ -52,15 +52,15 @@ void PlayState::init(GameEngine* lp_game_engine)
 			   )
 			{
 				sf::Vector2i pos(i, j);
-				if((i%4 == 0) && !((j%4==0) || (j%20==1)))
+				if(((i%4 == 0) || (i%20 == 1)) && !((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 0);
 				}
-				else if(!(i%4 == 0) && ((j%4==0) || (j%20==1)))
+				else if(!((i%4 == 0) || (i%20 == 1)) && ((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 1);
 				}
-				else if((i%4 == 0) && ((j%4==0) || (j%20==1)))
+				else if(((i%4 == 0) || (i%20 == 1)) && ((j%4==0) || (j%20==1)))
 				{
 					this->map.addRoad(pos, Road::cross, 0);
 				}
@@ -119,15 +119,22 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 			buildings++;
 			floors += floor_count;
-			homes += floor_count * size_x * size_y * 2;
+			//homes += floor_count * size_x * size_y * 2;
+			unsigned int home_count = floor_count * size_x * size_y * 2;
+			homes += home_count;
+			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.7, 1.3));
+			population += inhabitant_count;
+			lp_lot->setInhabitants(inhabitant_count);
 			//std::cout << "Model created" << std::endl;
 		}
 	}
 
+	//population = static_cast<int>(float(homes)*2.61);
+
 	std::cout << "Buildings: " << buildings << std::endl;
 	std::cout << "Floors: " << floors << std::endl;
 	std::cout << "Homes: " << homes << std::endl;
-	std::cout << "Population: " << floor(float(homes)*2.61) << std::endl;
+	std::cout << "Population: " << population << std::endl;
 
 	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
 	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
@@ -135,13 +142,35 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	this->generateLists();
 
-	Text* lp_stats_text = new Text(&this->gui_root);
-	lp_stats_text->text = std::string("Saganopolis ---- Population: XXXXXXXXX ---- Buildings: XXXXXX");
+	Text* lp_stats_text = new Text(&this->gui_root, STATS_TEXT_BAR);
+	std::stringstream ss;
+	ss << "Saganopolis ---- Population: " << population << " ---- Buildings: " << buildings;
+	lp_stats_text->text = ss.str();
 	lp_stats_text->setPosition(sf::Vector2f(0.f, 0.f));
 	lp_stats_text->txt_color = sf::Color::White;
 	lp_stats_text->txt_size = 18.f;
 	lp_stats_text->bg_color = sf::Color(0, 0, 0, 128);
 	lp_stats_text->size = sf::Vector2f(lp_game_engine->window.getSize().x, 25.f);
+
+	Panel* lp_info_panel = new Panel(&this->gui_root, INFO_PANEL);
+	lp_info_panel->size = {125.f, 75.f};
+	lp_info_panel->color = sf::Color(32, 32, 32, 192);
+
+	/*Text* lp_info_text = new Text(lp_info_panel, INFO_TEXT);
+	lp_info_text->setPosition(sf::Vector2f(0.f, 0.f));
+	lp_info_text->text = std::string("Building");
+	lp_info_text->txt_color = sf::Color::White;
+	lp_info_text->txt_size = 10.f;
+	lp_info_text->bg_color = sf::Color(0, 0, 0, 0);
+	lp_info_text->size = sf::Vector2f(100.f, 25.f);*/
+	Multitext* lp_info_text = new Multitext(lp_info_panel, INFO_TEXT);
+	lp_info_text->setPosition(sf::Vector2f(0.f, 0.f));
+	lp_info_text->lines = std::vector<std::string>{"Building", "height: XXX m", "#floors: XX", "#inhabitants: XXX"};
+	lp_info_text->txt_color = sf::Color::White;
+	lp_info_text->txt_size = 10.f;
+	lp_info_text->bg_color = sf::Color(0, 0, 0, 0);
+	lp_info_text->size = lp_info_panel->size;
+	lp_info_text->interline_space = 5.f;
 }
 
 void PlayState::cleanup()
@@ -234,10 +263,28 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 					for(int j = std::min(this->select_from.y, this->select_to.y); j <= std::max(this->select_from.y, this->select_to.y); j++)
 					{
 						this->selected_tiles.push_back(sf::Vector2i(i, j));
-
 					}
 				}
 			}
+		}
+		else if(event.type == sf::Event::MouseMoved)
+		{
+			sf::Vector2f mouse_pos(event.mouseMove.x, event.mouseMove.y);
+			sf::Vector2f panel_size = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->size;
+			sf::Vector3f map_pos = this->map.getMapPosFromMouse(sf::Vector2i(mouse_pos.x, mouse_pos.y));
+			this->gui_root.getById(INFO_PANEL)->setPosition(mouse_pos + sf::Vector2f(20.f, -20.f-panel_size.y));
+			std::vector<std::string> lines;
+			std::stringstream ss;
+			if(this->map.hasStructure(map_pos.x, map_pos.y))
+			{
+				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
+				//lines.push_back()
+			}
+			else
+			{
+				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
+			}
+
 		}
 	}
 }
@@ -279,6 +326,7 @@ void PlayState::update(GameEngine* lp_game_engine)
 	{
 		std::cout << "Error getting view pos vertices" << std::endl;
 	}
+
 }
 
 void PlayState::draw(GameEngine* lp_game_engine)
@@ -296,25 +344,33 @@ void PlayState::draw(GameEngine* lp_game_engine)
 	this->map_pos = this->map.getMapPosFromMouse(this->mouse_pos);
 	this->createSelectedShapes(lp_game_engine);
 
-	dfv::RealIntRect road_rect;
-	road_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 50);
-	road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
-
-	this->map.drawRoads(road_rect, this->camera, this->resources);
-
-	dfv::RealIntRect outlines_rect;
-	outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
-	outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
-
-	this->map.callStructureBoxList();
-	glDisable(GL_CULL_FACE);
-	this->map.drawStructureOutlines(outlines_rect);
-
 	this->gui.setMapPos(this->map_pos);
+	this->map.callStructureBoxList();
 
-	glDisable(GL_LIGHTING);
-	this->map.drawProps(road_rect, this->camera, this->resources);
-	glEnable(GL_LIGHTING);
+	// TODO set this to camera height meassured from ground
+	if(this->camera.getPosition().z < 50.f)
+	{
+		dfv::RealIntRect road_rect;
+		road_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 50);
+		road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
+
+		this->map.drawRoads(road_rect, this->camera, this->resources);
+
+		dfv::RealIntRect outlines_rect;
+		outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
+		outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
+
+		//this->map.callStructureBoxList();
+		glDisable(GL_CULL_FACE);
+		this->map.drawStructureOutlines(outlines_rect);
+
+
+	//this->gui.setMapPos(this->map_pos);
+
+		glDisable(GL_LIGHTING);
+		this->map.drawProps(road_rect, this->camera, this->resources);
+		glEnable(GL_LIGHTING);
+	}
 
 	glEnable(GL_CULL_FACE);
 
@@ -454,7 +510,6 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0f);
 	glClearColor(0.5f, 0.6f, 0.95f, 0.f);
-	//glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

@@ -26,7 +26,9 @@
 namespace dfv
 {
 
-Lot::Lot()
+Lot::Lot():
+		inhabitants(0),
+		jobs(0)
 {
 
 }
@@ -104,6 +106,26 @@ sf::Vector2f Lot::getOrigin2d() const
 sf::Vector2i Lot::getOriginTileIndices() const
 {
 	return this->tile_indices.at(0);
+}
+
+void Lot::setInhabitants(unsigned int value)
+{
+	this->inhabitants = value;
+}
+
+unsigned int Lot::getInhabitants() const
+{
+	return this->inhabitants;
+}
+
+void Lot::setJobs(unsigned int value)
+{
+	this->jobs = value;
+}
+
+unsigned int Lot::getJobs() const
+{
+	return this->jobs;
 }
 
 } /* namespace dfv */

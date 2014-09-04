@@ -24,6 +24,7 @@
 #include "gui/Text.h"
 #include "gui/Clickable.h"
 #include "gui/Editable.h"
+#include "gui/Multitext.h"
 #include "Utils.h"
 #include "CmdServer.h"
 
@@ -96,6 +97,12 @@ private:
 	CmdServer cmd_server;
 
 	Component gui_root;
+	enum GuiId
+	{
+		STATS_TEXT_BAR = 0,
+		INFO_PANEL,
+		INFO_TEXT
+	};
 };
 
 } /* namespace dfv */

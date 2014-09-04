@@ -46,6 +46,7 @@ void StartMenuState::handleInput(GameEngine* lp_game_engine)
 
 void StartMenuState::update(GameEngine* lp_game_engine)
 {
+	this->gui.getById(LOGO_IMG)->setPosition(sf::Vector2f(50.f+rand()%2, 50.f+rand()%2));
 }
 
 void StartMenuState::draw(GameEngine* lp_game_engine)
@@ -97,7 +98,7 @@ StartMenuState::StartMenuState():
 	Picture* lp_bg_img = new Picture(&(this->gui));
 	lp_bg_img->loadFromFile("res/gui/start_bg_1.png");
 
-	Picture* lp_logo = new Picture(lp_bg_img);
+	Picture* lp_logo = new Picture(lp_bg_img, LOGO_IMG);
 	lp_logo->loadFromFile("res/gui/logo.png");
 	lp_logo->setPosition(sf::Vector2f(50.f, 50.f));
 
@@ -107,8 +108,8 @@ StartMenuState::StartMenuState():
 	lp_start_button->size = {200.f, 50.f};
 	lp_start_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*3.f});
 	lp_start_button->txt_color = sf::Color::White;
-	lp_start_button->bg_color = sf::Color(64, 64, 64, 192);
-	lp_start_button->bg_over_color = sf::Color(64, 64, 64, 255);
+	lp_start_button->bg_color = sf::Color(32, 32, 32, 192);
+	lp_start_button->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_start_button->cmd = std::string("start");
 
 	Clickable* lp_load_button = new Clickable(lp_bg_img);
@@ -117,8 +118,8 @@ StartMenuState::StartMenuState():
 	lp_load_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*2.f});
 	lp_load_button->size = {200.f, 50.f};
 	lp_load_button->txt_color = sf::Color::White;
-	lp_load_button->bg_color = sf::Color(64, 64, 64, 192);
-	lp_load_button->bg_over_color = sf::Color(64, 64, 64, 255);
+	lp_load_button->bg_color = sf::Color(32, 32, 32, 192);
+	lp_load_button->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_load_button->cmd = std::string("load");
 
 	Clickable* lp_quit_button = new Clickable(lp_bg_img);
@@ -127,8 +128,8 @@ StartMenuState::StartMenuState():
 	lp_quit_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*1.f});
 	lp_quit_button->size = {200.f, 50.f};
 	lp_quit_button->txt_color = sf::Color::White;
-	lp_quit_button->bg_color = sf::Color(64, 64, 64, 192);
-	lp_quit_button->bg_over_color = sf::Color(64, 64, 64, 255);
+	lp_quit_button->bg_color = sf::Color(32, 32, 32, 192);
+	lp_quit_button->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_quit_button->cmd = std::string("quit");
 
 	Panel* lp_new_menu = new Panel(lp_bg_img, START_NEW_MENU);
