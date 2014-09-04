@@ -124,12 +124,13 @@ void Model::create(const float min_terrain_height,
 		const float max_terrain_height, const sf::Vector2f& position,
 		const Quad& base_quad, unsigned int floor_count)
 {
-	const float street_height = 0.1625f;
+	const float street_height = 0.18f;
 	const float floor_height = 0.125f;
 	const float margin = 0.01f;
 	const float line_width = 0.02f;
 
 	const float building_height = floor_count * floor_height + street_height;
+	this->height = building_height;
 
 	// Create building box
 	const sf::Vector3f origin(position.x, position.y, min_terrain_height);
@@ -188,6 +189,16 @@ void Model::create(const float min_terrain_height,
 			this->outline_quads.push_back(q);
 		}
 	}
+}
+
+unsigned int Model::getFloorCount() const
+{
+	return this->floor_count;
+}
+
+float Model::getHeight() const
+{
+	return this->height;
 }
 
 } /* namespace dfv */

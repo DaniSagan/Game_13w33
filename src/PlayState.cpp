@@ -271,19 +271,28 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		{
 			sf::Vector2f mouse_pos(event.mouseMove.x, event.mouseMove.y);
 			sf::Vector2f panel_size = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->size;
-			sf::Vector3f map_pos = this->map.getMapPosFromMouse(sf::Vector2i(mouse_pos.x, mouse_pos.y));
+			sf::Vector2i map_pos(this->map_pos.x, this->map_pos.y);// = this->map.getMapPosFromMouse(sf::Vector2i(mouse_pos.x, mouse_pos.y));
 			this->gui_root.getById(INFO_PANEL)->setPosition(mouse_pos + sf::Vector2f(20.f, -20.f-panel_size.y));
-			std::vector<std::string> lines;
-			std::stringstream ss;
-			if(this->map.hasStructure(map_pos.x, map_pos.y))
+			/*if(this->map.hasStructure(map_pos.x, map_pos.y))
 			{
 				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
-				//lines.push_back()
+				const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
+				const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
+				const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
+				std::stringstream ss;
+				ss << "Height: " << static_cast<int>(structure_height * 32.f) << " m";
+				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
+				ss.str("");
+				ss << "#floors: " << structure_floors;
+				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(2) = ss.str();
+				ss.str("");
+				ss << "#inhabitants: " << inhabitants;
+				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
 			}
 			else
 			{
 				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
-			}
+			}*/
 
 		}
 	}
@@ -325,6 +334,27 @@ void PlayState::update(GameEngine* lp_game_engine)
 	catch(...)
 	{
 		std::cout << "Error getting view pos vertices" << std::endl;
+	}
+
+	if(this->map.hasStructure(map_pos.x, map_pos.y))
+	{
+		static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
+		const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
+		const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
+		const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
+		std::stringstream ss;
+		ss << "Height: " << static_cast<int>(structure_height * 32.f) << " m";
+		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
+		ss.str("");
+		ss << "#floors: " << structure_floors;
+		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(2) = ss.str();
+		ss.str("");
+		ss << "#inhabitants: " << inhabitants;
+		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
+	}
+	else
+	{
+		static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
 	}
 
 }

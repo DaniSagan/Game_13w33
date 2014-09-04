@@ -61,6 +61,9 @@ public:
 	void setJobs(unsigned int value);
 	unsigned int getJobs() const;
 
+	float getStructureHeight() const;
+	unsigned int getStructureFloorCount() const;
+
 private:
 	sf::Vector3f origin;
 	std::vector<Structure*> lp_structures;

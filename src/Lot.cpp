@@ -128,4 +128,32 @@ unsigned int Lot::getJobs() const
 	return this->jobs;
 }
 
+float Lot::getStructureHeight() const
+{
+	if(this->lp_structures.size() == 0)
+	{
+		return 0.f;
+	}
+	std::vector<float> heights;
+	for(Structure* lp_structure: this->lp_structures)
+	{
+		heights.push_back(lp_structure->getModelHeight());
+	}
+	return *(std::max_element(heights.begin(), heights.end()));
+}
+
+unsigned int Lot::getStructureFloorCount() const
+{
+	if(this->lp_structures.size() == 0)
+	{
+		return 0;
+	}
+	std::vector<unsigned int> floors;
+	for(Structure* lp_structure: this->lp_structures)
+	{
+		floors.push_back(lp_structure->getModelFloorCount());
+	}
+	return *(std::max_element(floors.begin(), floors.end()));
+}
+
 } /* namespace dfv */

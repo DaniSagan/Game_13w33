@@ -52,4 +52,14 @@ void Structure::drawOutline() const
 	this->model.drawOutlines();
 }
 
+float Structure::getModelHeight() const
+{
+	return this->model.getHeight();
+}
+
+unsigned int Structure::getModelFloorCount() const
+{
+	return this->model.getFloorCount();
+}
+
 } /* namespace dfv */

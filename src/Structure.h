@@ -39,6 +39,9 @@ public:
 	void setModel(const Model & model);
 	void drawBox() const;
 	void drawOutline() const;
+
+	float getModelHeight() const;
+	unsigned int getModelFloorCount() const;
 private:
 	Model model;
 };
