@@ -123,12 +123,14 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
 				}
 				//else if(map.HasBuilding(abs_pos))
+				/*
 				else if(map.hasBuilding(abs_pos.x, abs_pos.y))
 				{
 					this->lp_pixels[(j * this->size + i) * 4] = map.getBuildingColor(abs_pos).r;
 					this->lp_pixels[(j * this->size + i) * 4 + 1] = map.getBuildingColor(abs_pos).g;
 					this->lp_pixels[(j * this->size + i) * 4 + 2] = map.getBuildingColor(abs_pos).b;
 				}
+				*/
 				else if(map.isWater(abs_pos.x, abs_pos.y))
 				{
 					this->lp_pixels[(j * this->size + i) * 4] = 0;

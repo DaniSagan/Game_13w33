@@ -76,7 +76,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 		unsigned int y = rand() % this->map.getSize();
 		if(!this->map.isWater(x, y) &&
 		   !this->map.isBeach(x, y) &&
-		   !this->map.hasBuilding(x, y) &&
+		   //!this->map.hasBuilding(x, y) &&
 		   !this->map.isRoad(x, y))
 		{
 			lp_tree = new Tree();
@@ -229,7 +229,7 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		{
 			if(event.key.code == sf::Keyboard::P)
 			{
-				this->map.saveAsMapFormat("res/map/world1.map");
+				//this->map.saveAsMapFormat("res/map/world1.map");
 			}
 			else if(event.key.code == sf::Keyboard::O)
 			{
@@ -454,8 +454,8 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 			{
 				filename = "res/map/world1_test.map";
 			}
-			this->map.saveAsMapFormat(filename);
-			std::cout << "Map saved in file " << filename << std::endl;
+			//this->map.saveAsMapFormat(filename);
+			std::cout << "Map saving not implemented " << std::endl;
 			return true;
 		}
 		else if(tokens.at(0) == std::string("select"))
@@ -510,7 +510,7 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				this->map.generateTileList(this->camera, this->resources);
 				return true;
 			}
-			else if(tokens.at(1) == std::string("building"))
+			/*else if(tokens.at(1) == std::string("building"))
 			{
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
@@ -519,7 +519,7 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				}
 				this->map.generateBuildingList();
 				return true;
-			}
+			}*/
 			else if(tokens.at(1) == std::string("prop"))
 			{
 				std::vector<sf::Vector2i>::iterator it;
@@ -527,7 +527,7 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				{
 					this->map.clearProp(it->x, it->y);
 				}
-				this->map.generateBuildingList();
+				//this->map.generateBuildingList();
 				return true;
 			}
 		}
@@ -653,7 +653,7 @@ void PlayState::generateLists()
 {
 	std::cout << "generating lists" << std::endl;
 	this->map.generateTileList(this->camera, this->resources);
-	this->map.generateBuildingList();
+	//this->map.generateBuildingList();
 	this->map.generateRoadList(this->camera, this->resources);
 	this->map.generateStructureBoxList(this->camera, this->resources);
 }

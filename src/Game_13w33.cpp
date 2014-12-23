@@ -30,9 +30,5 @@ int main()
 		game_engine.update();
 		game_engine.draw();
 	}
-
-	/*sf::RenderWindow window({1024, 1024 * 9 / 16}, "Hyperopolis");
-	dfv::App app(window);
-	app.run();*/
 	return 0;
 }

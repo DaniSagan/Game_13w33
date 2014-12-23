@@ -28,7 +28,7 @@ namespace dfv
 
 Map::Map():
 		size(0),
-		building_list(0),
+		//building_list(0),
 		tile_list(0),
 		population(0)
 {
@@ -92,6 +92,7 @@ void Map::generateTiles()
 	}
 }
 
+/*
 void Map::createFromFile(std::string filename, unsigned int water_level, float max_height)
 {
 
@@ -177,6 +178,7 @@ void Map::createFromFile(std::string filename, unsigned int water_level, float m
 	}
 	//std::cout << "No. of buildings: " << building_count << std::endl;
 }
+*/
 
 void Map::createRandom(const unsigned int size)
 {
@@ -387,6 +389,7 @@ void Map::createValley(const unsigned int size, const float a, const float b)
 	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
+/*
 void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
@@ -578,7 +581,7 @@ void Map::draw(sf::Window& window, const dfv::Camera& camera, const dfv::Resourc
 			this->lp_tiles[i][j]->DrawBuilding();
 		}
 	}*/
-}
+//}
 
 unsigned int Map::getSize() const
 {
@@ -655,6 +658,7 @@ bool Map::loadHeightMap(const std::string& filename)
 
 }
 
+/*
 bool Map::saveBuildingMap(const std::string& filename)
 {
 	sf::Image img;
@@ -813,7 +817,7 @@ bool Map::loadBuildingMap(const std::string& filename)
 		std::cout << "ERROR: Building map does not match height map." << std::endl;
 		return false;
 	}
-}
+}*/
 
 void Map::generateMapImg(const unsigned int tile_size)
 {
@@ -828,11 +832,12 @@ void Map::generateMapImg(const unsigned int tile_size)
 			{
 				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
 			}
+			/*
 			if(this->lp_tiles[i][j]->hasBuilding())
 			{
 				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size - 1, (j+1)*tile_size - 1), sf::Color(0, 0, 0));
 				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size+1, j*tile_size+1), sf::Vector2i((i+1)*tile_size - 2, (j+1)*tile_size - 2), this->lp_tiles[i][j]->getBuildingColor());
-			}
+			}*/
 		}
 	}
 
@@ -878,7 +883,7 @@ bool Map::isRoad(unsigned int x, unsigned int y) const
 	}
 }*/
 
-bool Map::hasBuilding(unsigned int x, unsigned int y) const
+/*bool Map::hasBuilding(unsigned int x, unsigned int y) const
 {
 	if(x >= 0 && x < this->size &&
 	   y >= 0 && y < this->size)
@@ -902,7 +907,7 @@ sf::Color Map::getBuildingColor(const sf::Vector2i& tile_pos) const
 	{
 		return sf::Color(0, 0, 0);
 	}
-}
+}*/
 
 bool Map::changeRoadType(const sf::Vector2i& tile_pos)
 {
@@ -1103,6 +1108,7 @@ void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources
 	glEnd();
 }
 
+/*
 void Map::drawBuildingBoxes(dfv::RealIntRect rect) const
 {
 	rect.trim(this->getTileRect());
@@ -1154,7 +1160,7 @@ void Map::drawBuildingFloors(dfv::RealIntRect rect) const
 		}
 	}
 	glEnd();
-}
+}*/
 
 void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
@@ -1202,6 +1208,7 @@ void Map::drawStructureOutlines(dfv::RealIntRect rect) const
 	glEnd();
 }
 
+/*
 bool Map::saveAsMapFormat(std::string filename)
 {
 	std::ofstream file;
@@ -1285,8 +1292,9 @@ bool Map::saveAsMapFormat(std::string filename)
 	{
 		return false;
 	}
-}
+}*/
 
+/*
 bool Map::loadFromMapFormat(std::string filename)
 {
 	std::ifstream file;
@@ -1368,7 +1376,7 @@ bool Map::loadFromMapFormat(std::string filename)
 		return false;
 	}
 
-}
+}*/
 
 float Map::getHeight(const sf::Vector2f& pos) const
 {
@@ -1447,6 +1455,7 @@ bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 	}
 }
 
+/*
 void Map::generateBuildingList()
 {
 	this->building_list = glGenLists(1);
@@ -1458,7 +1467,7 @@ void Map::generateBuildingList()
 void Map::callBuildingList() const
 {
 	glCallList(this->building_list);
-}
+}*/
 
 void Map::generateRoadList(const Camera& camera, const Resources& resources)
 {
@@ -1867,6 +1876,7 @@ bool Map::buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned in
 	return false;
 }
 
+/*
 bool Map::clearBuilding(unsigned int x, unsigned int y)
 {
 	try
@@ -1878,6 +1888,7 @@ bool Map::clearBuilding(unsigned int x, unsigned int y)
 		return false;
 	}
 }
+*/
 
 bool Map::clearProp(unsigned int x, unsigned int y)
 {

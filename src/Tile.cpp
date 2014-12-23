@@ -27,7 +27,7 @@ namespace dfv
 {
 
 Tile::Tile():
-		lp_building(NULL),
+		//lp_building(NULL),
 		is_road(false),
 		lp_road(NULL),
 		lp_prop(NULL),
@@ -41,7 +41,7 @@ Tile::Tile():
 
 Tile::~Tile()
 {
-	if(lp_building != NULL) delete this->lp_building;
+	//if(lp_building != NULL) delete this->lp_building;
 	if(lp_road != NULL) delete this->lp_road;
 	if(lp_structure != NULL) delete this->lp_structure;
 }
@@ -134,6 +134,7 @@ void Tile::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
 }
 
+/*
 void Tile::addBuilding(float height)
 {
 	this->lp_building = new Building;
@@ -144,13 +145,14 @@ void Tile::addBuilding(float height)
 bool Tile::hasBuilding() const
 {
 	return this->lp_building != NULL;
-}
+}*/
 
 bool Tile::hasProp() const
 {
 	return this->lp_prop != NULL;
 }
 
+/*
 void Tile::drawBuilding(const bool draw_floors) const
 {
 	if(this->lp_building != NULL)
@@ -169,7 +171,7 @@ sf::Color Tile::getBuildingColor() const
 	{
 		return sf::Color(0, 0, 0);
 	}
-}
+}*/
 
 void Tile::setAsRoad(const bool r)
 {
@@ -181,6 +183,7 @@ bool Tile::isRoad() const
 	return this->lp_road != NULL;
 }
 
+/*
 float Tile::getBuildingHeight() const
 {
 	if(this->hasBuilding())
@@ -191,7 +194,7 @@ float Tile::getBuildingHeight() const
 	{
 		return 0.f;
 	}
-}
+}*/
 
 void Tile::addRoad(dfv::Road::Type type, unsigned int orientation)
 {
@@ -261,7 +264,7 @@ sf::Vector3f Tile::getVertex(const unsigned int index) const
 {
 	if(index < 4)
 	{
-		return this->vertices[index];
+		return this->vertices.at(index);
 	}
 	return this->vertices.back();
 }
@@ -271,6 +274,7 @@ const std::vector<sf::Vector3f> & Tile::getVertices() const
 	return this->vertices;
 }
 
+/*
 void Tile::drawBuildingBox() const
 {
 	this->lp_building->drawBox();
@@ -284,7 +288,7 @@ void Tile::drawBuildingOutline() const
 void Tile::drawBuildingFloors() const
 {
 	this->lp_building->drawFloors();
-}
+}*/
 
 sf::Vector3f Tile::getColor(unsigned int index) const
 {
@@ -296,10 +300,11 @@ sf::Vector3f Tile::getNormal(unsigned int index) const
 	return this->normals[index];
 }
 
+/*
 sf::Vector3f Tile::getBuildingColor3f() const
 {
 	return this->lp_building->getColor3f();
-}
+}*/
 
 void Tile::setVertex(const unsigned int index, const sf::Vector3f& vertex)
 {
@@ -311,10 +316,11 @@ sf::Color Tile::getSfmlColor() const
 	return sf::Color(this->color.x * 255.f, this->color.y * 255.f, this->color.z * 255.f);
 }
 
+/*
 void Tile::setBuildingColor(const sf::Color& color)
 {
 	this->lp_building->setColor(color);
-}
+}*/
 
 void Tile::drawRoad(const Camera& camera, const Resources& resources) const
 {
@@ -367,6 +373,7 @@ bool Tile::clearRoad()
 
 }
 
+/*
 bool Tile::clearBuilding()
 {
 	if(this->lp_building != NULL)
@@ -380,7 +387,7 @@ bool Tile::clearBuilding()
 	{
 		return false;
 	}
-}
+}*/
 
 bool Tile::clearProp()
 {
