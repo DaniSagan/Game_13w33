@@ -1845,7 +1845,7 @@ bool Map::clearRoad(unsigned int x, unsigned int y)
 {
 	try
 	{
-		return this->lp_tiles[x][y]->clearRoad();
+		return this->lp_tiles.at(x).at(y)->clearRoad();
 	}
 	catch(...)
 	{
@@ -1992,6 +1992,11 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 Lot* Map::getLot(unsigned int x, unsigned int y) const
 {
 	return this->lp_tiles.at(x).at(y)->lp_lot;
+}
+
+const Tile& Map::getTile(size_t x, size_t y) const
+{
+	return *(this->lp_tiles.at(x).at(y));
 }
 
 } /* namespace dfv */

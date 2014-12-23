@@ -16,8 +16,8 @@
 */
 
 //#include "App.h"
-#include "GameEngine.h"
-#include "StartMenuState.h"
+#include "engine/GameEngine.h"
+#include "engine/StartMenuState.h"
 #include <SFML/Graphics.hpp>
 
 int main()

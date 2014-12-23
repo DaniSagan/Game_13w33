@@ -125,6 +125,8 @@ public:
 	bool addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax, unsigned int ymax);
 	Lot* getLot(unsigned int x, unsigned int y) const;
 
+	const Tile& getTile(size_t x, size_t y) const;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;

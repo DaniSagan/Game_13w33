@@ -9,11 +9,11 @@
 #define STARTMENUSTATE_H_
 
 #include "GameState.h"
-#include "gui/Text.h"
-#include "gui/Clickable.h"
-#include "gui/Picture.h"
-#include "gui/Panel.h"
-#include "gui/Editable.h"
+#include "../gui/Text.h"
+#include "../gui/Clickable.h"
+#include "../gui/Picture.h"
+#include "../gui/Panel.h"
+#include "../gui/Editable.h"
 
 namespace dfv
 {

@@ -10,23 +10,23 @@
 
 #include "GameState.h"
 //#include "App.h"
-#include "gui/Gui.h"
+#include "../gui/Gui.h"
 #include <iostream>
 #include <string>
 #include <cmath>
 #include <random>
 #include <thread>
-#include "Map.h"
-#include "Resources.h"
-#include "gui/Button.h"
-#include "gui/Gui.h"
-#include "gui/Component.h"
-#include "gui/Text.h"
-#include "gui/Clickable.h"
-#include "gui/Editable.h"
-#include "gui/Multitext.h"
-#include "Utils.h"
-#include "CmdServer.h"
+#include "../Map.h"
+#include "../Resources.h"
+#include "../gui/Button.h"
+#include "../gui/Gui.h"
+#include "../gui/Component.h"
+#include "../gui/Text.h"
+#include "../gui/Clickable.h"
+#include "../gui/Editable.h"
+#include "../gui/Multitext.h"
+#include "../Utils.h"
+#include "../CmdServer.h"
 
 namespace dfv
 {

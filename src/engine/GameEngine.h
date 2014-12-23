@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <stack>
 #include <cassert>
-#include "gui/Assets.h"
+#include "../gui/Assets.h"
 
 namespace dfv
 {
