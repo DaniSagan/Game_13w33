@@ -232,7 +232,7 @@ void Map::createRandom(const unsigned int size)
 					this->heights[i+1][j+1],
 					this->heights[i][j+1]);
 			//lp_tile->SetColor(sf::Color(20 + rand() % 20, 180 + rand() % 20, 20 + rand() % 20));
-			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
+			lp_tile->setColor(sf::Color(10 + rand() % 20, 80 + rand() % 20, 10 + rand() % 20));
 			this->lp_tiles[i][j] = lp_tile;
 			/*if(rand() % 5 < 4)
 			{
@@ -1536,12 +1536,13 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 	{
 		for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->isRoad())
-			{
+			//if(this->lp_tiles.at(i).at(j)->isRoad())
+			//{
 				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
-			}
+			//}
 		}
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
@@ -1946,7 +1947,7 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 			   !this->lp_tiles.at(i).at(j)->isBeach() &&
 			   !this->lp_tiles.at(i).at(j)->isWater() &&
 			   this->lp_tiles.at(i).at(j)->lp_prop == NULL &&
-			   //this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 5.f &&
+			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 5.f &&
 			   this->lp_tiles.at(i).at(j)->getQuad().getMaxInclination() < 0.2f)
 			{
 				// add tile to the list of tiles for the lot

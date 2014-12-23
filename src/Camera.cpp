@@ -94,7 +94,18 @@ void Camera::setView(const sf::Window& window) const
 	glViewport(0, 0, window.getSize().x, window.getSize().y);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+	{
+		gluPerspective(3.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+	}
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+		gluPerspective(10.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+	}
+	else
+	{
+		gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+	}
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -183,6 +194,7 @@ void Camera::handleInput(sf::Event& event)
 void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 {
 	this->map_normal = normal;
+	const float scale = 16.f;
 	//std::cout << "normal: " << normal.x << ", " << normal.y << ", " << normal.z << std::endl;
 	sf::Vector3f vdirx(sin(this->rpy.z*M_PI/180.0), cos(this->rpy.z*M_PI/180.0), 0.0);
 	sf::Vector3f vdiry(sin((this->rpy.z-90)*M_PI/180.0), cos((this->rpy.z-90)*M_PI/180.0), 0.0);
@@ -196,7 +208,8 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	//std::cout << "roll:" << roll << std::endl;
 
 	float height = this->getPosition().z - map_height;
-	float base_height = 0.05f / cos(pitch*M_PI/180.f);
+	//float base_height = 0.05f / cos(pitch*M_PI/180.f);
+	float base_height = (1.0f/scale) / cos(pitch*M_PI/180.f);
 	/*if(height < 0.04f)
 	{
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.04f + map_height));
@@ -238,7 +251,13 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 			this->move(sf::Vector3f(-dt * vel * sin(ang), -dt * vel * cos(ang), 0.0));
 		}
 
-		float rot = 20.0f * dt;
+
+		float rot = 40.0f * dt;
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+		{
+			rot *= 0.1f;
+		}
+
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
 			this->rotate(sf::Vector3f(-rot/2.0, 0.f, 0.f));
@@ -265,13 +284,22 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	else if(this->mode == Driving)
 	{
 		this->car.update(dt, this->curr_pitch);
-		vel = 1.f/32.f*this->car.getSpeed();
+		vel = 1.f/scale*this->car.getSpeed();
 		float rot = 0.0;
 		if(vel > 0.0)
 		{
 			rot = this->car.getDeltaSteeringAngle(dt);
 			float fc = this->car.getCentrifugalForce();
 			float fc_max = this->car.getMaxCentrifugalForce();
+			if(rot < 0)
+			{
+				fc_max -= this->car.getMass()*9.81*sin(this->curr_roll*M_PI/180.f);
+			}
+			else
+			{
+				fc_max += this->car.getMass()*9.81*sin(this->curr_roll*M_PI/180.f);
+			}
+
 			if(fc > fc_max)
 			{
 				rot = this->car.getMaxDeltaSteeringAngle(dt);

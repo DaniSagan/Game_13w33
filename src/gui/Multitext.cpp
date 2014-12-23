@@ -16,7 +16,9 @@ Multitext::Multitext(Component* lp_parent, int id):
 		txt_color(sf::Color::White),
 		visible(true),
 		txt_size(12.f),
-		interline_space(0.f)
+		interline_space(0.f),
+		text_alignment(LEFT),
+		margin(5.f)
 {
 }
 
@@ -37,14 +39,27 @@ void Multitext::draw(sf::RenderWindow& window, const Assets& assets) const
 	{
 		txts.at(i) = sf::Text(this->lines.at(i), assets.font, this->txt_size);
 		txts.at(i).setColor(this->txt_color);
-		txts.at(i).setPosition((this->size.x-txts.at(i).getLocalBounds().width)/2.f, -txts.at(i).getLocalBounds().top);
+		float xpos = 0.f;
+		if(this->text_alignment == LEFT)
+		{
+			xpos = this->margin;
+		}
+		else if(this->text_alignment == CENTER)
+		{
+			xpos = (this->size.x - txts.at(i).getLocalBounds().width)/2.f;
+		}
+		else if(this->text_alignment == RIGHT)
+		{
+			xpos = this->size.x - txts.at(i).getLocalBounds().width - this->margin;
+		}
+
+		txts.at(i).setPosition(xpos, -txts.at(i).getLocalBounds().top);
 		if(i >= 1)
 		{
 			/*txts.at(i).setPosition(txts.at(i-1).getLocalBounds().height+txts.at(i-1).getLocalBounds().top + this->interline_space,
 								   (this->size.x-txts.at(i).getLocalBounds().width)/2.f - txts.at(i).getLocalBounds().top);*/
 			float last_bottom = txts.at(i-1).getGlobalBounds().top + txts.at(i-1).getGlobalBounds().height;
 			txts.at(i).move(0.f, last_bottom + this->interline_space);
-			std::cout << i << ": " << last_bottom << std::endl;
 		}
 		txt_height += txts.at(i).getLocalBounds().height;
 	}

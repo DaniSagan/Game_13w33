@@ -67,6 +67,7 @@ public:
 	float getCentrifugalForce() const;
 	float getMaxCentrifugalForce() const;
 	float getMaxDeltaSteeringAngle(float dt) const;
+	float getMass() const;
 private:
 	float k, w0, w1;
 	sf::Vector3f position;

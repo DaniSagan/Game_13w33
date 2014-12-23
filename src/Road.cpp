@@ -169,7 +169,7 @@ void Road::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 			glVertex3f(this->vertices[i].x, this->vertices[i].y, this->vertices[i].z);
 		}
 	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Road::setId(unsigned int id)

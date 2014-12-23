@@ -56,8 +56,11 @@ void Model::create(const Quad & tile_quad,
 				   const Quad & base_quad,
 				   unsigned int floor_count)
 {
-	const float street_height = 0.1625f;
-	const float floor_height = 0.125f;
+	const float scale = 16.f;
+	//const float street_height = 0.1625f;
+	//const float floor_height = 0.125f;
+	const float street_height = 5.f / scale;
+	const float floor_height = 3.f / scale;
 	const float margin = 0.01f;
 	const float line_width = 0.02f;
 
@@ -124,9 +127,12 @@ void Model::create(const float min_terrain_height,
 		const float max_terrain_height, const sf::Vector2f& position,
 		const Quad& base_quad, unsigned int floor_count)
 {
-	const float street_height = 0.18f;
-	const float floor_height = 0.125f;
-	const float margin = 0.01f;
+	//const float street_height = 0.18f;
+	//const float floor_height = 0.125f;
+	const float scale = 16.f;
+	const float street_height = 5.f / scale;
+	const float floor_height = 3.f / scale;
+	const float margin = 0.015f;
 	const float line_width = 0.02f;
 
 	const float building_height = floor_count * floor_height + street_height;
@@ -189,6 +195,16 @@ void Model::create(const float min_terrain_height,
 			this->outline_quads.push_back(q);
 		}
 	}
+
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		q.create(vv.at(i) + sf::Vector3f(0.f, 0.f, min_terrain_height),
+				 base_quad.getVertex(i) + sf::Vector3f(origin.x, origin.y, 0.f) + sf::Vector3f(0.f, 0.f, min_terrain_height),
+				 base_quad.getVertex(i) + sf::Vector3f(origin.x, origin.y, 0.f) + sf::Vector3f(0.f, 0.f, max_terrain_height + building_height),
+				 vv.at(i) + sf::Vector3f(0.f, 0.f, max_terrain_height + building_height));
+		this->outline_quads.push_back(q);
+	}
+
 }
 
 unsigned int Model::getFloorCount() const

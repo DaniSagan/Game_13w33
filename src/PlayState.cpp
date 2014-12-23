@@ -38,7 +38,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createFlat(850, 2.0);
 	//this->map.createFlat(64, 2.0);
 	unsigned int map_size = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
-	this->map.createFlat(map_size, 2.f);
+	//this->map.createFlat(map_size, 2.f);
+	this->map.createRandom(map_size);
 
 	// create roads
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
@@ -47,20 +48,19 @@ void PlayState::init(GameEngine* lp_game_engine)
 		{
 			if(!this->map.isWater(i, j) &&
 			   !this->map.isBeach(i, j) &&
-			   this->map.getMaxInclination(i, j) < 0.25f //&&
-			   //this->map.getAvgHeight(i, j) < 5.f)
-			   )
+			   this->map.getMaxInclination(i, j) < 0.25f &&
+			   this->map.getAvgHeight(i, j) < 5.f)
 			{
 				sf::Vector2i pos(i, j);
-				if(((i%4 == 0) || (i%20 == 1)) && !((j%4==0) || (j%20==1)))
+				if(((i%5 == 0) || (i%25 == 1)) && !((j%5==0) || (j%25==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 0);
 				}
-				else if(!((i%4 == 0) || (i%20 == 1)) && ((j%4==0) || (j%20==1)))
+				else if(!((i%5 == 0) || (i%25 == 1)) && ((j%5==0) || (j%25==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 1);
 				}
-				else if(((i%4 == 0) || (i%20 == 1)) && ((j%4==0) || (j%20==1)))
+				else if(((i%5 == 0) || (i%25 == 1)) && ((j%5==0) || (j%25==1)))
 				{
 					this->map.addRoad(pos, Road::cross, 0);
 				}
@@ -97,8 +97,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 		unsigned int ymin = rand() % this->map.getSize();
 		//unsigned int size_x = (rand() % 3) + 1;
 		//unsigned int size_y = (rand() % 3) + 1;
-		unsigned int size_x = 1 + floor(2.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
-		unsigned int size_y = 1 + floor(2.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
+		unsigned int size_x = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
+		unsigned int size_y = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
 		//std::cout << xmin << ", " << ymin << ", " << size_x << ", " << size_y << std::endl;
 		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
 		{
@@ -110,7 +110,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
 													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
-			unsigned int floor_count = floor(20.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			unsigned int floor_count = floor(15.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();
@@ -144,6 +144,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	Text* lp_stats_text = new Text(&this->gui_root, STATS_TEXT_BAR);
 	std::stringstream ss;
+	ss.imbue(std::locale(""));
 	ss << "Saganopolis ---- Population: " << population << " ---- Buildings: " << buildings;
 	lp_stats_text->text = ss.str();
 	lp_stats_text->setPosition(sf::Vector2f(0.f, 0.f));
@@ -188,6 +189,7 @@ void PlayState::resume()
 void PlayState::handleInput(GameEngine* lp_game_engine)
 {
 	this->mouse_pos = sf::Vector2i(sf::Mouse::getPosition(lp_game_engine->window));
+	sf::Vector2f mouse_pos(this->mouse_pos.x, this->mouse_pos.y);
 	std::string server_cmd = this->cmd_server.getCmd();
 	if(server_cmd != std::string(""))
 	{
@@ -269,10 +271,11 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		}
 		else if(event.type == sf::Event::MouseMoved)
 		{
-			sf::Vector2f mouse_pos(event.mouseMove.x, event.mouseMove.y);
+			//sf::Vector2f mouse_pos(event.mouseMove.x, event.mouseMove.y);
+			//sf::Vector2f mouse_pos = sf::Mouse::getPosition(lp_game_engine->window);
 			sf::Vector2f panel_size = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->size;
 			sf::Vector2i map_pos(this->map_pos.x, this->map_pos.y);// = this->map.getMapPosFromMouse(sf::Vector2i(mouse_pos.x, mouse_pos.y));
-			this->gui_root.getById(INFO_PANEL)->setPosition(mouse_pos + sf::Vector2f(20.f, -20.f-panel_size.y));
+			//this->gui_root.getById(INFO_PANEL)->setPosition(mouse_pos + sf::Vector2f(20.f, -20.f-panel_size.y));
 			/*if(this->map.hasStructure(map_pos.x, map_pos.y))
 			{
 				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
@@ -338,12 +341,14 @@ void PlayState::update(GameEngine* lp_game_engine)
 
 	if(this->map.hasStructure(map_pos.x, map_pos.y))
 	{
-		static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
+		Panel* info_panel = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL));
+		//static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
+		info_panel->visible = true;
 		const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
 		const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
 		const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
 		std::stringstream ss;
-		ss << "Height: " << static_cast<int>(structure_height * 32.f) << " m";
+		ss << "Height: " << static_cast<int>(structure_height * 16.f) << " m";
 		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
 		ss.str("");
 		ss << "#floors: " << structure_floors;
@@ -351,6 +356,9 @@ void PlayState::update(GameEngine* lp_game_engine)
 		ss.str("");
 		ss << "#inhabitants: " << inhabitants;
 		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
+		sf::Vector2f info_panel_pos(sf::Mouse::getPosition(lp_game_engine->window).x + 20.f,
+				sf::Mouse::getPosition(lp_game_engine->window).y - 20.f - info_panel->size.y);
+		info_panel->setPosition(info_panel_pos);
 	}
 	else
 	{
@@ -361,13 +369,27 @@ void PlayState::update(GameEngine* lp_game_engine)
 
 void PlayState::draw(GameEngine* lp_game_engine)
 {
+	/*if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+		std::cout << "hello" << std::endl;
+		gluPerspective(15.f, (float)lp_game_engine->window.getSize().x / (float)lp_game_engine->window.getSize().y, 0.01f, 2500.f);
+	}
+	else
+	{
+		gluPerspective(55.f, (float)lp_game_engine->window.getSize().x / (float)lp_game_engine->window.getSize().y, 0.01f, 2500.f);
+	}*/
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
 	lp_game_engine->window.setActive();
 	this->camera.setView(lp_game_engine->window);
 
+
+
+	glDisable(GL_FOG);
 	this->map.drawSky();
 	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
+	glEnable(GL_FOG);
 
 	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
 	this->map.callTileList();
@@ -539,7 +561,8 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0f);
-	glClearColor(0.5f, 0.6f, 0.95f, 0.f);
+	//glClearColor(0.5f, 0.6f, 0.95f, 0.f);
+	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glDepthMask(GL_TRUE);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -575,6 +598,14 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 	glEnable(GL_LIGHT1);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_CULL_FACE);
+
+	// fog
+	GLfloat fog_start = 20.f;
+	GLfloat fog_density = 0.002f;
+	GLfloat fog_color[] = {0.9f, 0.9f, 0.9f, 1.f};
+	glFogfv(GL_FOG_START, &fog_start);
+	glFogfv(GL_FOG_DENSITY, &fog_density);
+	glFogfv(GL_FOG_COLOR, fog_color);
 }
 
 void PlayState::createSelectedShapes(GameEngine* lp_game_engine)

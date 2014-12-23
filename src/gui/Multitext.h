@@ -20,6 +20,13 @@ public:
 	Multitext(Component* lp_parent, int id=-1);
 	virtual ~Multitext();
 
+	enum Alignment
+	{
+		LEFT,
+		CENTER,
+		RIGHT
+	};
+
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
 	virtual GuiRect getRect() const;
 
@@ -31,6 +38,8 @@ public:
 	bool visible;
 	std::vector<std::string> lines;
 	float interline_space;
+	Alignment text_alignment;
+	float margin;
 
 protected:
 

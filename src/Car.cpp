@@ -38,11 +38,11 @@ Car::Car():
 {
 	float diff_ratio = 4.17;
 	this->gear_ratios.resize(5);
-	this->gear_ratios[0] = diff_ratio * 3.06;
-	this->gear_ratios[1] = diff_ratio * 1.83;
-	this->gear_ratios[2] = diff_ratio * 1.29;
-	this->gear_ratios[3] = diff_ratio * 0.98;
-	this->gear_ratios[4] = diff_ratio * 0.76;
+	this->gear_ratios.at(0) = diff_ratio * 3.06;
+	this->gear_ratios.at(1) = diff_ratio * 1.83;
+	this->gear_ratios.at(2) = diff_ratio * 1.29;
+	this->gear_ratios.at(3) = diff_ratio * 0.98;
+	this->gear_ratios.at(4) = diff_ratio * 0.76;
 	/*float diff_ratio = 3.64;
 	this->gear_ratios.resize(7);
 	this->gear_ratios[0] = diff_ratio * 3.18;
@@ -94,9 +94,9 @@ float Car::getMaxTorque() const
 void Car::setGearRatios(std::vector<float>& gear_ratios)
 {
 	this->gear_ratios.resize(gear_ratios.size());
-	for(unsigned int i = 0; i < gear_ratios.size(); i++)
+	for(std::size_t i = 0; i < gear_ratios.size(); i++)
 	{
-		this->gear_ratios[i] = gear_ratios[i];
+		this->gear_ratios.at(i) = gear_ratios.at(i);
 	}
 }
 
@@ -127,7 +127,7 @@ bool Car::gearUp()
 float Car::getMotorW() const
 {
 	float wmin = 980*2*3.1416/60;
-	float w = (this->speed/this->wheel_radius)*this->gear_ratios[this->curr_gear];
+	float w = (this->speed/this->wheel_radius)*this->gear_ratios.at(this->curr_gear);
 	if(w < wmin)
 	{
 		return wmin;
@@ -222,7 +222,7 @@ float Car::getForce() const
 	}
 	else if(this->state == Accelerating)
 	{
-		return (this->getCurrTorque()*this->gear_ratios[this->curr_gear]) / this->wheel_radius;
+		return (this->getCurrTorque()*this->gear_ratios.at(this->curr_gear)) / this->wheel_radius;
 	}
 	else if(this->state == Braking)
 	{
@@ -277,6 +277,11 @@ float Car::getMaxCentrifugalForce() const
 float Car::getMaxDeltaSteeringAngle(float dt) const
 {
 	return dt*this->friction_coeff*9.81/this->speed;
+}
+
+float Car::getMass() const
+{
+	return this->mass;
 }
 
 } /* namespace dfv */
