@@ -16,7 +16,7 @@
 #include <cmath>
 #include <random>
 #include <thread>
-#include "../Map.h"
+#include "../map/Map.h"
 #include "../Resources.h"
 #include "../gui/Button.h"
 #include "../gui/Gui.h"

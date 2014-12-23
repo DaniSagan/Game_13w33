@@ -31,9 +31,9 @@
 #include <fstream>
 #include <random>
 #include <SFML/OpenGL.hpp>
-#include "Camera.h"
+#include "../Camera.h"
 #include "Tile.h"
-#include "Resources.h"
+#include "../Resources.h"
 #include "Sky.h"
 #include "Prop.h"
 #include "Tree.h"

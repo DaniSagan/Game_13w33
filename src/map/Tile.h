@@ -28,9 +28,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 //#include "Building.h"
-#include "Utils.h"
-#include "Resources.h"
-#include "Camera.h"
+#include "../Utils.h"
+#include "../Resources.h"
+#include "../Camera.h"
 #include "Road.h"
 #include "Prop.h"
 #include "Structure.h"

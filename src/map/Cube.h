@@ -15,35 +15,42 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- * Prop.h
+ * Cube.h
  *
- *  Created on: Jun 23, 2014
+ *  Created on: Aug 11, 2013
  *      Author: daniel
  */
 
-#ifndef PROP_H_
-#define PROP_H_
+#ifndef CUBE_H_
+#define CUBE_H_
 
 #include <SFML/Graphics.hpp>
-#include <vector>
-#include <iostream>
-#include "Resources.h"
-#include "Camera.h"
-#include "Utils.h"
+#include "../Camera.h"
 
-namespace dfv {
+namespace dfv
+{
 
-class Prop
+class Cube
 {
 public:
-	Prop();
-	virtual ~Prop();
-	virtual void create(const std::vector<sf::Vector3f>& tile_vertices);
-	virtual void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-protected:
-	OpenGLImage img;
-	std::vector<Quad> quads;
+	Cube();
+	virtual ~Cube();
+
+	sf::Color getColor() const;
+	void setColor(sf::Color color);
+	const sf::Vector3f& getPosition() const;
+	void setPosition(const sf::Vector3f& position);
+
+	void draw(sf::Window& window, const dfv::Camera& camera, bool top_only = false);
+
+private:
+	sf::Vector3f position;
+	sf::Color color;
+	sf::Vector3f gl_color_top;
+	sf::Vector3f gl_color_side_b;
+	sf::Vector3f gl_color_side_d;
+	sf::Vector3f gl_color_bottom;
 };
 
 } /* namespace dfv */
-#endif /* PROP_H_ */
+#endif /* CUBE_H_ */

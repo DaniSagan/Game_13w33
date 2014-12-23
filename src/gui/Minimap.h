@@ -28,7 +28,7 @@
 #include <cmath>
 #include <string>
 #include "../Camera.h"
-#include "../Map.h"
+#include "../map/Map.h"
 
 namespace dfv
 {

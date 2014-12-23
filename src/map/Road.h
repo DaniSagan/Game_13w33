@@ -15,42 +15,59 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- * Cube.h
+ * Road.h
  *
- *  Created on: Aug 11, 2013
+ *  Created on: Aug 14, 2013
  *      Author: daniel
  */
 
-#ifndef CUBE_H_
-#define CUBE_H_
+#ifndef ROAD_H_
+#define ROAD_H_
 
 #include <SFML/Graphics.hpp>
-#include "Camera.h"
+#include <vector>
+#include <iostream>
+#include "../Resources.h"
+#include "../Camera.h"
+#include "../Utils.h"
 
 namespace dfv
 {
 
-class Cube
+class Road
 {
 public:
-	Cube();
-	virtual ~Cube();
+	Road();
+	virtual ~Road();
 
-	sf::Color getColor() const;
-	void setColor(sf::Color color);
-	const sf::Vector3f& getPosition() const;
-	void setPosition(const sf::Vector3f& position);
+	enum Type
+	{
+		straight,
+		cross,
+		tcross,
+		curve,
+		av_straight,
+		av_cross,
+		av_tcross,
+		count
+	};
 
-	void draw(sf::Window& window, const dfv::Camera& camera, bool top_only = false);
+	void create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
+	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+	void setId(unsigned int id);
+	void setOrientation(unsigned int orientation);
+	unsigned int getOrientation() const;
+	unsigned int getId() const;
 
 private:
-	sf::Vector3f position;
-	sf::Color color;
-	sf::Vector3f gl_color_top;
-	sf::Vector3f gl_color_side_b;
-	sf::Vector3f gl_color_side_d;
-	sf::Vector3f gl_color_bottom;
+	//Type id;
+	unsigned int id;
+	unsigned int orientation;
+	std::vector<sf::Vector3f> vertices;
+	std::vector<sf::Vector3f> normals;
+	std::vector<sf::Vector2f> tex_coords;
+
 };
 
 } /* namespace dfv */
-#endif /* CUBE_H_ */
+#endif /* ROAD_H_ */

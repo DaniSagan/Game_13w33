@@ -15,59 +15,35 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
- * Road.h
+ * Prop.h
  *
- *  Created on: Aug 14, 2013
+ *  Created on: Jun 23, 2014
  *      Author: daniel
  */
 
-#ifndef ROAD_H_
-#define ROAD_H_
+#ifndef PROP_H_
+#define PROP_H_
 
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
-#include "Resources.h"
-#include "Camera.h"
-#include "Utils.h"
+#include "../Resources.h"
+#include "../Camera.h"
+#include "../Utils.h"
 
-namespace dfv
-{
+namespace dfv {
 
-class Road
+class Prop
 {
 public:
-	Road();
-	virtual ~Road();
-
-	enum Type
-	{
-		straight,
-		cross,
-		tcross,
-		curve,
-		av_straight,
-		av_cross,
-		av_tcross,
-		count
-	};
-
-	void create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
-	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-	void setId(unsigned int id);
-	void setOrientation(unsigned int orientation);
-	unsigned int getOrientation() const;
-	unsigned int getId() const;
-
-private:
-	//Type id;
-	unsigned int id;
-	unsigned int orientation;
-	std::vector<sf::Vector3f> vertices;
-	std::vector<sf::Vector3f> normals;
-	std::vector<sf::Vector2f> tex_coords;
-
+	Prop();
+	virtual ~Prop();
+	virtual void create(const std::vector<sf::Vector3f>& tile_vertices);
+	virtual void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+protected:
+	OpenGLImage img;
+	std::vector<Quad> quads;
 };
 
 } /* namespace dfv */
-#endif /* ROAD_H_ */
+#endif /* PROP_H_ */
