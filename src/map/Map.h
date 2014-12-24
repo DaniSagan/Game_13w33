@@ -62,7 +62,7 @@ public:
 	//bool saveHeightMap(const std::string& filename);
 	//bool loadHeightMap(const std::string& filename);
 	void generateMapImg(const unsigned int tile_size);
-	void loadHeightMap(const string& filename);
+	void loadHeightMap(const string& filename, size_t smoothingCount = 0);
 
 	bool isRoad(unsigned int x, unsigned int y) const;
 	bool changeRoadType(const sf::Vector2i& tile_pos);
@@ -129,6 +129,8 @@ public:
 
 	const Tile& getTile(size_t x, size_t y) const;
 
+	HeightMap heightMap;
+
 private:
 	unsigned int size;
 	std::vector<std::vector<float> > heights;
@@ -139,7 +141,7 @@ private:
 	GLuint road_list;
 	unsigned int population;
 	GLuint structure_box_list;
-	HeightMap heightMap;
+
 
 };
 

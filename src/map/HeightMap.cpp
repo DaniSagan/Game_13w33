@@ -11,7 +11,7 @@ namespace dfv
 {
 
 HeightMap::HeightMap():
-		minHeight(-1.f), maxHeight(20.f)
+		minHeight(-4.f), maxHeight(30.f)
 {
 	/*this->m_data.resize(size);
 	for(vector<float> v: this->m_data)
@@ -46,12 +46,33 @@ void HeightMap::load(const string& filename)
 		this->m_data.at(x).resize(size);
 		for(size_t y = 0; y < size; y++)
 		{
-			float color = static_cast<float>(img.getPixel(x, y).r);
+			float color = static_cast<float>(img.getPixel(x, img.getSize().y - y - 1).r);
 			float height = max(-0.01f, this->minHeight + (this->maxHeight-this->minHeight)/255.f * color);
 			this->m_data.at(x).at(y) = height;
 		}
 	}
 	cout << "Finished loading heightmap" << endl;
+}
+
+void HeightMap::smooth()
+{
+	vector<vector<float>> newData = this->m_data;
+	for(size_t x = 1; x < newData.size()-1; x++)
+	{
+		for(size_t y = 1; y < newData.size()-1; y++)
+		{
+			newData.at(x).at(y) = (this->m_data.at(x-1).at(y) +
+								   this->m_data.at(x-1).at(y-1) +
+								   this->m_data.at(x).at(y-1) +
+								   this->m_data.at(x+1).at(y-1) +
+								   this->m_data.at(x+1).at(y) +
+								   this->m_data.at(x+1).at(y+1) +
+								   this->m_data.at(x).at(y+1) +
+								   this->m_data.at(x-1).at(y+1) +
+								   2.f*this->m_data.at(x).at(y))/10.f;
+		}
+	}
+	this->m_data = newData;
 }
 
 size_t HeightMap::size() const

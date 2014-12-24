@@ -846,9 +846,13 @@ void Map::generateMapImg(const unsigned int tile_size)
 	this->map_img.saveToFile("res/map/map_img.png");
 }
 
-void Map::loadHeightMap(const string& filename)
+void Map::loadHeightMap(const string& filename, size_t smoothingCount)
 {
 	this->heightMap.load(filename);
+	for(size_t k = 0; k < smoothingCount; k++)
+	{
+		this->heightMap.smooth();
+	}
 	this->size = this->heightMap.size() - 1;
 	// Create tile data
 	this->lp_tiles.resize(this->size);
@@ -867,7 +871,7 @@ void Map::loadHeightMap(const string& filename)
 					this->heightMap.at(i+1, j  ),
 					this->heightMap.at(i+1, j+1),
 					this->heightMap.at(i  , j+1));
-			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
+			lp_tile->setColor(sf::Color(10 + rand() % 10, 80 + rand() % 10, 10 + rand() % 10));
 			this->lp_tiles.at(i).at(j) = lp_tile;
 
 			// If it's a beach
@@ -2000,7 +2004,7 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 			   !this->lp_tiles.at(i).at(j)->isBeach() &&
 			   !this->lp_tiles.at(i).at(j)->isWater() &&
 			   this->lp_tiles.at(i).at(j)->lp_prop == NULL &&
-			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 5.f &&
+			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 9.f &&
 			   this->lp_tiles.at(i).at(j)->getQuad().getMaxInclination() < 0.2f)
 			{
 				// add tile to the list of tiles for the lot

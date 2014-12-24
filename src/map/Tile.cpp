@@ -95,7 +95,7 @@ void Tile::setColor(sf::Color color)
 	{
 		if(this->vertices[i].z < water_threshold)
 		{
-			this->colors[i] = sf::Vector3f(0.1f, 0.1f, 0.5f);
+			this->colors[i] = sf::Vector3f(0.05f, 0.05f, 0.25f);
 		}
 		else if(this->vertices[i].z < sand_threshold)
 		{
@@ -104,9 +104,10 @@ void Tile::setColor(sf::Color color)
 			float rr3 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f + rr1, 0.9f + rr2, 0.4f + rr3);
 		}
-		else if(this->vertices[i].z > snow_threshold && this->lp_road == NULL)
+		else if(this->vertices[i].z > snow_threshold + static_cast<float>(rand() % 100)/10.f && this->lp_road == NULL)
 		{
-			this->colors[i] = sf::Vector3f(0.9f, 0.9f, 0.95f);
+			float rr = ((float)rand() / (float)RAND_MAX) * 0.1f;
+			this->colors[i] = sf::Vector3f(0.9f-rr, 0.9f-rr, 0.95f-rr);
 		}
 		else
 		{

@@ -41,7 +41,15 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createFlat(map_size, 2.f);
 
 	//this->map.createRandom(map_size);
-	this->map.loadHeightMap("maps/mountains.png");
+	string filename = Utils::exec("python script/filemanager.py o");
+
+	// santa monica
+	//this->map.heightMap.minHeight = -5.f;
+	//this->map.heightMap.maxHeight = 40.f;
+
+	this->map.heightMap.minHeight = -4.5f;
+	this->map.heightMap.maxHeight = 40.f;
+	this->map.loadHeightMap(filename, 2);
 
 	// create roads
 	cout << "Creating roads" << endl;
@@ -52,18 +60,18 @@ void PlayState::init(GameEngine* lp_game_engine)
 			if(!this->map.isWater(i, j) &&
 			   !this->map.isBeach(i, j) &&
 			   this->map.getMaxInclination(i, j) < 0.25f &&
-			   this->map.getAvgHeight(i, j) < 5.f)
+			   this->map.getAvgHeight(i, j) < 9.f)
 			{
 				sf::Vector2i pos(i, j);
-				if(((i%5 == 0) || (i%25 == 1)) && !((j%5==0) || (j%25==1)))
+				if(((i%6 == 0) || (i%30 == 1)) && !((j%6==0) || (j%30==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 0);
 				}
-				else if(!((i%5 == 0) || (i%25 == 1)) && ((j%5==0) || (j%25==1)))
+				else if(!((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
 				{
 					this->map.addRoad(pos, Road::straight, 1);
 				}
-				else if(((i%5 == 0) || (i%25 == 1)) && ((j%5==0) || (j%25==1)))
+				else if(((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
 				{
 					this->map.addRoad(pos, Road::cross, 0);
 				}
@@ -74,13 +82,14 @@ void PlayState::init(GameEngine* lp_game_engine)
 	// generate random trees
 	cout << "Creating trees" << endl;
 	Tree* lp_tree = new Tree();
-	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/10; i++)
+	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/5; i++)
 	{
 		unsigned int x = rand() % this->map.getSize();
 		unsigned int y = rand() % this->map.getSize();
 		if(!this->map.isWater(x, y) &&
 		   !this->map.isBeach(x, y) &&
 		   //!this->map.hasBuilding(x, y) &&
+		   this->map.getAvgHeight(x, y) < 18.f &&
 		   !this->map.isRoad(x, y))
 		{
 			lp_tree = new Tree();
@@ -102,9 +111,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 		unsigned int ymin = rand() % this->map.getSize();
 		//unsigned int size_x = (rand() % 3) + 1;
 		//unsigned int size_y = (rand() % 3) + 1;
-		unsigned int size_x = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
-		unsigned int size_y = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 10.f) + 0.5f);
+		unsigned int size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		unsigned int size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
 		//std::cout << xmin << ", " << ymin << ", " << size_x << ", " << size_y << std::endl;
+		sf::Vector2i center(550, 650);
 		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
 		{
 			Model model;
@@ -115,7 +125,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
 													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
-			unsigned int floor_count = floor(15.f * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(xmin)-center.x, 2) + pow(static_cast<int>(ymin)-center.y, 2)));
+			float kCenter = exp(-pow(distToCenter/100.f, 2.f));
+			cout << kCenter << endl;
+			unsigned int floor_count = floor(25.f* kCenter * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();
@@ -125,9 +138,9 @@ void PlayState::init(GameEngine* lp_game_engine)
 			buildings++;
 			floors += floor_count;
 			//homes += floor_count * size_x * size_y * 2;
-			unsigned int home_count = floor_count * size_x * size_y * 2;
+			unsigned int home_count = (floor_count+1) * size_x * size_y;
 			homes += home_count;
-			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.7, 1.3));
+			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
 			population += inhabitant_count;
 			lp_lot->setInhabitants(inhabitant_count);
 			//std::cout << "Model created" << std::endl;
@@ -389,8 +402,6 @@ void PlayState::draw(GameEngine* lp_game_engine)
 	lp_game_engine->window.setActive();
 	this->camera.setView(lp_game_engine->window);
 
-
-
 	glDisable(GL_FOG);
 	this->map.drawSky();
 	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
@@ -606,7 +617,7 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 
 	// fog
 	GLfloat fog_start = 20.f;
-	GLfloat fog_density = 0.002f;
+	GLfloat fog_density = 0.001f;
 	GLfloat fog_color[] = {0.9f, 0.9f, 0.9f, 1.f};
 	glFogfv(GL_FOG_START, &fog_start);
 	glFogfv(GL_FOG_DENSITY, &fog_density);

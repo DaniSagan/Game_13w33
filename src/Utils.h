@@ -32,6 +32,9 @@
 #include <sstream>
 #include <stdexcept>
 #include <cassert>
+#include <iomanip>
+
+using namespace std;
 
 namespace dfv
 {
@@ -176,6 +179,7 @@ public:
 	static float floatRandom(const float min, const float max);
 	static float rFunction(const float x, const float n);
 	static float angle(const sf::Vector3f& v1, const sf::Vector3f& v2);
+	static string exec(char* cmd);
 
 	static bool test();
 };

@@ -26,6 +26,7 @@ public:
 
 	float& at(size_t x, size_t y);
 	void load(const string& filename);
+	void smooth();
 
 	float minHeight;
 	float maxHeight;

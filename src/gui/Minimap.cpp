@@ -48,7 +48,7 @@ void Minimap::create(const unsigned int size)
 	this->lp_pixels = new sf::Uint8[size * size * 4];
 	for(unsigned int i = 0; i < size * size * 4; i++)
 	{
-		this->lp_pixels[i] = 150;
+		this->lp_pixels[i] = 220;
 	}
 }
 
@@ -137,11 +137,23 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[(j * this->size + i) * 4 + 1] = 0;
 					this->lp_pixels[(j * this->size + i) * 4 + 2] = 200;
 				}
-				else
+				else if(map.isBeach(abs_pos.x, abs_pos.y))
 				{
 					this->lp_pixels[(j * this->size + i) * 4] = 200;
 					this->lp_pixels[(j * this->size + i) * 4 + 1] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 200;
+					this->lp_pixels[(j * this->size + i) * 4 + 2] = 100;
+				}
+				else if(map.hasStructure(abs_pos.x, abs_pos.y))
+				{
+					this->lp_pixels[(j * this->size + i) * 4] = 200;
+					this->lp_pixels[(j * this->size + i) * 4 + 1] = 100;
+					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
+				}
+				else
+				{
+					this->lp_pixels[(j * this->size + i) * 4] = 50;
+					this->lp_pixels[(j * this->size + i) * 4 + 1] = 100;
+					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
 				}
 			}
 			else

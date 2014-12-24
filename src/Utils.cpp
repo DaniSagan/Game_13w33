@@ -478,6 +478,23 @@ float Utils::angle(const sf::Vector3f& v1, const sf::Vector3f& v2)
 	return Utils::dot(v1, v2) / (Utils::length(v1)*Utils::length(v2));
 }
 
+string Utils::exec(char* cmd)
+{
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    string result = "";
+    while(!feof(pipe))
+    {
+    	if(fgets(buffer, 128, pipe) != NULL)
+    	{
+    		result += buffer;
+    	}
+    }
+    pclose(pipe);
+    return result;
+}
+
 bool Utils::test()
 {
 	bool everything_ok = true;
