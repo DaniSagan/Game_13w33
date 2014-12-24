@@ -39,9 +39,12 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createFlat(64, 2.0);
 	unsigned int map_size = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
 	//this->map.createFlat(map_size, 2.f);
-	this->map.createRandom(map_size);
+
+	//this->map.createRandom(map_size);
+	this->map.loadHeightMap("maps/mountains.png");
 
 	// create roads
+	cout << "Creating roads" << endl;
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
 	{
 		for(unsigned int j = 0; j < this->map.getSize(); j++)
@@ -69,6 +72,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	}
 
 	// generate random trees
+	cout << "Creating trees" << endl;
 	Tree* lp_tree = new Tree();
 	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/10; i++)
 	{
@@ -87,6 +91,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	}
 
 	// generate lots
+	cout << "Creating structures" << endl;
 	unsigned int buildings = 0;
 	unsigned int floors = 0;
 	unsigned int homes = 0;

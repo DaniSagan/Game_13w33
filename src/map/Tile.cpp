@@ -87,8 +87,8 @@ void Tile::setColor(sf::Color color)
 	this->color.y = (float)color.g / 255.f;
 	this->color.z = (float)color.b / 255.f;
 
-	const float water_threshold = 1.0f;
-	const float sand_threshold = 1.1f;
+	const float water_threshold = 0.f;
+	const float sand_threshold = 0.1f;
 	const float snow_threshold = 15.0f;
 
 	for(unsigned int i = 0; i < 4; i++)
@@ -340,7 +340,7 @@ void Tile::drawProp(const Camera& camera, const Resources& resources) const
 
 bool Tile::isWater() const
 {
-	float threshold = 1.0;
+	float threshold = 0.f;
 	return (this->vertices[0].z < threshold ||
 			this->vertices[1].z < threshold ||
 			this->vertices[2].z < threshold ||
@@ -349,7 +349,7 @@ bool Tile::isWater() const
 
 bool Tile::isBeach() const
 {
-	float threshold = 1.1;
+	float threshold = 0.1f;
 	return ((this->vertices[0].z < threshold ||
 			 this->vertices[1].z < threshold ||
 			 this->vertices[2].z < threshold ||

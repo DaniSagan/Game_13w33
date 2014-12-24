@@ -64,10 +64,10 @@ void Map::create(unsigned int size)
 	this->lp_tiles.resize(size);
 	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
 	{
-		this->lp_tiles[i].resize(size + 1);
+		this->lp_tiles.at(i).resize(size + 1);
 		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
 		{
-			this->lp_tiles[i][j] = NULL;
+			this->lp_tiles.at(i).at(j) = NULL;
 		}
 	}
 
@@ -80,14 +80,14 @@ void Map::generateTiles()
 	{
 		for(unsigned int j = 0; j < this->lp_tiles.size(); j++)
 		{
-			this->lp_tiles[i][j] = new Tile;
-			this->lp_tiles[i][j]->create(
+			this->lp_tiles.at(i).at(j) = new Tile;
+			this->lp_tiles.at(i).at(j)->create(
 					sf::Vector2f(i, j),
-					this->heights[i][j],
-					this->heights[i+1][j],
-					this->heights[i+1][j+1],
-					this->heights[i][j+1]);
-			this->lp_tiles[i][j]->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+					this->heights.at(i).at(j),
+					this->heights.at(i+1).at(j),
+					this->heights.at(i+1).at(j+1),
+					this->heights.at(i).at(j+1));
+			this->lp_tiles.at(i).at(j)->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		}
 	}
 }
@@ -598,6 +598,7 @@ float Map::getTileHeight(int x, int y)
 	return this->heights[x][y];
 }
 
+/*
 bool Map::saveHeightMap(const std::string& filename)
 {
 	std::ofstream file;
@@ -657,6 +658,7 @@ bool Map::loadHeightMap(const std::string& filename)
 	}
 
 }
+*/
 
 /*
 bool Map::saveBuildingMap(const std::string& filename)
@@ -844,6 +846,44 @@ void Map::generateMapImg(const unsigned int tile_size)
 	this->map_img.saveToFile("res/map/map_img.png");
 }
 
+void Map::loadHeightMap(const string& filename)
+{
+	this->heightMap.load(filename);
+	this->size = this->heightMap.size() - 1;
+	// Create tile data
+	this->lp_tiles.resize(this->size);
+	for(size_t i = 0; i < this->size; i++)
+	{
+		this->lp_tiles.at(i).resize(this->size);
+		for(size_t j = 0; j < this->size; j++)
+		{
+			float x = (float)i - (float)(this->size + 1)/2.0;
+			float y = (float)j - (float)(this->size + 1)/2.0;
+
+			dfv::Tile* lp_tile = new Tile;
+			lp_tile->create(
+					sf::Vector2f(i, j),
+					this->heightMap.at(i  , j  ),
+					this->heightMap.at(i+1, j  ),
+					this->heightMap.at(i+1, j+1),
+					this->heightMap.at(i  , j+1));
+			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
+			this->lp_tiles.at(i).at(j) = lp_tile;
+
+			// If it's a beach
+			if(this->heightMap.at(i  , j  ) < 0.1f &&
+			   this->heightMap.at(i+1, j  ) < 0.1f &&
+			   this->heightMap.at(i+1, j+1) < 0.1f &&
+			   this->heightMap.at(i  , j+1) < 0.1f)
+			{
+				// beach
+				this->lp_tiles.at(i).at(j)->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
+			}
+		}
+	}
+	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
+}
+
 /*bool Map::IsRoad(const sf::Vector2i& tile_pos) const
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
@@ -862,7 +902,7 @@ bool Map::isRoad(unsigned int x, unsigned int y) const
 	if(x >= 0 && x < this->size &&
 	   y >= 0 && y < this->size)
 	{
-		return this->lp_tiles[x][y]->isRoad();
+		return this->lp_tiles.at(x).at(y)->isRoad();
 	}
 	else
 	{
@@ -1767,6 +1807,7 @@ bool Map::setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 	}*/
 }
 
+/*
 bool Map::saveAsSgmFormat(const std::string& filename) const
 {
 	std::ofstream file;
@@ -1813,6 +1854,7 @@ bool Map::loadFromSgmFormat(const std::string& filename)
 {
 	return false;
 }
+*/
 
 bool Map::isWater(unsigned int x, unsigned int y) const
 {
