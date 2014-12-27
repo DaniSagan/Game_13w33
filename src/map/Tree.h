@@ -39,8 +39,6 @@ public:
 	void draw(const Camera& camera, const Resources& resources) const;
 	void drawQuad(const unsigned int index, const dfv::Resources& resources) const;
 protected:
-	//std::vector<sf::Vector3f> vertices;
-	//std::vector<sf::Vector3f> normals;
 	std::vector<Quad> quads;
 	OpenGLImage *lp_img;
 	unsigned int type;

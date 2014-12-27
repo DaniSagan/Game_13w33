@@ -39,7 +39,6 @@ public:
 
 	void drawBox() const;
 	void drawOutlines() const;
-	//void addBaseVertex(const sf::Vector2f & vertex);
 	void create(const Quad & tile_quad,
 			    const Quad & base_quad,
 			    unsigned int floor_count);
@@ -53,10 +52,7 @@ public:
 	unsigned int getFloorCount() const;
 	float getHeight() const;
 
-	//std::vector<sf::Vector2f> base;
 private:
-	//std::vector<sf::Vector2f> base_vertices;
-	//std::vector<sf::Vector3f> vertices;
 	Quad base_quad;
 	std::vector<Quad> facade_quads;
 	std::vector<Quad> outline_quads;

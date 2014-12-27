@@ -44,7 +44,6 @@ public:
 private:
 	float size;
 	std::vector<sf::Vector3f> vertices;
-	//std::vector<sf::Vector3f> normals;
 	std::vector<sf::Image> images;
 	std::vector<GLuint> image_handles;
 	sf::Image sky_img;

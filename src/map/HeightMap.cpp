@@ -13,15 +13,6 @@ namespace dfv
 HeightMap::HeightMap():
 		minHeight(-4.f), maxHeight(30.f)
 {
-	/*this->m_data.resize(size);
-	for(vector<float> v: this->m_data)
-	{
-		v.resize(size);
-		for(float& x: v)
-		{
-			x = 0.f;
-		}
-	}*/
 }
 
 HeightMap::~HeightMap()

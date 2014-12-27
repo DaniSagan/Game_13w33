@@ -36,7 +36,6 @@ class Tile;
 class Lot
 {
 public:
-	//Lot(const std::vector<Tile*> & lp_tiles);
 	Lot();
 	Lot(const std::vector<sf::Vector2i> & tile_indices,
 	    const std::vector<Quad> & tile_quads,
@@ -67,7 +66,6 @@ public:
 private:
 	sf::Vector3f origin;
 	std::vector<Structure*> lp_structures;
-	//std::vector<Tile*> lp_tiles;
 	std::vector<sf::Vector2i> tile_indices;
 	std::vector<Quad> tile_quads;
 	unsigned int inhabitants;

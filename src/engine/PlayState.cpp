@@ -16,11 +16,7 @@ PlayState PlayState::play_state;
 void PlayState::init(GameEngine* lp_game_engine)
 {
 	assert(this->test());
-
 	srand(time(NULL));
-
-	//this->window.create(sf::VideoMode(1024, 1024 * 9 / 16), "Saganopolis", sf::Style::Default, sf::ContextSettings(32));
-	//this->window.setVerticalSyncEnabled(true);
 	this->initOpenGL(lp_game_engine);
 
 	// Initialize comand server
@@ -33,30 +29,20 @@ void PlayState::init(GameEngine* lp_game_engine)
 		this->cmd_server.run();
 	}
 
-	//this->map.LoadFromMapFormat("res/map/world1_test.map");
-	//this->map.createRandom(700);
-	//this->map.createFlat(850, 2.0);
-	//this->map.createFlat(64, 2.0);
+	// Size of the map obtained from the start screen
 	unsigned int map_size = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
-	//this->map.createFlat(map_size, 2.f);
 
-	//this->map.createRandom(map_size);
-	//string filename = Utils::exec("python script/filemanager.py o");
+	// Execute folder select dialog
 	string filePath = Utils::exec("python script/filemanager.py f");
 	string cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
 	cout << cityName << endl;
+
+	// Path to the .cfg file
 	string fileName = filePath + "/" + cityName + ".cfg";
 	cout << "File name: " << fileName << endl;
 	SimpleParser parser;
 	parser.parse(fileName);
-	//string heightmapPath = parser.get("heightmap");
 
-	// santa monica
-	//this->map.heightMap.minHeight = -5.f;
-	//this->map.heightMap.maxHeight = 40.f;
-
-	//this->map.heightMap.minHeight = -10.f;
-	//this->map.heightMap.maxHeight = 60.f;
 	this->map.heightMap.minHeight = stof(parser.get("minheight"));
 	this->map.heightMap.maxHeight = stof(parser.get("maxheight"));
 	this->map.loadHeightMap(filePath + "/" + parser.get("heightmap"), 2);
@@ -119,12 +105,13 @@ void PlayState::init(GameEngine* lp_game_engine)
 	{
 		unsigned int xmin = rand() % this->map.getSize();
 		unsigned int ymin = rand() % this->map.getSize();
-		//unsigned int size_x = (rand() % 3) + 1;
-		//unsigned int size_y = (rand() % 3) + 1;
 		unsigned int size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
 		unsigned int size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
-		//std::cout << xmin << ", " << ymin << ", " << size_x << ", " << size_y << std::endl;
+
+		// Position of the city center (CBD)
 		sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
+
+		// If a lot could be added to the map
 		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
 		{
 			Model model;
@@ -146,17 +133,13 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 			buildings++;
 			floors += floor_count;
-			//homes += floor_count * size_x * size_y * 2;
 			unsigned int home_count = (floor_count+1) * size_x * size_y;
 			homes += home_count;
 			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
 			population += inhabitant_count;
 			lp_lot->setInhabitants(inhabitant_count);
-			//std::cout << "Model created" << std::endl;
 		}
 	}
-
-	//population = static_cast<int>(float(homes)*2.61);
 
 	std::cout << "Buildings: " << buildings << std::endl;
 	std::cout << "Floors: " << floors << std::endl;
@@ -169,6 +152,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	this->generateLists();
 
+	// GUI elements
 	Text* lp_stats_text = new Text(&this->gui_root, STATS_TEXT_BAR);
 	std::stringstream ss;
 	ss.imbue(std::locale(""));
@@ -184,13 +168,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 	lp_info_panel->size = {125.f, 75.f};
 	lp_info_panel->color = sf::Color(32, 32, 32, 192);
 
-	/*Text* lp_info_text = new Text(lp_info_panel, INFO_TEXT);
-	lp_info_text->setPosition(sf::Vector2f(0.f, 0.f));
-	lp_info_text->text = std::string("Building");
-	lp_info_text->txt_color = sf::Color::White;
-	lp_info_text->txt_size = 10.f;
-	lp_info_text->bg_color = sf::Color(0, 0, 0, 0);
-	lp_info_text->size = sf::Vector2f(100.f, 25.f);*/
 	Multitext* lp_info_text = new Multitext(lp_info_panel, INFO_TEXT);
 	lp_info_text->setPosition(sf::Vector2f(0.f, 0.f));
 	lp_info_text->lines = std::vector<std::string>{"Building", "height: XXX m", "#floors: XX", "#inhabitants: XXX"};
@@ -369,7 +346,6 @@ void PlayState::update(GameEngine* lp_game_engine)
 	if(this->map.hasStructure(map_pos.x, map_pos.y))
 	{
 		Panel* info_panel = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL));
-		//static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
 		info_panel->visible = true;
 		const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
 		const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
@@ -396,16 +372,6 @@ void PlayState::update(GameEngine* lp_game_engine)
 
 void PlayState::draw(GameEngine* lp_game_engine)
 {
-	/*if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
-	{
-		std::cout << "hello" << std::endl;
-		gluPerspective(15.f, (float)lp_game_engine->window.getSize().x / (float)lp_game_engine->window.getSize().y, 0.01f, 2500.f);
-	}
-	else
-	{
-		gluPerspective(55.f, (float)lp_game_engine->window.getSize().x / (float)lp_game_engine->window.getSize().y, 0.01f, 2500.f);
-	}*/
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
 	lp_game_engine->window.setActive();
@@ -413,8 +379,8 @@ void PlayState::draw(GameEngine* lp_game_engine)
 
 	glDisable(GL_FOG);
 	this->map.drawSky();
-	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
 	glEnable(GL_FOG);
+	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
 
 	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
 	this->map.callTileList();
@@ -437,12 +403,8 @@ void PlayState::draw(GameEngine* lp_game_engine)
 		outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
 		outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
 
-		//this->map.callStructureBoxList();
 		glDisable(GL_CULL_FACE);
 		this->map.drawStructureOutlines(outlines_rect);
-
-
-	//this->gui.setMapPos(this->map_pos);
 
 		glDisable(GL_LIGHTING);
 		this->map.drawProps(road_rect, this->camera, this->resources);
@@ -678,7 +640,6 @@ void PlayState::generateLists()
 {
 	std::cout << "generating lists" << std::endl;
 	this->map.generateTileList(this->camera, this->resources);
-	//this->map.generateBuildingList();
 	this->map.generateRoadList(this->camera, this->resources);
 	this->map.generateStructureBoxList(this->camera, this->resources);
 }

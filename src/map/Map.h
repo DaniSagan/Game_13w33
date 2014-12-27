@@ -59,8 +59,6 @@ public:
 	void createValley(const unsigned int size, const float a, const float b);
 	unsigned int getSize() const;
 	float getTileHeight(int x, int y);
-	//bool saveHeightMap(const std::string& filename);
-	//bool loadHeightMap(const std::string& filename);
 	void generateMapImg(const unsigned int tile_size);
 	void loadHeightMap(const string& filename, size_t smoothingCount = 0);
 
@@ -103,9 +101,6 @@ public:
 	bool setRoadId(const sf::Vector2i& pos, unsigned int id);
 	bool setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation);
 
-	//bool saveAsSgmFormat(const std::string& filename) const;
-	//bool loadFromSgmFormat(const std::string& filename);
-
 	bool isWater(unsigned int x, unsigned int y) const;
 	bool isBeach(unsigned int x, unsigned int y) const;
 	sf::Vector3f getNormal(unsigned int x, unsigned int y);
@@ -141,8 +136,6 @@ private:
 	GLuint road_list;
 	unsigned int population;
 	GLuint structure_box_list;
-
-
 };
 
 } /* namespace dfv */

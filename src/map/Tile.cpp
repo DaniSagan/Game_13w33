@@ -27,21 +27,17 @@ namespace dfv
 {
 
 Tile::Tile():
-		//lp_building(NULL),
 		is_road(false),
 		lp_road(NULL),
 		lp_prop(NULL),
 		lp_structure(NULL),
 		lp_lot(NULL)
-		//has_structure(false)
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 Tile::~Tile()
 {
-	//if(lp_building != NULL) delete this->lp_building;
 	if(lp_road != NULL) delete this->lp_road;
 	if(lp_structure != NULL) delete this->lp_structure;
 }
@@ -63,19 +59,6 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 									   this->vertices.at(1)-this->vertices.at(2));
 	this->normals.at(3) = Utils::cross(this->vertices.at(0)-this->vertices.at(3),
 									   this->vertices.at(2)-this->vertices.at(3));
-
-	/*this->normals[0] = dfv::Utils::cross(
-			dfv::Utils::diff(this->vertices[1], this->vertices[0]),
-			dfv::Utils::diff(this->vertices[3], this->vertices[0]));
-	this->normals[1] = dfv::Utils::cross(
-			dfv::Utils::diff(this->vertices[2], this->vertices[1]),
-			dfv::Utils::diff(this->vertices[0], this->vertices[1]));
-	this->normals[2] = dfv::Utils::cross(
-			dfv::Utils::diff(this->vertices[3], this->vertices[2]),
-			dfv::Utils::diff(this->vertices[1], this->vertices[2]));
-	this->normals[3] = dfv::Utils::cross(
-			dfv::Utils::diff(this->vertices[0], this->vertices[3]),
-			dfv::Utils::diff(this->vertices[2], this->vertices[3]));*/
 
 	this->colors.resize(4);
 
@@ -135,44 +118,10 @@ void Tile::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	glVertex3f(this->vertices[3].x, this->vertices[3].y, this->vertices[3].z);
 }
 
-/*
-void Tile::addBuilding(float height)
-{
-	this->lp_building = new Building;
-	this->lp_building->create(this->vertices, height);//1.f + 0.0001f * ((float)(rand() % 100)*(float)(rand() % 100)));
-	this->lp_building->setColor(sf::Color(160 + rand() % 70, 160 + rand() % 70, 160 + rand() % 70));
-}
-
-bool Tile::hasBuilding() const
-{
-	return this->lp_building != NULL;
-}*/
-
 bool Tile::hasProp() const
 {
 	return this->lp_prop != NULL;
 }
-
-/*
-void Tile::drawBuilding(const bool draw_floors) const
-{
-	if(this->lp_building != NULL)
-	{
-		this->lp_building->draw(draw_floors);
-	}
-}
-
-sf::Color Tile::getBuildingColor() const
-{
-	if(this->hasBuilding())
-	{
-		return this->lp_building->getColor();
-	}
-	else
-	{
-		return sf::Color(0, 0, 0);
-	}
-}*/
 
 void Tile::setAsRoad(const bool r)
 {
@@ -183,19 +132,6 @@ bool Tile::isRoad() const
 {
 	return this->lp_road != NULL;
 }
-
-/*
-float Tile::getBuildingHeight() const
-{
-	if(this->hasBuilding())
-	{
-		return this->lp_building->getHeight();
-	}
-	else
-	{
-		return 0.f;
-	}
-}*/
 
 void Tile::addRoad(dfv::Road::Type type, unsigned int orientation)
 {
@@ -275,22 +211,6 @@ const std::vector<sf::Vector3f> & Tile::getVertices() const
 	return this->vertices;
 }
 
-/*
-void Tile::drawBuildingBox() const
-{
-	this->lp_building->drawBox();
-}
-
-void Tile::drawBuildingOutline() const
-{
-	this->lp_building->drawOutline();
-}
-
-void Tile::drawBuildingFloors() const
-{
-	this->lp_building->drawFloors();
-}*/
-
 sf::Vector3f Tile::getColor(unsigned int index) const
 {
 	return this->colors[index];
@@ -301,12 +221,6 @@ sf::Vector3f Tile::getNormal(unsigned int index) const
 	return this->normals[index];
 }
 
-/*
-sf::Vector3f Tile::getBuildingColor3f() const
-{
-	return this->lp_building->getColor3f();
-}*/
-
 void Tile::setVertex(const unsigned int index, const sf::Vector3f& vertex)
 {
 	this->vertices[index] = vertex;
@@ -316,12 +230,6 @@ sf::Color Tile::getSfmlColor() const
 {
 	return sf::Color(this->color.x * 255.f, this->color.y * 255.f, this->color.z * 255.f);
 }
-
-/*
-void Tile::setBuildingColor(const sf::Color& color)
-{
-	this->lp_building->setColor(color);
-}*/
 
 void Tile::drawRoad(const Camera& camera, const Resources& resources) const
 {
@@ -374,22 +282,6 @@ bool Tile::clearRoad()
 
 }
 
-/*
-bool Tile::clearBuilding()
-{
-	if(this->lp_building != NULL)
-	{
-		delete this->lp_building;
-		this->lp_building = NULL;
-		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}*/
-
 bool Tile::clearProp()
 {
 	std::cout << "Clearing prop" << std::endl;
@@ -420,12 +312,10 @@ void Tile::createStructure(Quad base, unsigned int floor_count)
 	this->lp_structure = new Structure;
 	this->lp_structure->setModel(model);
 	this->setColor({220, 220, 220});
-	//this->has_structure = true;
 }
 
 void Tile::destroyStructure()
 {
-	//this->has_structure = false;
 	delete this->lp_structure;
 	this->lp_structure = NULL;
 }
@@ -448,7 +338,6 @@ void Tile::drawStructureOutline() const
 
 bool Tile::hasStructure() const
 {
-	//return this->has_structure;
 	if(this->lp_lot != NULL)
 	{
 		return this->lp_lot->hasStructure();
@@ -457,7 +346,6 @@ bool Tile::hasStructure() const
 	{
 		return false;
 	}
-	//return this->lp_structure != NULL;
 }
 
 } /* namespace dfv */

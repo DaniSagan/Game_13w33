@@ -57,8 +57,6 @@ void Model::create(const Quad & tile_quad,
 				   unsigned int floor_count)
 {
 	const float scale = 16.f;
-	//const float street_height = 0.1625f;
-	//const float floor_height = 0.125f;
 	const float street_height = 5.f / scale;
 	const float floor_height = 3.f / scale;
 	const float margin = 0.01f;
@@ -127,8 +125,6 @@ void Model::create(const float min_terrain_height,
 		const float max_terrain_height, const sf::Vector2f& position,
 		const Quad& base_quad, unsigned int floor_count)
 {
-	//const float street_height = 0.18f;
-	//const float floor_height = 0.125f;
 	const float scale = 16.f;
 	const float street_height = 5.f / scale;
 	const float floor_height = 3.f / scale;
@@ -167,15 +163,11 @@ void Model::create(const float min_terrain_height,
 	std::vector<sf::Vector3f> vv(4);
 	for(unsigned int i = 0; i < 4; i++)
 	{
-		//float angle = Utils::dot(vh.at(i%4), vh.at((i+1)%4)) / Utils::length()
 		sf::Vector3f& v0 = vh.at(i);
 		sf::Vector3f& v1 = vh.at((i+1)%4);
 		sf::Vector3f& v2 = vh.at((i-1)%4);
 		float angle = Utils::angle(v1, v2);
 		float margin2 = margin / sin(angle);
-		/*vv.at(i) = vh.at(i) +
-				   margin*(vh.at(i%4)-vh.at((i+1)%4))/Utils::length(vh.at(i%4)-vh.at((i+1)%4)) +
-				   margin*(vh.at(i%4)-vh.at((i-1)%4))/Utils::length(vh.at(i%4)-vh.at((i-1)%4));*/
 		vv.at(i) = v0 +
 				   margin2 * (v0-v1) / Utils::length(v0-v1) +
 				   margin2 * (v0-v2) / Utils::length(v0-v2);

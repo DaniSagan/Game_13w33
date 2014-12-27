@@ -79,7 +79,6 @@ void Sky::create(float size, sf::Vector2f center, std::string filename)
 	}
 
 	this->vertices.resize(8);
-	//this->normals.resize(8);
 
 	this->vertices[0] = sf::Vector3f(center.x -size /2, center.y-size/2, -size/2);
 	this->vertices[4] = sf::Vector3f(center.x -size /2, center.y-size/2, size/2);
