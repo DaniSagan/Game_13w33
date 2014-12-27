@@ -532,7 +532,42 @@ bool Utils::test()
 	return everything_ok;
 }
 
+SimpleParser::SimpleParser()
+{
+}
 
+void SimpleParser::parse(const string& filename)
+{
+	ifstream file(filename);
+	string line;
+	if(file.is_open())
+	{
+		while(getline(file, line))
+		{
+			stringstream ss(line);
+			size_t pos = line.find(":");
+			if(pos != string::npos)
+			{
+				string field = line.substr(0, pos);
+				string data = line.substr(pos+1, line.size());
+				cout << field << ":" << data << endl;
+				this->m_data[field] = data;
+			}
+		}
+		file.close();
+	}
+}
+
+string SimpleParser::get(const string& field)
+{
+	string result;
+	map<string, string>::const_iterator pos = this->m_data.find(field);
+	if(pos != this->m_data.end())
+	{
+		result = pos->second;
+	}
+	return result;
+}
 
 } /* namespace dfv */
 

@@ -41,15 +41,25 @@ void PlayState::init(GameEngine* lp_game_engine)
 	//this->map.createFlat(map_size, 2.f);
 
 	//this->map.createRandom(map_size);
-	string filename = Utils::exec("python script/filemanager.py o");
+	//string filename = Utils::exec("python script/filemanager.py o");
+	string filePath = Utils::exec("python script/filemanager.py f");
+	string cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
+	cout << cityName << endl;
+	string fileName = filePath + "/" + cityName + ".cfg";
+	cout << "File name: " << fileName << endl;
+	SimpleParser parser;
+	parser.parse(fileName);
+	//string heightmapPath = parser.get("heightmap");
 
 	// santa monica
 	//this->map.heightMap.minHeight = -5.f;
 	//this->map.heightMap.maxHeight = 40.f;
 
-	this->map.heightMap.minHeight = -4.5f;
-	this->map.heightMap.maxHeight = 40.f;
-	this->map.loadHeightMap(filename, 2);
+	//this->map.heightMap.minHeight = -10.f;
+	//this->map.heightMap.maxHeight = 60.f;
+	this->map.heightMap.minHeight = stof(parser.get("minheight"));
+	this->map.heightMap.maxHeight = stof(parser.get("maxheight"));
+	this->map.loadHeightMap(filePath + "/" + parser.get("heightmap"), 2);
 
 	// create roads
 	cout << "Creating roads" << endl;
@@ -114,20 +124,19 @@ void PlayState::init(GameEngine* lp_game_engine)
 		unsigned int size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
 		unsigned int size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
 		//std::cout << xmin << ", " << ymin << ", " << size_x << ", " << size_y << std::endl;
-		sf::Vector2i center(550, 650);
+		sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
 		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
 		{
 			Model model;
 			Lot* lp_lot = this->map.getLot(xmin, ymin);
 			Quad base_quad;
-			std::vector<sf::Vector3f> base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.f, 0.3*size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.f, 0.3*size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.7*size_x, size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.f, 0.3*size_x), Utils::floatRandom(0.7*size_y, size_y), 0.0)};
+			std::vector<sf::Vector3f> base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+													   sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
 			base_quad.create(base_vertices);
 			float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(xmin)-center.x, 2) + pow(static_cast<int>(ymin)-center.y, 2)));
-			float kCenter = exp(-pow(distToCenter/100.f, 2.f));
-			cout << kCenter << endl;
+			float kCenter = exp(-pow(distToCenter/stof(parser.get("distrib")), 2.f));
 			unsigned int floor_count = floor(25.f* kCenter * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
@@ -163,7 +172,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	Text* lp_stats_text = new Text(&this->gui_root, STATS_TEXT_BAR);
 	std::stringstream ss;
 	ss.imbue(std::locale(""));
-	ss << "Saganopolis ---- Population: " << population << " ---- Buildings: " << buildings;
+	ss << parser.get("name") + " ---- Population: " << population << " ---- Buildings: " << buildings;
 	lp_stats_text->text = ss.str();
 	lp_stats_text->setPosition(sf::Vector2f(0.f, 0.f));
 	lp_stats_text->txt_color = sf::Color::White;
@@ -617,8 +626,8 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 
 	// fog
 	GLfloat fog_start = 20.f;
-	GLfloat fog_density = 0.001f;
-	GLfloat fog_color[] = {0.9f, 0.9f, 0.9f, 1.f};
+	GLfloat fog_density = 0.002f;
+	GLfloat fog_color[] = {0.6f, 0.6f, 0.6f, 1.f};
 	glFogfv(GL_FOG_START, &fog_start);
 	glFogfv(GL_FOG_DENSITY, &fog_density);
 	glFogfv(GL_FOG_COLOR, fog_color);

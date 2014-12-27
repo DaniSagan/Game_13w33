@@ -21,6 +21,13 @@ def main():
         if saveFileDialog.ShowModal() == wx.ID_CANCEL:
             return 0
         sys.stdout.write(saveFileDialog.GetPath().encode('utf-8'))
+    elif sys.argv[1] == 'f':
+        openFolderDialog = wx.DirDialog(parent=None, 
+                                        message="Open city", 
+                                        defaultPath="maps/")
+        if openFolderDialog.ShowModal() == wx.ID_CANCEL:
+            return 0
+        sys.stdout.write(openFolderDialog.GetPath().encode('utf-8'))                             
     return 0
 
 if __name__ == '__main__':

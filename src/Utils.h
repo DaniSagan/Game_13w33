@@ -33,6 +33,8 @@
 #include <stdexcept>
 #include <cassert>
 #include <iomanip>
+#include <map>
+#include <fstream>
 
 using namespace std;
 
@@ -182,6 +184,16 @@ public:
 	static string exec(char* cmd);
 
 	static bool test();
+};
+
+class SimpleParser
+{
+public:
+	SimpleParser();
+	void parse(const string& filename);
+	string get(const string& field);
+protected:
+	map<string, string> m_data;
 };
 
 } /* namespace dfv */

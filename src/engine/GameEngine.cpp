@@ -17,7 +17,9 @@ GameEngine::GameEngine():
 	const unsigned int WIDTH = 1024;
 	const unsigned int HEIGHT = WIDTH * 9 / 16;
 	const std::string GAME_NAME("Hyperopolis");
-	this->window.create({WIDTH, HEIGHT}, GAME_NAME, sf::Style::Default, sf::ContextSettings(32));
+	sf::ContextSettings contextSettings(32);
+	//contextSettings.antialiasingLevel = 1;
+	this->window.create({WIDTH, HEIGHT}, GAME_NAME, sf::Style::Default, contextSettings);
 	assert(this->assets.load());
 
 }

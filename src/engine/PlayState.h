@@ -9,7 +9,6 @@
 #define PLAYSTATE_H_
 
 #include "GameState.h"
-//#include "App.h"
 #include "../gui/Gui.h"
 #include <iostream>
 #include <string>

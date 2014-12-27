@@ -89,7 +89,7 @@ void Tile::setColor(sf::Color color)
 
 	const float water_threshold = 0.f;
 	const float sand_threshold = 0.1f;
-	const float snow_threshold = 15.0f;
+	const float snow_threshold = 40.0f;
 
 	for(unsigned int i = 0; i < 4; i++)
 	{

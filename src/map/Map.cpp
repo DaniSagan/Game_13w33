@@ -871,7 +871,7 @@ void Map::loadHeightMap(const string& filename, size_t smoothingCount)
 					this->heightMap.at(i+1, j  ),
 					this->heightMap.at(i+1, j+1),
 					this->heightMap.at(i  , j+1));
-			lp_tile->setColor(sf::Color(10 + rand() % 10, 80 + rand() % 10, 10 + rand() % 10));
+			lp_tile->setColor(sf::Color(5 + rand() % 10, 40 + rand() % 10, 5 + rand() % 10));
 			this->lp_tiles.at(i).at(j) = lp_tile;
 
 			// If it's a beach
@@ -1210,7 +1210,7 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
 	rect.trim(this->getTileRect());
 	glBegin(GL_QUADS);
-	glColor3f(0.9, 0.9, 0.9);
+	glColor3f(0.65, 0.65, 0.65);
 	for(int i = rect.xmin; i <= rect.xmax; i++)
 	{
 		for(int j = rect.ymin; j <= rect.ymax; j++)
