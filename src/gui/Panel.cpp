@@ -38,6 +38,24 @@ void Panel::draw(sf::RenderWindow& window, const Assets& assets) const
 	}
 }
 
+void Panel::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	if(!this->visible)
+	{
+		return;
+	}
+	sf::RectangleShape rect;
+	rect.setSize(this->size);
+	rect.setFillColor(this->color);
+	rect.setPosition(this->getAbsPosition());
+	target.draw(rect);
+	for(Component* lp_component: this->lp_children)
+	{
+		target.draw(*lp_component);
+	}
+}
+
+/*
 std::string& Panel::handleInput(std::string& cmd, sf::Event& event)
 {
 	for(Component* lp_component: this->lp_children)
@@ -45,6 +63,6 @@ std::string& Panel::handleInput(std::string& cmd, sf::Event& event)
 		cmd = lp_component->handleInput(cmd, event);
 	}
 	return cmd;
-}
+}*/
 
 } /* namespace dfv */

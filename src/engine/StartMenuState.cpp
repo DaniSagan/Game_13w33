@@ -35,8 +35,30 @@ void StartMenuState::handleInput(GameEngine* lp_game_engine)
 	sf::Event event;
 	while(lp_game_engine->window.pollEvent(event))
 	{
-		this->gui.handleInput(cmd, event);
-		this->executeCmd(cmd, lp_game_engine);
+		//this->gui.handleInput(cmd, event);
+		const GuiEvent guiEvent = this->gui.handleInput(event);
+		if(guiEvent.type == GuiEvent::ButtonEvent)
+		{
+			if(guiEvent.click.id == START_NEW_BUTTON)
+			{
+				cout << "Start new pressed" << endl;
+			}
+			else if(guiEvent.click.id == LOAD_BUTTON)
+			{
+				cout << "Load pressed" << endl;
+				lp_game_engine->changeState(PlayState::getInstance());
+			}
+			else if(guiEvent.click.id == GENERATE_NEW_BUTTON)
+			{
+				cout << "Generate new pressed" << endl;
+			}
+			else if(guiEvent.click.id == QUIT_BUTTON)
+			{
+				cout << "Quit pressed" << endl;
+				lp_game_engine->quit();
+			}
+		}
+		//this->executeCmd(cmd, lp_game_engine);
 		if(event.type == sf::Event::Closed)
 		{
 			lp_game_engine->quit();
@@ -46,7 +68,7 @@ void StartMenuState::handleInput(GameEngine* lp_game_engine)
 
 void StartMenuState::update(GameEngine* lp_game_engine)
 {
-	this->gui.getById(LOGO_IMG)->setPosition(sf::Vector2f(50.f+rand()%2, 50.f+rand()%2));
+	//this->gui.getById(LOGO_IMG)->setPosition(sf::Vector2f(50.f+rand()%2, 50.f+rand()%2));
 }
 
 void StartMenuState::draw(GameEngine* lp_game_engine)
@@ -112,7 +134,7 @@ StartMenuState::StartMenuState():
 	lp_start_button->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_start_button->cmd = std::string("start");
 
-	Clickable* lp_load_button = new Clickable(lp_bg_img);
+	Clickable* lp_load_button = new Clickable(lp_bg_img, LOAD_BUTTON);
 	lp_load_button->text = "Load city";
 	lp_load_button->txt_size = 24.f;
 	lp_load_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*2.f});
@@ -122,7 +144,7 @@ StartMenuState::StartMenuState():
 	lp_load_button->bg_over_color = sf::Color(32, 32, 32, 255);
 	lp_load_button->cmd = std::string("load");
 
-	Clickable* lp_quit_button = new Clickable(lp_bg_img);
+	Clickable* lp_quit_button = new Clickable(lp_bg_img, QUIT_BUTTON);
 	lp_quit_button->text = "Quit game";
 	lp_quit_button->txt_size = 24.f;
 	lp_quit_button->setPosition({1024.f - 200.f, 1024.f * 9.f / 16.f - 50.f*1.f});

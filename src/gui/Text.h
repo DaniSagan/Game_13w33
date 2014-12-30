@@ -20,6 +20,7 @@ public:
 	virtual ~Text();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	//virtual std::string& handleInput(std::string& cmd, sf::Event& event);
 	virtual GuiRect getRect() const;
 

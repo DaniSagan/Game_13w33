@@ -37,12 +37,66 @@ Map::Map():
 
 Map::~Map()
 {
-	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
+	this->clear();
+	/*for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
 	{
 		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
 		{
 			delete this->lp_tiles.at(i).at(j);
 		}
+	}*/
+}
+
+void Map::clear()
+{
+	cout << "clearing lots" << endl;
+	for(size_t x = 0; x < this->size; x++)
+	{
+		for(size_t y = 0; y < this->size; y++)
+		{
+			this->clearLot(sf::Vector2i(x, y));
+		}
+	}
+	cout << "clearing tiles" << endl;
+	for(size_t x = 0; x < this->size; x++)
+	{
+		for(size_t y = 0; y < this->size; y++)
+		{
+			delete this->lp_tiles.at(x).at(y);
+		}
+	}
+	this->lp_tiles.clear();
+	this->size = 0;
+	/*
+	for(size_t x = 0; x < this->size; x++)
+	{
+		for(size_t y = 0; y < this->size; y++)
+		{
+			cout << "clearing tile " << x << ", " << y << endl;
+			this->lp_tiles.at(x).at(y)->clear();
+			if(this->lp_tiles.at(x).at(y) != nullptr)
+			{
+				delete this->lp_tiles.at(x).at(y);
+			}
+		}
+	}*/
+	//this->size = 0;
+}
+
+void Map::clearLot(const sf::Vector2i& tileIndex)
+{
+	Lot* lpLot = this->lp_tiles.at(tileIndex.x).at(tileIndex.y)->getLot();
+	if(lpLot != nullptr)
+	{
+		cout << "clearing structure" << endl;
+		lpLot->clearStructures();
+		for(const sf::Vector2i& tileIndex: lpLot->getTileIndices())
+		{
+			Tile& tile = *(this->lp_tiles.at(tileIndex.x).at(tileIndex.y));
+			tile.setColor(Map::randomGrassColor());
+			tile.forgetLot();
+		}
+		delete lpLot;
 	}
 }
 
@@ -86,7 +140,7 @@ void Map::generateTiles()
 					this->heights.at(i+1).at(j),
 					this->heights.at(i+1).at(j+1),
 					this->heights.at(i).at(j+1));
-			this->lp_tiles.at(i).at(j)->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
+			this->lp_tiles.at(i).at(j)->setColor(Map::randomGrassColor());
 		}
 	}
 }
@@ -457,23 +511,28 @@ void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources
 void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
 	rect.trim(this->getTileRect());
-	glBegin(GL_QUADS);
-	glColor3f(0.65, 0.65, 0.65);
-	for(int i = rect.xmin; i <= rect.xmax; i++)
+	if(rect.xmin >= 0 && rect.xmax < this->size &&
+	   rect.ymin >= 0 && rect.ymax < this->size)
 	{
-		for(int j = rect.ymin; j <= rect.ymax; j++)
+		glBegin(GL_QUADS);
+		glColor3f(0.65, 0.65, 0.65);
+		for(int i = rect.xmin; i <= rect.xmax; i++)
 		{
-			Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
-			if(lp_lot != NULL)
+			for(int j = rect.ymin; j <= rect.ymax; j++)
 			{
-				if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
+				cout << i << "," << j << endl;
+				Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+				if(lp_lot != NULL)
 				{
-					lp_lot->drawStructureBoxes();
+					if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
+					{
+						lp_lot->drawStructureBoxes();
+					}
 				}
 			}
 		}
+		glEnd();
 	}
-	glEnd();
 }
 
 void Map::drawStructureOutlines(dfv::RealIntRect rect) const
@@ -605,6 +664,13 @@ void Map::generateStructureBoxList(const Camera& camera, const Resources& resour
 void Map::callStructureBoxList() const
 {
 	glCallList(this->structure_box_list);
+}
+
+void Map::deleteLists()
+{
+	glDeleteLists(this->road_list, 1);
+	glDeleteLists(this->tile_list, 1);
+	glDeleteLists(this->structure_box_list, 1);
 }
 
 void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
@@ -896,7 +962,10 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 		{
 			// each tile has a pointer to the lot
 			this->lp_tiles.at(i).at(j)->lp_lot = lp_new_lot;
-			this->lp_tiles.at(i).at(j)->setColor(sf::Color(180+(rand()%10), 180+(rand()%10), 180+(rand()%10)));
+			if(xmin != xmax || ymin != ymax)
+			{
+				this->lp_tiles.at(i).at(j)->setColor(sf::Color(180+(rand()%10), 180+(rand()%10), 180+(rand()%10)));
+			}
 		}
 	}
 
@@ -911,6 +980,11 @@ Lot* Map::getLot(unsigned int x, unsigned int y) const
 const Tile& Map::getTile(size_t x, size_t y) const
 {
 	return *(this->lp_tiles.at(x).at(y));
+}
+
+sf::Color Map::randomGrassColor()
+{
+	return sf::Color(5 + rand() % 10, 40 + rand() % 10, 5 + rand() % 10);
 }
 
 } /* namespace dfv */

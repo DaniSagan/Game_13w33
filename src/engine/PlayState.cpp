@@ -101,15 +101,31 @@ void PlayState::init(GameEngine* lp_game_engine)
 	unsigned int floors = 0;
 	unsigned int homes = 0;
 	unsigned int population = 0;
+
+	// Position of the city center (CBD)
+	sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
 	for(unsigned int i = 0; i < 5000000; i++)
 	{
 		unsigned int xmin = rand() % this->map.getSize();
 		unsigned int ymin = rand() % this->map.getSize();
-		unsigned int size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
-		unsigned int size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(xmin)-center.x, 2) + pow(static_cast<int>(ymin)-center.y, 2)));
+		size_t size_x, size_y;
+		if(distToCenter < 2.f * stof(parser.get("distrib")))
+		{
+			size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
+		else if(distToCenter < 3.f * stof(parser.get("distrib")))
+		{
+			size_x = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
+		else
+		{
+			size_x = 1 + floor(1.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(1.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
 
-		// Position of the city center (CBD)
-		sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
 
 		// If a lot could be added to the map
 		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
@@ -117,14 +133,39 @@ void PlayState::init(GameEngine* lp_game_engine)
 			Model model;
 			Lot* lp_lot = this->map.getLot(xmin, ymin);
 			Quad base_quad;
-			std::vector<sf::Vector3f> base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
-													   sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+			std::vector<sf::Vector3f> base_vertices;
+			if(distToCenter > 2.f*stof(parser.get("distrib")))
+			{
+				base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+			}
+			else
+			{
+				if(rand() % 2 == 0)
+				{
+						base_vertices = {sf::Vector3f(0.f, 0.f, 0.0),
+									     sf::Vector3f(size_x, 0.f, 0.0),
+									     sf::Vector3f(size_x, size_y, 0.0),
+									     sf::Vector3f(0.f, size_y, 0.0)};
+				}
+				else
+				{
+					base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+				}
+			}
 			base_quad.create(base_vertices);
-			float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(xmin)-center.x, 2) + pow(static_cast<int>(ymin)-center.y, 2)));
+
 			float kCenter = exp(-pow(distToCenter/stof(parser.get("distrib")), 2.f));
 			unsigned int floor_count = floor(25.f* kCenter * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			if(rand() % 10 == 0)
+			{
+				floor_count++;
+			}
 			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
 
 			Structure* lp_structure = new Structure();
@@ -176,10 +217,17 @@ void PlayState::init(GameEngine* lp_game_engine)
 	lp_info_text->bg_color = sf::Color(0, 0, 0, 0);
 	lp_info_text->size = lp_info_panel->size;
 	lp_info_text->interline_space = 5.f;
+
+	MenuButton* lpButtonMenu = new MenuButton(&this->gui_root, BUTTON_MENU);
+	lpButtonMenu->loadTexture("res/gui/button_menu.png");
+	lpButtonMenu->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16));
 }
 
 void PlayState::cleanup()
 {
+	this->map.clear();
+	this->map.deleteLists();
+	this->gui_root.clear();
 }
 
 void PlayState::pause()
@@ -206,8 +254,15 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 	while(lp_game_engine->window.pollEvent(event))
 	{
 		this->camera.handleInput(event);
-		this->root_component.handleInput(cmd, event);
-		this->executeCmd(cmd, lp_game_engine);
+		//this->root_component.handleInput(cmd, event);
+		//const GuiEvent guiEvent = this->root_component.handleInput(event);
+		const GuiEvent guiEvent = this->gui_root.handleInput(event);
+		if(guiEvent.type != GuiEvent::None)
+		{
+			lp_game_engine->changeState(StartMenuState::getInstance());
+			return;
+		}
+		//this->executeCmd(cmd, lp_game_engine);
 		if(event.type == sf::Event::Closed)
 		{
 			lp_game_engine->quit();
@@ -417,7 +472,8 @@ void PlayState::draw(GameEngine* lp_game_engine)
 
 	this->drawSelection(lp_game_engine->window);
 	this->gui.draw(lp_game_engine->window, this->camera);
-	this->gui_root.draw(lp_game_engine->window, lp_game_engine->assets);
+	//this->gui_root.draw(lp_game_engine->window, lp_game_engine->assets);
+	lp_game_engine->window.draw(this->gui_root);
 
 	lp_game_engine->window.popGLStates();
 	lp_game_engine->window.display();
@@ -548,8 +604,10 @@ void PlayState::initOpenGL(GameEngine* lp_game_engine)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glClearDepth(1.0f);
-	//glClearColor(0.5f, 0.6f, 0.95f, 0.f);
-	glClearColor(0.f, 0.f, 0.f, 0.f);
+	glClearColor(0.5f, 0.6f, 0.95f, 0.f);
+	//glClearColor(47.f/255.f, 77.f/255.f, 127.f/255.f, 0.f);
+	//glClearColor(0.35f, 0.45f, 0.725f, 0.f);
+	//glClearColor(0.f, 0.f, 0.f, 0.f);
 	glDepthMask(GL_TRUE);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -638,9 +696,11 @@ sf::Vector2i PlayState::getCameraTile() const
 
 void PlayState::generateLists()
 {
-	std::cout << "generating lists" << std::endl;
+	std::cout << "generating tile list" << std::endl;
 	this->map.generateTileList(this->camera, this->resources);
+	std::cout << "generating road list" << std::endl;
 	this->map.generateRoadList(this->camera, this->resources);
+	std::cout << "generating structure's boxes list" << std::endl;
 	this->map.generateStructureBoxList(this->camera, this->resources);
 }
 

@@ -20,7 +20,9 @@ public:
 	virtual ~Clickable();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
-	virtual std::string& handleInput(std::string& cmd, sf::Event& event);
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	//virtual std::string& handleInput(std::string& cmd, sf::Event& event);
+	virtual const GuiEvent handleInput(const sf::Event& event);
 
 	sf::Color bg_over_color;
 	std::string cmd;

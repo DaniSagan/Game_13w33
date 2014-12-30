@@ -102,15 +102,21 @@ bool RealIntRect::contains(sf::Vector2i pos)
 		   pos.y >= this->ymin && pos.y < this->ymax;
 }
 
-void RealIntRect::trim(int xmin, int xmax, int ymin, int ymax)
+bool RealIntRect::trim(int xmin, int xmax, int ymin, int ymax)
 {
+	if(this->xmax < xmin || this->xmin > xmax ||
+	   this->ymax < ymin || this->ymin > ymax)
+	{
+		return false;
+	}
 	if(this->xmin < xmin) this->xmin = xmin;
 	if(this->xmax > xmax) this->xmax = xmax;
 	if(this->ymin < ymin) this->ymin = ymin;
 	if(this->ymax > ymax) this->ymax = ymax;
+	return true;
 }
 
-void RealIntRect::trim(RealIntRect rect)
+bool RealIntRect::trim(RealIntRect rect)
 {
 	return this->trim(rect.xmin, rect.xmax, rect.ymin, rect.ymax);
 }
@@ -530,6 +536,31 @@ bool Utils::test()
 	}
 
 	return everything_ok;
+}
+
+GLuint Utils::loadGLTexture(const string& filename)
+{
+	sf::Image img;
+	img.loadFromFile(filename);
+	GLuint handle;
+	glGenTextures(1, &handle);
+	glBindTexture(GL_TEXTURE_2D, handle);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 0.05);
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, GL_RGBA,
+		img.getSize().x, img.getSize().y,
+		0,
+		GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr()
+	);
+	return handle;
 }
 
 SimpleParser::SimpleParser()

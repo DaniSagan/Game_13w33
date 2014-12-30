@@ -53,6 +53,8 @@ public:
 	virtual ~Map();
 
 	void create(unsigned int size);
+	void clear();
+	void clearLot(const sf::Vector2i& tileIndex);
 	void generateTiles();
 	void createRandom(const unsigned int size);
 	void createFlat(const unsigned int size, float height);
@@ -92,6 +94,8 @@ public:
 	void generateStructureBoxList(const Camera& camera, const Resources& resources);
 	void callStructureBoxList() const;
 
+	void deleteLists();
+
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
@@ -123,6 +127,8 @@ public:
 	Lot* getLot(unsigned int x, unsigned int y) const;
 
 	const Tile& getTile(size_t x, size_t y) const;
+
+	static sf::Color randomGrassColor();
 
 	HeightMap heightMap;
 

@@ -11,7 +11,7 @@ namespace dfv
 {
 
 Component::Component(Component* lp_parent, int id):
-		position({0.f, 0.f})
+		position({0.f, 0.f}), mId(id)
 {
 	this->lp_parent = lp_parent;
 	if(lp_parent != nullptr)
@@ -52,6 +52,15 @@ void Component::draw(sf::RenderWindow& window, const Assets& assets) const
 	}
 }
 
+void Component::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+	for(Component* lp_component: this->lp_children)
+	{
+		target.draw(*lp_component);
+	}
+}
+
+/*
 std::string& Component::handleInput(std::string& cmd, sf::Event& event)
 {
 	for(Component* lp_component: this->lp_children)
@@ -59,6 +68,19 @@ std::string& Component::handleInput(std::string& cmd, sf::Event& event)
 		cmd = lp_component->handleInput(cmd, event);
 	}
 	return cmd;
+}*/
+
+const GuiEvent Component::handleInput(const sf::Event& event)
+{
+	for(Component* lpComponent: this->lp_children)
+	{
+		const GuiEvent guiEvent = lpComponent->handleInput(event);
+		if(guiEvent.type != GuiEvent::None)
+		{
+			return guiEvent;
+		}
+	}
+	return GuiEvent::noEvent;
 }
 
 void Component::addComponent(Component* lp_component)
@@ -103,6 +125,16 @@ Component* Component::getById(const int id) const
 		}
 		return lp_temp->lp_components.at(id);
 	}
+}
+
+void Component::clear()
+{
+	for(Component* lpComponent: this->lp_children)
+	{
+		lpComponent->clear();
+		delete lpComponent;
+	}
+	lp_children.clear();
 }
 
 } /* namespace dfv */

@@ -58,6 +58,7 @@ public:
 	};
 
 	void create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
+	void clear();
 	void setColor(sf::Color color);
 	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
 	bool hasProp() const;
@@ -83,6 +84,7 @@ public:
 	bool clearRoad();
 	bool clearBuilding();
 	bool clearProp();
+	void forgetLot();
 
 	Quad getQuad() const;
 
@@ -91,6 +93,7 @@ public:
 	void drawStructureBox() const;
 	void drawStructureOutline() const;
 	bool hasStructure() const;
+	Lot* getLot() const;
 
 	friend class Map;
 

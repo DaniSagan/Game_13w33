@@ -24,6 +24,7 @@
 #include "../gui/Clickable.h"
 #include "../gui/Editable.h"
 #include "../gui/Multitext.h"
+#include "../gui/MenuButton.h"
 #include "../Utils.h"
 #include "../CmdServer.h"
 
@@ -100,7 +101,8 @@ private:
 	{
 		STATS_TEXT_BAR = 0,
 		INFO_PANEL,
-		INFO_TEXT
+		INFO_TEXT,
+		BUTTON_MENU
 	};
 };
 

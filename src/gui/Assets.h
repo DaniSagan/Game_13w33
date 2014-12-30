@@ -20,8 +20,11 @@ public:
 	virtual ~Assets();
 
 	sf::Font font;
+	sf::Texture buttonMenuImg;
 	bool load();
 };
+
+extern Assets assetsInstance;
 
 } /* namespace dfv */
 

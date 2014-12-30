@@ -93,6 +93,9 @@ bool Resources::load()
 		);
 	}
 
+	this->img_roads_handles.at(0) = Utils::loadGLTexture("res/img/road/straight.png");
+	this->img_roads_handles.at(1) = Utils::loadGLTexture("res/img/road/x-cross.png");
+
 	this->img_tree_2.loadFromFile("res/prop/tree-1.png");
 	this->img_tree.loadFromFile("res/prop/tree-2.png");
 	/*glGenTextures(1, &this->img_1_handle);

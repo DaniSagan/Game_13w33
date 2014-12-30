@@ -52,6 +52,18 @@ void Lot::addStructure(Structure* lp_structure)
 	this->lp_structures.push_back(lp_structure);
 }
 
+void Lot::clearStructures()
+{
+	for(Structure* lpStructure: this->lp_structures)
+	{
+		if(lpStructure != nullptr)
+		{
+			delete lpStructure;
+		}
+	}
+	this->lp_structures.clear();
+}
+
 void Lot::drawStructureBoxes() const
 {
 	for(auto lp_structure: this->lp_structures)
@@ -106,6 +118,11 @@ sf::Vector2f Lot::getOrigin2d() const
 sf::Vector2i Lot::getOriginTileIndices() const
 {
 	return this->tile_indices.at(0);
+}
+
+const vector<sf::Vector2i>& Lot::getTileIndices() const
+{
+	return this->tile_indices;
 }
 
 void Lot::setInhabitants(unsigned int value)

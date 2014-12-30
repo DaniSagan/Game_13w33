@@ -28,6 +28,7 @@ public:
 	};
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual GuiRect getRect() const;
 
 	sf::Vector2f size;

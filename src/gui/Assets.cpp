@@ -10,10 +10,11 @@
 namespace dfv
 {
 
+Assets assetsInstance;
+
 Assets::Assets()
 {
-	// TODO Auto-generated constructor stub
-
+	this->load();
 }
 
 Assets::~Assets()
@@ -25,6 +26,10 @@ bool Assets::load()
 {
 	bool everything_ok = true;
 	if(!this->font.loadFromFile("res/font/Ubuntu-L.ttf"))
+	{
+		everything_ok = false;
+	}
+	if(!this->buttonMenuImg.loadFromFile("res/gui/button_menu.png"))
 	{
 		everything_ok = false;
 	}

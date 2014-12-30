@@ -48,7 +48,10 @@ private:
 	Component gui;
 	enum GuiComponents
 	{
-		START_NEW_BUTTON = 0,
+		NONE = 0,
+		START_NEW_BUTTON,
+		LOAD_BUTTON,
+		QUIT_BUTTON,
 		START_NEW_MENU,
 		SIZE_EDIT,
 		GENERATE_NEW_BUTTON,

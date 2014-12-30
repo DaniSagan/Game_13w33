@@ -43,6 +43,7 @@ public:
 	virtual ~Lot();
 
 	void addStructure(Structure* lp_structure);
+	void clearStructures();
 
 	void drawStructureBoxes() const;
 	void drawStructureOutlines() const;
@@ -53,6 +54,7 @@ public:
 	sf::Vector3f getOrigin() const;
 	sf::Vector2f getOrigin2d() const;
 	sf::Vector2i getOriginTileIndices() const;
+	const vector<sf::Vector2i>& getTileIndices() const;
 
 	void setInhabitants(unsigned int value);
 	unsigned int getInhabitants() const;

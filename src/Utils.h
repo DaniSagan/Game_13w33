@@ -81,8 +81,8 @@ struct RealIntRect
 	RealIntRect(int xmin_, int xmax_, int ymin_, int ymax_);
 	int xmin, xmax, ymin, ymax;
 	bool contains(sf::Vector2i pos);
-	void trim(int xmin, int xmax, int ymin, int ymax);
-	void trim(RealIntRect rect);
+	bool trim(int xmin, int xmax, int ymin, int ymax);
+	bool trim(RealIntRect rect);
 	void setFromCenterRadius(sf::Vector2i center_pos, int radius);
 	std::string toString() const;
 };
@@ -182,6 +182,7 @@ public:
 	static float rFunction(const float x, const float n);
 	static float angle(const sf::Vector3f& v1, const sf::Vector3f& v2);
 	static string exec(char* cmd);
+	static GLuint loadGLTexture(const string& filename);
 
 	static bool test();
 };

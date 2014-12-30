@@ -20,6 +20,7 @@ public:
 	virtual ~Picture();
 
 	virtual void draw(sf::RenderWindow& window, const Assets& assets) const;
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	bool loadFromFile(std::string filename);
 

@@ -28,18 +28,18 @@ namespace dfv
 
 Tile::Tile():
 		is_road(false),
-		lp_road(NULL),
-		lp_prop(NULL),
-		lp_structure(NULL),
-		lp_lot(NULL)
+		lp_road(nullptr),
+		lp_prop(nullptr),
+		lp_structure(nullptr),
+		lp_lot(nullptr)
 {
 	// TODO Auto-generated constructor stub
 }
 
 Tile::~Tile()
 {
-	if(lp_road != NULL) delete this->lp_road;
-	if(lp_structure != NULL) delete this->lp_structure;
+	if(lp_road != nullptr) delete this->lp_road;
+	if(lp_structure != nullptr) delete this->lp_structure;
 }
 
 void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
@@ -62,6 +62,39 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 
 	this->colors.resize(4);
 
+}
+
+void Tile::clear()
+{
+	/*cout << "clearing road" << endl;
+	if(this->lp_road != nullptr)
+	{
+		delete this->lp_road;
+		this->lp_road = nullptr;
+	}
+	cout << "clearing prop" << endl;
+	if(this->lp_prop != nullptr)
+	{
+		delete this->lp_prop;
+		this->lp_prop = nullptr;
+	}
+	cout << "clearing structure" << endl;
+	if(this->lp_structure != nullptr)
+	{
+		delete this->lp_structure;
+		this->lp_structure = nullptr;
+	}
+	cout << "clearing lot" << endl;
+	if(this->lp_lot != nullptr)
+	{
+		cout << "clear()" << endl;
+		this->lp_lot->clear();
+		cout << "delete" << endl;
+		delete this->lp_lot;
+		cout << "nullptr" << endl;
+		this->lp_lot = nullptr;
+	}
+	cout << "finished if" << endl;*/
 }
 
 void Tile::setColor(sf::Color color)
@@ -87,7 +120,7 @@ void Tile::setColor(sf::Color color)
 			float rr3 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f + rr1, 0.9f + rr2, 0.4f + rr3);
 		}
-		else if(this->vertices[i].z > snow_threshold + static_cast<float>(rand() % 100)/10.f && this->lp_road == NULL)
+		else if(this->vertices[i].z > snow_threshold + static_cast<float>(rand() % 100)/10.f && this->lp_road == nullptr)
 		{
 			float rr = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f-rr, 0.9f-rr, 0.95f-rr);
@@ -120,7 +153,7 @@ void Tile::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 
 bool Tile::hasProp() const
 {
-	return this->lp_prop != NULL;
+	return this->lp_prop != nullptr;
 }
 
 void Tile::setAsRoad(const bool r)
@@ -130,7 +163,7 @@ void Tile::setAsRoad(const bool r)
 
 bool Tile::isRoad() const
 {
-	return this->lp_road != NULL;
+	return this->lp_road != nullptr;
 }
 
 void Tile::addRoad(dfv::Road::Type type, unsigned int orientation)
@@ -241,7 +274,7 @@ void Tile::drawRoad(const Camera& camera, const Resources& resources) const
 
 void Tile::drawProp(const Camera& camera, const Resources& resources) const
 {
-	if(this->lp_prop != NULL)
+	if(this->lp_prop != nullptr)
 	{
 		this->lp_prop->draw(camera, resources);
 	}
@@ -268,10 +301,10 @@ bool Tile::isBeach() const
 
 bool Tile::clearRoad()
 {
-	if(this->lp_road != NULL)
+	if(this->lp_road != nullptr)
 	{
 		delete this->lp_road;
-		this->lp_road = NULL;
+		this->lp_road = nullptr;
 		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
@@ -285,10 +318,10 @@ bool Tile::clearRoad()
 bool Tile::clearProp()
 {
 	std::cout << "Clearing prop" << std::endl;
-	if(this->lp_prop != NULL)
+	if(this->lp_prop != nullptr)
 	{
 		delete this->lp_prop;
-		this->lp_prop = NULL;
+		this->lp_prop = nullptr;
 		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
@@ -296,6 +329,11 @@ bool Tile::clearProp()
 	{
 		return false;
 	}
+}
+
+void Tile::forgetLot()
+{
+	this->lp_lot = nullptr;
 }
 
 Quad Tile::getQuad() const
@@ -317,12 +355,12 @@ void Tile::createStructure(Quad base, unsigned int floor_count)
 void Tile::destroyStructure()
 {
 	delete this->lp_structure;
-	this->lp_structure = NULL;
+	this->lp_structure = nullptr;
 }
 
 void Tile::drawStructureBox() const
 {
-	if(this->lp_structure != NULL)
+	if(this->lp_structure != nullptr)
 	{
 		this->lp_structure->drawBox();
 	}
@@ -330,7 +368,7 @@ void Tile::drawStructureBox() const
 
 void Tile::drawStructureOutline() const
 {
-	if(this->lp_structure != NULL)
+	if(this->lp_structure != nullptr)
 	{
 		this->lp_structure->drawOutline();
 	}
@@ -338,7 +376,7 @@ void Tile::drawStructureOutline() const
 
 bool Tile::hasStructure() const
 {
-	if(this->lp_lot != NULL)
+	if(this->lp_lot != nullptr)
 	{
 		return this->lp_lot->hasStructure();
 	}
@@ -346,6 +384,11 @@ bool Tile::hasStructure() const
 	{
 		return false;
 	}
+}
+
+Lot* Tile::getLot() const
+{
+	return this->lp_lot;
 }
 
 } /* namespace dfv */
