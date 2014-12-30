@@ -95,6 +95,8 @@ public:
 	bool hasStructure() const;
 	Lot* getLot() const;
 
+	bool canBuildRoad() const;
+
 	friend class Map;
 
 private:

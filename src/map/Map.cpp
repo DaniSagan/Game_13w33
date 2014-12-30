@@ -88,7 +88,6 @@ void Map::clearLot(const sf::Vector2i& tileIndex)
 	Lot* lpLot = this->lp_tiles.at(tileIndex.x).at(tileIndex.y)->getLot();
 	if(lpLot != nullptr)
 	{
-		cout << "clearing structure" << endl;
 		lpLot->clearStructures();
 		for(const sf::Vector2i& tileIndex: lpLot->getTileIndices())
 		{
@@ -408,7 +407,7 @@ bool Map::changeRoadType(const sf::Vector2i& tile_pos)
 	if(this->isRoad(tile_pos.x, tile_pos.y))
 	{
 		const unsigned int road_type = this->lp_tiles[tile_pos.x][tile_pos.y]->getRoadId();
-		if(road_type >= Road::count - 1)
+		if(road_type >= Road::id_count - 1)
 		{
 			this->lp_tiles[tile_pos.x][tile_pos.y]->setRoadId(Road::straight);
 		}
@@ -520,7 +519,6 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 		{
 			for(int j = rect.ymin; j <= rect.ymax; j++)
 			{
-				cout << i << "," << j << endl;
 				Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
 				if(lp_lot != NULL)
 				{

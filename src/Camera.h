@@ -87,6 +87,7 @@ public:
 	float getCarTorque() const;
 	float getCarPower() const;
 	Mode getMode() const;
+	void setMode(Mode mode);
 	dfv::RealIntRect getRectFromView(const dfv::RealIntRect& map_rect) const;
 
 private:
@@ -97,6 +98,7 @@ private:
 	Car car;
 	float curr_pitch;
 	float curr_roll;
+	float totalDist;
 };
 
 } /* namespace dfv */

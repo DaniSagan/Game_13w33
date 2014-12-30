@@ -22,6 +22,7 @@
  */
 
 #include "Resources.h"
+#include "map/Road.h"
 
 namespace dfv
 {
@@ -63,8 +64,9 @@ bool Resources::load()
 	);*/
 
 	const unsigned int img_road_count = 7;
-	this->img_roads.resize(img_road_count);
-	this->img_roads_handles.resize(img_road_count);
+	//this->img_roads.resize(img_road_count);
+	this->img_roads.resize(Road::id_count);
+	this->img_roads_handles.resize(Road::id_count);
 	for(unsigned int i = 0; i < img_road_count; i++)
 	{
 		std::stringstream ss;
@@ -93,8 +95,12 @@ bool Resources::load()
 		);
 	}
 
-	this->img_roads_handles.at(0) = Utils::loadGLTexture("res/img/road/straight.png");
-	this->img_roads_handles.at(1) = Utils::loadGLTexture("res/img/road/x-cross.png");
+	this->img_roads_handles.at(Road::straight) = Utils::loadGLTexture("res/img/road/straight.png");
+	this->img_roads_handles.at(Road::cross) = Utils::loadGLTexture("res/img/road/x-cross.png");
+	this->img_roads_handles.at(Road::roundabout_center) = Utils::loadGLTexture("res/img/road/roundabout1/center.png");
+	this->img_roads_handles.at(Road::roundabout_side) = Utils::loadGLTexture("res/img/road/roundabout1/side.png");
+	this->img_roads_handles.at(Road::roundabout_corner) = Utils::loadGLTexture("res/img/road/roundabout1/corner.png");
+	this->img_roads_handles.at(Road::roundabout_exit) = Utils::loadGLTexture("res/img/road/roundabout1/exit.png");
 
 	this->img_tree_2.loadFromFile("res/prop/tree-1.png");
 	this->img_tree.loadFromFile("res/prop/tree-2.png");

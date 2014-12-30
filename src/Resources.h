@@ -33,6 +33,8 @@
 namespace dfv
 {
 
+class Road;
+
 class Resources
 {
 public:

@@ -391,6 +391,15 @@ Lot* Tile::getLot() const
 	return this->lp_lot;
 }
 
+bool Tile::canBuildRoad() const
+{
+	return
+	!this->isWater() &&
+	!this->isBeach() &&
+	this->getQuad().getMaxInclination() < 0.25f &&
+    this->getQuad().getAvgHeight() < 9.f;
+}
+
 } /* namespace dfv */
 
 

@@ -79,7 +79,6 @@ const GuiEvent MenuButton::handleInput(const sf::Event& event)
 		if(Utils::length(mousePos - this->getAbsPosition()) <= this->radius)
 		{
 			this->state = OVER;
-			cout << "Mouse over button" << endl;
 		}
 		else
 		{

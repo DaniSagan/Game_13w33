@@ -49,7 +49,11 @@ public:
 		av_straight,
 		av_cross,
 		av_tcross,
-		count
+		roundabout_center,
+		roundabout_side,
+		roundabout_corner,
+		roundabout_exit,
+		id_count
 	};
 
 	void create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);

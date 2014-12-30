@@ -53,10 +53,11 @@ void PlayState::init(GameEngine* lp_game_engine)
 	{
 		for(unsigned int j = 0; j < this->map.getSize(); j++)
 		{
-			if(!this->map.isWater(i, j) &&
+			/*if(!this->map.isWater(i, j) &&
 			   !this->map.isBeach(i, j) &&
 			   this->map.getMaxInclination(i, j) < 0.25f &&
-			   this->map.getAvgHeight(i, j) < 9.f)
+			   this->map.getAvgHeight(i, j) < 9.f)*/
+			if(this->map.getTile(i, j).canBuildRoad())
 			{
 				sf::Vector2i pos(i, j);
 				if(((i%6 == 0) || (i%30 == 1)) && !((j%6==0) || (j%30==1)))
@@ -70,6 +71,46 @@ void PlayState::init(GameEngine* lp_game_engine)
 				else if(((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
 				{
 					this->map.addRoad(pos, Road::cross, 0);
+				}
+			}
+		}
+	}
+
+	// Add random rondabouts
+	for(size_t k = 0; k < 100000; k++)
+	{
+		size_t x = rand() % this->map.getSize();
+		size_t y = rand() % this->map.getSize();
+		// make sure it's a cross
+		if(x >= 1 && x < this->map.getSize() - 1 &&
+		   y >= 1 && y < this->map.getSize() - 1 &&
+		   this->map.getTile(x, y).isRoad())
+		{
+			if(this->map.getTile(x, y).getRoadId() == Road::cross)
+			{
+				if(this->map.getTile(x, y).canBuildRoad() &&
+				   this->map.getTile(x+1, y).canBuildRoad() &&
+				   this->map.getTile(x+1, y+1).canBuildRoad() &&
+				   this->map.getTile(x, y+1).canBuildRoad() &&
+				   this->map.getTile(x-1, y+1).canBuildRoad() &&
+				   this->map.getTile(x-1, y).canBuildRoad() &&
+				   this->map.getTile(x-1, y-1).canBuildRoad() &&
+				   this->map.getTile(x, y-1).canBuildRoad() &&
+				   this->map.getTile(x+1, y-1).canBuildRoad() &&
+				   !this->map.getTile(x+1, y+1).isRoad() &&
+				   !this->map.getTile(x-1, y+1).isRoad() &&
+				   !this->map.getTile(x-1, y-1).isRoad() &&
+				   !this->map.getTile(x+1, y-1).isRoad())
+				{
+					this->map.addRoad(sf::Vector2i(x, y), Road::roundabout_center, 0);
+					this->map.addRoad(sf::Vector2i(x+1, y), Road::roundabout_exit, 1);
+					this->map.addRoad(sf::Vector2i(x+1, y+1), Road::roundabout_corner, 3);
+					this->map.addRoad(sf::Vector2i(x, y+1), Road::roundabout_exit, 0);
+					this->map.addRoad(sf::Vector2i(x-1, y+1), Road::roundabout_corner, 2);
+					this->map.addRoad(sf::Vector2i(x-1, y), Road::roundabout_exit, 3);
+					this->map.addRoad(sf::Vector2i(x-1, y-1), Road::roundabout_corner, 1);
+					this->map.addRoad(sf::Vector2i(x, y-1), Road::roundabout_exit, 2);
+					this->map.addRoad(sf::Vector2i(x+1, y-1), Road::roundabout_corner, 0);
 				}
 			}
 		}
@@ -221,6 +262,18 @@ void PlayState::init(GameEngine* lp_game_engine)
 	MenuButton* lpButtonMenu = new MenuButton(&this->gui_root, BUTTON_MENU);
 	lpButtonMenu->loadTexture("res/gui/button_menu.png");
 	lpButtonMenu->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16));
+
+	MenuButton* lpButtonCameraFree = new MenuButton(&this->gui_root, BUTTON_CAMERA_FREE);
+	lpButtonCameraFree->loadTexture("res/gui/button_camera_free.png");
+	lpButtonCameraFree->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16+36*1));
+
+	MenuButton* lpButtonCameraWalking = new MenuButton(&this->gui_root, BUTTON_CAMERA_WALKING);
+	lpButtonCameraWalking->loadTexture("res/gui/button_camera_walking.png");
+	lpButtonCameraWalking->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16+36*2));
+
+	MenuButton* lpButtonCameraDriving = new MenuButton(&this->gui_root, BUTTON_CAMERA_DRIVING);
+	lpButtonCameraDriving->loadTexture("res/gui/button_camera_driving.png");
+	lpButtonCameraDriving->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16+36*3));
 }
 
 void PlayState::cleanup()
@@ -254,12 +307,32 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 	while(lp_game_engine->window.pollEvent(event))
 	{
 		this->camera.handleInput(event);
-		//this->root_component.handleInput(cmd, event);
-		//const GuiEvent guiEvent = this->root_component.handleInput(event);
 		const GuiEvent guiEvent = this->gui_root.handleInput(event);
 		if(guiEvent.type != GuiEvent::None)
 		{
-			lp_game_engine->changeState(StartMenuState::getInstance());
+			if(guiEvent.type == GuiEvent::ButtonEvent)
+			{
+				if(guiEvent.click.id == BUTTON_MENU)
+				{
+					lp_game_engine->changeState(StartMenuState::getInstance());
+					return;
+				}
+				else if(guiEvent.click.id == BUTTON_CAMERA_FREE)
+				{
+					this->camera.setMode(Camera::Free);
+					return;
+				}
+				else if(guiEvent.click.id == BUTTON_CAMERA_WALKING)
+				{
+					this->camera.setMode(Camera::Walking);
+					return;
+				}
+				else if(guiEvent.click.id == BUTTON_CAMERA_DRIVING)
+				{
+					this->camera.setMode(Camera::Driving);
+					return;
+				}
+			}
 			return;
 		}
 		//this->executeCmd(cmd, lp_game_engine);

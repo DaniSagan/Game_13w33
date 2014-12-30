@@ -29,7 +29,8 @@ namespace dfv
 Camera::Camera():
 		mode(Free),
 		curr_pitch(0.0),
-		curr_roll(0.0)
+		curr_roll(0.0),
+		totalDist(0.f)
 {
 	// TODO Auto-generated constructor stub
 
@@ -220,36 +221,63 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, base_height + map_height));
 	}
 	//float vel = dt * 0.1f * (16*height + 16.0);
-	float vel = 0.1 * (16.0*height + 16.0);
+	float vel;
+	if(this->mode == Free)
+	{
+		vel = 0.1 * (16.0*height + 16.0);
+	}
+	else if(this->mode == Walking)
+	{
+		vel = 0.3f;
+	}
 	float ang = this->getRpy().z * M_PI / 180.0;
 	float angx = this->getRpy().x * M_PI / 180.0;
 
-	if(this->mode == Free)
+	if(this->mode == Free || this->mode == Walking)
 	{
+		sf::Vector3f direction;
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
-			this->move(sf::Vector3f(-dt * vel * sin(ang) * sin(angx), -dt * vel * cos(ang) * sin(angx), -dt * vel * cos(angx)));
+			direction += sf::Vector3f(-sin(ang) * sin(angx), -cos(ang) * sin(angx), -cos(angx));
+			//this->move(sf::Vector3f(-dt * vel * sin(ang) * sin(angx), -dt * vel * cos(ang) * sin(angx), -dt * vel * cos(angx)));
+			//this->totalDist += dt * vel;
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
-			this->move(sf::Vector3f(dt * vel * sin(ang) * sin(angx), dt * vel * cos(ang) * sin(angx), dt * vel * cos(angx)));
+			direction += sf::Vector3f(sin(ang) * sin(angx), cos(ang) * sin(angx), cos(angx));
+			//this->move(sf::Vector3f(dt * vel * sin(ang) * sin(angx), dt * vel * cos(ang) * sin(angx), dt * vel * cos(angx)));
+			//this->totalDist += dt * vel;
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			this->move(sf::Vector3f(dt * vel * cos(ang), -dt * vel * sin(ang), 0.f));
+			direction += sf::Vector3f(cos(ang), -sin(ang), 0.f);
+			//this->move(sf::Vector3f(dt * vel * cos(ang), -dt * vel * sin(ang), 0.f));
+			//this->totalDist += dt * vel;
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			this->move(sf::Vector3f(-dt * vel * cos(ang), dt * vel * sin(ang), 0.f));
+			direction += sf::Vector3f(-cos(ang), sin(ang), 0.f);
+			//this->move(sf::Vector3f(-dt * vel * cos(ang), dt * vel * sin(ang), 0.f));
+			//this->totalDist += dt * vel;
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		{
-			this->move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.0));
+			direction += sf::Vector3f(sin(ang), cos(ang), 0.0);
+			//this->move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.0));
+			//this->totalDist += dt * vel;
 		}
 		if(sf::Keyboard::isKeyPressed(sf::Keyboard::F))
 		{
-			this->move(sf::Vector3f(-dt * vel * sin(ang), -dt * vel * cos(ang), 0.0));
+			direction += sf::Vector3f(sin(ang), -cos(ang), 0.0);
+			//this->move(sf::Vector3f(-dt * vel * sin(ang), -dt * vel * cos(ang), 0.0));
+			//this->totalDist += dt * vel;
 		}
+		if(Utils::length(direction) != 0.f)
+		{
+			this->move(direction * vel * dt / Utils::length(direction));
+			this->totalDist += vel*dt;
+		}
+
 
 
 		float rot = 40.0f * dt;
@@ -280,6 +308,10 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 			this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.04f + map_height));
 		}
 
+		if(mode == Walking)
+		{
+			this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.09f + map_height + 0.003f*sin(50.f*this->totalDist)));
+		}
 	}
 	else if(this->mode == Driving)
 	{
@@ -365,6 +397,27 @@ float Camera::getCarPower() const
 Camera::Mode Camera::getMode() const
 {
 	return this->mode;
+}
+
+void Camera::setMode(Mode mode)
+{
+	if(mode == Free)
+	{
+		this->rpy = sf::Vector3f(this->rpy.x, 0.f, this->rpy.z);
+		this->mode = Free;
+	}
+	else if(mode == Walking)
+	{
+		this->mode = Walking;
+	}
+	else if(mode == Driving)
+	{
+		if(this->mode != Driving)
+		{
+			this->mode = Driving;
+			this->car.init();
+		}
+	}
 }
 
 dfv::RealIntRect Camera::getRectFromView(const dfv::RealIntRect& map_rect) const
