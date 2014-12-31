@@ -33,6 +33,22 @@ bool Assets::load()
 	{
 		everything_ok = false;
 	}
+	if(!this->sounds.selectBuffer.loadFromFile("res/sound/select.wav"))
+	{
+		everything_ok = false;
+	}
+	else
+	{
+		this->sounds.select.setBuffer(this->sounds.selectBuffer);
+	}
+	if(!this->sounds.overBuffer.loadFromFile("res/sound/over.wav"))
+	{
+		everything_ok = false;
+	}
+	else
+	{
+		this->sounds.over.setBuffer(this->sounds.overBuffer);
+	}
 	return everything_ok;
 }
 

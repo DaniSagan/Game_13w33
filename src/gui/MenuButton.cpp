@@ -62,6 +62,10 @@ const GuiEvent MenuButton::handleInput(const sf::Event& event)
 		sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 		if(Utils::length(mousePos - this->getAbsPosition()) <= this->radius)
 		{
+			//sf::Sound sound;
+			//sound.setBuffer(assetsInstance.sounds.select);
+			//sound.play();
+			assetsInstance.sounds.select.play();
 			GuiEvent guiEvent;
 			guiEvent.type = GuiEvent::ButtonEvent;
 			guiEvent.click.id = this->mId;
@@ -78,6 +82,7 @@ const GuiEvent MenuButton::handleInput(const sf::Event& event)
 		sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
 		if(Utils::length(mousePos - this->getAbsPosition()) <= this->radius)
 		{
+			if(this->state != OVER) assetsInstance.sounds.over.play();
 			this->state = OVER;
 		}
 		else

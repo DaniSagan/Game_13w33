@@ -168,7 +168,8 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		this->steering_angle -= 20.f*dt*(1.0/(1.0+0.1f*this->speed));
+		float k = this->steering_angle > 0.01f? 60.f : (50.f*this->steering_time > 20.f? 20.f:50.f*this->steering_time);
+		this->steering_angle -= k*dt*(1.0/(1.0+0.1f*this->speed));
 		if(this->steering_angle < -40.f)
 		{
 			this->steering_angle = -40.f;
@@ -176,7 +177,8 @@ void Car::update(float dt, float pitch)
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		this->steering_angle += 20.f*dt*(1.0/(1.0+0.1f*this->speed));
+		float k = this->steering_angle < -0.01f? 60.f : (50.f*this->steering_time > 20.f? 20.f:50.f*this->steering_time);
+		this->steering_angle += k*dt*(1.0/(1.0+0.1f*this->speed));
 		if(this->steering_angle > 40.f)
 		{
 			this->steering_angle = 40.f;

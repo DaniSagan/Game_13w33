@@ -14,7 +14,8 @@ Clickable::Clickable(Component* parent, int id):
 		Text(parent, id),
 		bg_over_color(sf::Color(0, 0, 0, 0)),
 		cmd(std::string("")),
-		mouse_over(false)
+		mouse_over(false),
+		state(NORMAL)
 {
 
 }
@@ -70,7 +71,8 @@ void Clickable::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	rect.setSize(this->size);
 	sf::FloatRect txt_rect = text.getLocalBounds();
 
-	if(this->mouse_over)
+	//if(this->mouse_over)
+	if(this->state == OVER)
 	{
 		rect.setFillColor(this->bg_over_color);
 	}
@@ -151,6 +153,7 @@ const GuiEvent Clickable::handleInput(const sf::Event& event)
 		sf::Vector2f mouse_pos(event.mouseButton.x, event.mouseButton.y);
 		if(this->getRect().contains(mouse_pos))
 		{
+			assetsInstance.sounds.select.play();
 			GuiEvent guiEvent;
 			guiEvent.type = GuiEvent::ButtonEvent;
 			guiEvent.click.id = this->mId;
@@ -168,10 +171,13 @@ const GuiEvent Clickable::handleInput(const sf::Event& event)
 		if(this->getRect().contains(mouse_pos))
 		{
 			this->mouse_over = true;
+			if(this->state != OVER) assetsInstance.sounds.over.play();
+			this->state = OVER;
 		}
 		else
 		{
 			this->mouse_over = false;
+			this->state = NORMAL;
 		}
 		return GuiEvent::noEvent;
 	}

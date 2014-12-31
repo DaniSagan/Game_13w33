@@ -509,12 +509,38 @@ void Map::drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources
 
 void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
-	rect.trim(this->getTileRect());
-	if(rect.xmin >= 0 && rect.xmax < this->size &&
-	   rect.ymin >= 0 && rect.ymax < this->size)
+	if(rect.trim(this->getTileRect()))
+	{
+		if(rect.xmin >= 0 && rect.xmax < this->size &&
+		   rect.ymin >= 0 && rect.ymax < this->size)
+		{
+			glBegin(GL_QUADS);
+			glColor3f(0.65, 0.65, 0.65);
+			for(int i = rect.xmin; i <= rect.xmax; i++)
+			{
+				for(int j = rect.ymin; j <= rect.ymax; j++)
+				{
+					Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+					if(lp_lot != NULL)
+					{
+						if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
+						{
+							lp_lot->drawStructureBoxes();
+						}
+					}
+				}
+			}
+			glEnd();
+		}
+	}
+}
+
+void Map::drawStructureOutlines(dfv::RealIntRect rect) const
+{
+	if(rect.trim(this->getTileRect()))
 	{
 		glBegin(GL_QUADS);
-		glColor3f(0.65, 0.65, 0.65);
+		glColor3f(0.1, 0.1, 0.1);
 		for(int i = rect.xmin; i <= rect.xmax; i++)
 		{
 			for(int j = rect.ymin; j <= rect.ymax; j++)
@@ -524,35 +550,13 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 				{
 					if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
 					{
-						lp_lot->drawStructureBoxes();
+						lp_lot->drawStructureOutlines();
 					}
 				}
 			}
 		}
 		glEnd();
 	}
-}
-
-void Map::drawStructureOutlines(dfv::RealIntRect rect) const
-{
-	rect.trim(this->getTileRect());
-	glBegin(GL_QUADS);
-	glColor3f(0.1, 0.1, 0.1);
-	for(int i = rect.xmin; i <= rect.xmax; i++)
-	{
-		for(int j = rect.ymin; j <= rect.ymax; j++)
-		{
-			Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
-			if(lp_lot != NULL)
-			{
-				if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
-				{
-					lp_lot->drawStructureOutlines();
-				}
-			}
-		}
-	}
-	glEnd();
 }
 
 float Map::getHeight(const sf::Vector2f& pos) const
@@ -673,21 +677,23 @@ void Map::deleteLists()
 
 void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
 {
-	rect.trim(this->getTileRect());
-	glColor3f(1.f, 1.f, 1.f);
-	for(int i = floor(rect.xmin); i <= floor(rect.xmax); i++)
+	if(rect.trim(this->getTileRect()))
 	{
-		for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
+		glColor3f(1.f, 1.f, 1.f);
+		for(int i = floor(rect.xmin); i <= floor(rect.xmax); i++)
 		{
-			this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
+			for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
+			{
+				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
+			}
 		}
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const
 {
-	rect.trim(this->getTileRect());
+	if(!rect.trim(this->getTileRect())) return;
 	unsigned int quadrant = camera.getQuadrant();
 
 	if(quadrant == 0)
@@ -978,6 +984,58 @@ Lot* Map::getLot(unsigned int x, unsigned int y) const
 const Tile& Map::getTile(size_t x, size_t y) const
 {
 	return *(this->lp_tiles.at(x).at(y));
+}
+
+const Tile& Map::getTile(const sf::Vector2i& pos) const
+{
+	return *(this->lp_tiles.at(pos.x).at(pos.y));
+}
+
+char Map::getRoadChar(const sf::Vector2i& pos) const
+{
+	if(!this->getTile(pos).isRoad())
+	{
+		return ' ';
+	}
+	else
+	{
+		return Road::asChar(this->getTile(pos).getRoadId(), this->getTile(pos).getRoadOrientation());
+	}
+}
+
+vector<string> Map::getRoadPattern(const sf::Vector2i& pos, size_t radius) const
+{
+	vector<string> result;
+	for(int y = pos.y + static_cast<int>(radius); y >= pos.y - static_cast<int>(radius); y--)
+	{
+		string s;
+		for(int x = pos.x - static_cast<int>(radius); x <= pos.x + static_cast<int>(radius); x++)
+		{
+			cout << x << ", " << y << endl;
+			if(this->contains(sf::Vector2i(x, y)))
+			{
+				s += this->getRoadChar(sf::Vector2i(x, y));
+			}
+			else
+			{
+				s += ' ';
+			}
+		}
+		result.push_back(s);
+	}
+	return result;
+}
+
+bool Map::matchRoadPattern(sf::Vector2i pos, const string& pattern) const
+{
+	bool result = true;
+	return result;
+}
+
+bool Map::contains(const sf::Vector2i& pos) const
+{
+	return pos.x >= 0 && pos.x < this->size &&
+		   pos.y >= 0 && pos.y < this->size;
 }
 
 sf::Color Map::randomGrassColor()

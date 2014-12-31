@@ -127,6 +127,11 @@ public:
 	Lot* getLot(unsigned int x, unsigned int y) const;
 
 	const Tile& getTile(size_t x, size_t y) const;
+	const Tile& getTile(const sf::Vector2i& pos) const;
+	char getRoadChar(const sf::Vector2i& pos) const;
+	vector<string> getRoadPattern(const sf::Vector2i& pos, size_t radius) const;
+	bool matchRoadPattern(sf::Vector2i pos, const string& pattern) const;
+	bool contains(const sf::Vector2i& pos) const;
 
 	static sf::Color randomGrassColor();
 

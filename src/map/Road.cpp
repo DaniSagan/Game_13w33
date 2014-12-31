@@ -220,6 +220,16 @@ unsigned int Road::getId() const
 	return this->id;
 }
 
+char Road::asChar(int type, int orientation)
+{
+	if(type == Road::straight && (orientation == 0 || orientation == 2)) return '|';
+	else if(type == Road::straight && (orientation == 1 || orientation == 3)) return '-';
+	else if(type == Road::curve && (orientation == 0 || orientation == 2)) return '/';
+	else if(type == Road::curve && (orientation == 1 || orientation == 3)) return '\\';
+	else if(type == Road::cross) return '+';
+	else return ' ';
+}
+
 } /* namespace dfv */
 
 

@@ -97,6 +97,8 @@ bool Resources::load()
 
 	this->img_roads_handles.at(Road::straight) = Utils::loadGLTexture("res/img/road/straight.png");
 	this->img_roads_handles.at(Road::cross) = Utils::loadGLTexture("res/img/road/x-cross.png");
+	this->img_roads_handles.at(Road::curve) = Utils::loadGLTexture("res/img/road/diagonal.png");
+	this->img_roads_handles.at(Road::tcross) = Utils::loadGLTexture("res/img/road/t-cross.png");
 	this->img_roads_handles.at(Road::roundabout_center) = Utils::loadGLTexture("res/img/road/roundabout1/center.png");
 	this->img_roads_handles.at(Road::roundabout_side) = Utils::loadGLTexture("res/img/road/roundabout1/side.png");
 	this->img_roads_handles.at(Road::roundabout_corner) = Utils::loadGLTexture("res/img/road/roundabout1/corner.png");

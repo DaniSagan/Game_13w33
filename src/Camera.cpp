@@ -310,7 +310,7 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 
 		if(mode == Walking)
 		{
-			this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.09f + map_height + 0.003f*sin(50.f*this->totalDist)));
+			this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, 0.09f + map_height + 0.002f*sin(32.f*this->totalDist)));
 		}
 	}
 	else if(this->mode == Driving)

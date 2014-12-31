@@ -77,6 +77,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	}
 
 	// Add random rondabouts
+	cout << "Adding roundabouts" << endl;
 	for(size_t k = 0; k < 100000; k++)
 	{
 		size_t x = rand() % this->map.getSize();
@@ -111,6 +112,106 @@ void PlayState::init(GameEngine* lp_game_engine)
 					this->map.addRoad(sf::Vector2i(x-1, y-1), Road::roundabout_corner, 1);
 					this->map.addRoad(sf::Vector2i(x, y-1), Road::roundabout_exit, 2);
 					this->map.addRoad(sf::Vector2i(x+1, y-1), Road::roundabout_corner, 0);
+				}
+			}
+		}
+	}
+
+	// Fix road connections
+	cout << "Fixing road connections" << endl;
+	for(size_t x = 1; x < this->map.getSize()-1; x++)
+	{
+		for(size_t y = 1; y < this->map.getSize()-1; y++)
+		{
+			// x-crosses to t-crosses
+			sf::Vector2i pos(x, y);
+			if(this->map.getTile(pos).isRoad())
+			{
+				if(this->map.getTile(pos).getRoadId() == Road::cross)
+				{
+					vector<string> pattern = this->map.getRoadPattern(sf::Vector2i(x, y), 1);
+					vector<string> matchPattern;
+					matchPattern = {" | ",
+							        "-+-",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::tcross);
+						this->map.setRoadOrientation(pos, 0);
+						continue;
+					}
+					matchPattern = {" | ",
+							        " +-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::tcross);
+						this->map.setRoadOrientation(pos, 1);
+						continue;
+					}
+					matchPattern = {"   ",
+							        "-+-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::tcross);
+						this->map.setRoadOrientation(pos, 2);
+						continue;
+					}
+					matchPattern = {" | ",
+							        "-+ ",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::tcross);
+						this->map.setRoadOrientation(pos, 3);
+						continue;
+					}
+					matchPattern = {" | ",
+							        " +-",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::curve);
+						this->map.setRoadOrientation(pos, 0);
+						continue;
+					}
+					matchPattern = {"   ",
+							        " +-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::curve);
+						this->map.setRoadOrientation(pos, 1);
+						continue;
+					}
+					matchPattern = {"   ",
+							        "-+ ",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::curve);
+						this->map.setRoadOrientation(pos, 2);
+						continue;
+					}
+					matchPattern = {" | ",
+							        "-+ ",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->map.setRoadId(pos, Road::curve);
+						this->map.setRoadOrientation(pos, 3);
+						continue;
+					}
+
 				}
 			}
 		}
@@ -455,6 +556,20 @@ void PlayState::update(GameEngine* lp_game_engine)
 	if(tile_pos.x >= (int)this->map.getSize()) tile_pos.x = this->map.getSize() - 1;
 	if(tile_pos.y < 0) tile_pos.y = 0;
 	if(tile_pos.y >= (int)this->map.getSize()) tile_pos.y = this->map.getSize() - 1;
+
+	/*
+	if(this->map.getRect().contains(sf::Vector2f(tile_pos.x, tile_pos.y)))
+	{
+		if(this->map.getTile(tile_pos.x, tile_pos.y).isRoad())
+		{
+			vector<string> roadPattern = this->map.getRoadPattern(tile_pos, 1);
+			for(string& s: roadPattern)
+			{
+				cout << s << endl;
+			}
+			cout << "*****************" << endl;
+		}
+	}*/
 
 	std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(tile_pos);
 	std::vector<sf::Vector2f> sel_vertices(4);

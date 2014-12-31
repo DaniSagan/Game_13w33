@@ -9,6 +9,7 @@
 #define ASSETS_H_
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 namespace dfv
 {
@@ -22,6 +23,14 @@ public:
 	sf::Font font;
 	sf::Texture buttonMenuImg;
 	bool load();
+
+	struct Sounds
+	{
+		sf::SoundBuffer selectBuffer;
+		sf::Sound select;
+		sf::SoundBuffer overBuffer;
+		sf::Sound over;
+	} sounds;
 };
 
 extern Assets assetsInstance;

@@ -62,6 +62,7 @@ public:
 	void setOrientation(unsigned int orientation);
 	unsigned int getOrientation() const;
 	unsigned int getId() const;
+	static char asChar(int type, int orientation);
 
 private:
 	//Type id;

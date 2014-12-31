@@ -28,8 +28,15 @@ public:
 	std::string cmd;
 	void (*onClick)();
 
+	enum State
+	{
+		NORMAL,
+		OVER
+	};
+
 protected:
 	bool mouse_over;
+	State state;
 
 };
 
