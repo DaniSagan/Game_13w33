@@ -44,12 +44,12 @@ public:
 
 	bool load();
 
-	std::vector<sf::Image> img_roads;
-	std::vector<GLuint> img_roads_handles;
-	GLuint img_1_handle;
+	std::vector<sf::Image> imgRoads;
+	std::vector<GLuint> imgRoadsHandles;
+	//GLuint img_1_handle;
 
-	OpenGLImage img_tree;
-	OpenGLImage img_tree_2;
+	OpenGLImage imgTree;
+	OpenGLImage imgTree2;
 };
 
 } /* namespace dfv */

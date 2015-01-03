@@ -78,7 +78,6 @@ public:
 	void rotate(const sf::Vector3f& v);
 	unsigned int getQuadrant() const;
 	void setView(const sf::Window& window) const;
-	//dfv::IntRect GetRectFromView(const dfv::IntRect& map_rect) const;
 	void handleInput(sf::Event& event);
 	void update(float dt, float map_height, sf::Vector3f& normal);
 	float getCarSpeed() const;
@@ -93,11 +92,11 @@ public:
 private:
 	sf::Vector3f position;
 	sf::Vector3f rpy;
-	sf::Vector3f map_normal;
+	sf::Vector3f mapNormal;
 	Mode mode;
 	Car car;
-	float curr_pitch;
-	float curr_roll;
+	float currPitch;
+	float currRoll;
 	float totalDist;
 };
 

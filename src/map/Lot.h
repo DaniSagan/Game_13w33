@@ -67,9 +67,9 @@ public:
 
 private:
 	sf::Vector3f origin;
-	std::vector<Structure*> lp_structures;
-	std::vector<sf::Vector2i> tile_indices;
-	std::vector<Quad> tile_quads;
+	std::vector<Structure*> lpStructures;
+	std::vector<sf::Vector2i> tileIndices;
+	std::vector<Quad> tileQuads;
 	unsigned int inhabitants;
 	unsigned int jobs;
 };

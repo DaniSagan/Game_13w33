@@ -43,6 +43,7 @@ public:
 	//void GenerateFromMap(Map* lp_map, const Camera& camera);
 	void generateFromMap(const Map& map, const sf::Vector2f position, unsigned int range);
 	sf::Vector2i realPosFromMapPos(sf::Vector2i map_pos, int range);
+	sf::Vector2i realPosFromMinimapPos(const sf::Vector2i& minimapPos, const sf::Vector2f& mapPos) const;
 	void draw(sf::RenderWindow& window, const Camera& camera) const;
 	std::string handleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos);
 	unsigned int getSize() const;

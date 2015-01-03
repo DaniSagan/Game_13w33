@@ -28,8 +28,8 @@ namespace dfv
 
 Camera::Camera():
 		mode(Free),
-		curr_pitch(0.0),
-		curr_roll(0.0),
+		currPitch(0.0),
+		currRoll(0.0),
 		totalDist(0.f)
 {
 	// TODO Auto-generated constructor stub
@@ -194,7 +194,7 @@ void Camera::handleInput(sf::Event& event)
 
 void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 {
-	this->map_normal = normal;
+	this->mapNormal = normal;
 	const float scale = 16.f;
 	//std::cout << "normal: " << normal.x << ", " << normal.y << ", " << normal.z << std::endl;
 	sf::Vector3f vdirx(sin(this->rpy.z*M_PI/180.0), cos(this->rpy.z*M_PI/180.0), 0.0);
@@ -315,7 +315,7 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	}
 	else if(this->mode == Driving)
 	{
-		this->car.update(dt, this->curr_pitch);
+		this->car.update(dt, this->currPitch);
 		vel = 1.f/scale*this->car.getSpeed();
 		float rot = 0.0;
 		if(vel > 0.0)
@@ -325,11 +325,11 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 			float fc_max = this->car.getMaxCentrifugalForce();
 			if(rot < 0)
 			{
-				fc_max -= this->car.getMass()*9.81*sin(this->curr_roll*M_PI/180.f);
+				fc_max -= this->car.getMass()*9.81*sin(this->currRoll*M_PI/180.f);
 			}
 			else
 			{
-				fc_max += this->car.getMass()*9.81*sin(this->curr_roll*M_PI/180.f);
+				fc_max += this->car.getMass()*9.81*sin(this->currRoll*M_PI/180.f);
 			}
 
 			if(fc > fc_max)
@@ -350,9 +350,9 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 		{
 			rot_pitch += 50.f;
 		}
-		this->curr_pitch += 2.0f*(pitch - this->curr_pitch)*dt;
-		this->curr_roll += 2.0f*(roll - this->curr_roll)*dt;
-		this->setRpy(sf::Vector3f(-105.0 - curr_pitch,  -curr_roll, this->getRpy().z));
+		this->currPitch += 2.0f*(pitch - this->currPitch)*dt;
+		this->currRoll += 2.0f*(roll - this->currRoll)*dt;
+		this->setRpy(sf::Vector3f(-105.0 - currPitch,  -currRoll, this->getRpy().z));
 		this->rotate(sf::Vector3f(0.f, 0.f, rot*180.0/M_PI));
 		this->move(sf::Vector3f(dt * vel * sin(ang), dt * vel * cos(ang), 0.f));
 		this->setPosition(sf::Vector3f(this->getPosition().x, this->getPosition().y, base_height + map_height));

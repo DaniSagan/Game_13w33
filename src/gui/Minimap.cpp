@@ -31,7 +31,6 @@ Minimap::Minimap():
 		range(16),
 		lp_pixels(NULL)
 {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -52,118 +51,54 @@ void Minimap::create(const unsigned int size)
 	}
 }
 
-/*void Minimap::GenerateFromMap(Map* lp_map, const Camera& camera)
-{
-	this->lp_map = lp_map;
-	sf::Vector2f pos(camera.GetPosition().x, camera.GetPosition().y);
-	float map_height = lp_map->GetHeight(pos);
-	float height = camera.GetPosition().z - map_height;
-	this->range = 16 + 2* height;
-	for(unsigned int i = 0; i < this->size; i++)
-	{
-		for(unsigned int j = 0; j < this->size; j++)
-		{
-			sf::Vector2i rel_pos = this->RealPosFromMapPos(sf::Vector2i(i, j), this->range);
-			sf::Vector2i abs_pos(camera.GetPosition().x - rel_pos.x, camera.GetPosition().y - rel_pos.y);
-
-			if(abs_pos.x >= 0 && abs_pos.x < (int)(lp_map->GetSize()) && abs_pos.y >= 0 && abs_pos.y < (int)(lp_map->GetSize()))
-			{
-				if(lp_map->IsRoad(abs_pos))
-				{
-					this->lp_pixels[(j * this->size + i) * 4] = 50;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 50;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
-				}
-				else if(lp_map->HasBuilding(abs_pos))
-				{
-					this->lp_pixels[(j * this->size + i) * 4] = lp_map->GetBuildingColor(abs_pos).r;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = lp_map->GetBuildingColor(abs_pos).g;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = lp_map->GetBuildingColor(abs_pos).b;
-				}
-				else
-				{
-					this->lp_pixels[(j * this->size + i) * 4] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 200;
-				}
-			}
-			else
-			{
-				this->lp_pixels[(j * this->size + i) * 4] = 0;
-				this->lp_pixels[(j * this->size + i) * 4 + 1] = 0;
-				this->lp_pixels[(j * this->size + i) * 4 + 2] = 0;
-			}
-
-
-		}
-	}
-
-
-
-	this->img.LoadFromPixels(this->size, this->size, this->lp_pixels);
-}*/
-
 void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsigned int range)
 {
 	this->range = range;
-	for(unsigned int i = 0; i < this->size; i++)
+	for(size_t i = 0; i < this->size; i++)
 	{
-		for(unsigned int j = 0; j < this->size; j++)
+		for(size_t j = 0; j < this->size; j++)
 		{
-			sf::Vector2i rel_pos = this->realPosFromMapPos(sf::Vector2i(i, j), this->range);
-			sf::Vector2i abs_pos(position.x - rel_pos.x, position.y - rel_pos.y);
-
-			if(abs_pos.x >= 0 && abs_pos.x < (int)(map.getSize()) && abs_pos.y >= 0 && abs_pos.y < (int)(map.getSize()))
+			sf::Vector2i absPos = this->realPosFromMinimapPos(sf::Vector2i(i, j), position);
+			size_t pixelIndex = (j * this->size + i) * 4;
+			if(absPos.x >= 0 && absPos.x < (int)(map.getSize()) && absPos.y >= 0 && absPos.y < (int)(map.getSize()))
 			{
-				//if(map.IsRoad(abs_pos))
-				if(map.isRoad(abs_pos.x, abs_pos.y))
+				if(map.getTile(absPos).isRoad())
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = 50;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 50;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
+					this->lp_pixels[pixelIndex] = 50;
+					this->lp_pixels[pixelIndex + 1] = 50;
+					this->lp_pixels[pixelIndex + 2] = 50;
 				}
-				//else if(map.HasBuilding(abs_pos))
-				/*
-				else if(map.hasBuilding(abs_pos.x, abs_pos.y))
+				else if(map.getTile(absPos).isWater())
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = map.getBuildingColor(abs_pos).r;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = map.getBuildingColor(abs_pos).g;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = map.getBuildingColor(abs_pos).b;
+					this->lp_pixels[pixelIndex] = 0;
+					this->lp_pixels[pixelIndex + 1] = 0;
+					this->lp_pixels[pixelIndex + 2] = 200;
 				}
-				*/
-				else if(map.isWater(abs_pos.x, abs_pos.y))
+				else if(map.getTile(absPos).isBeach())
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = 0;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 0;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 200;
+					this->lp_pixels[pixelIndex] = 200;
+					this->lp_pixels[pixelIndex + 1] = 200;
+					this->lp_pixels[pixelIndex + 2] = 100;
 				}
-				else if(map.isBeach(abs_pos.x, abs_pos.y))
+				else if(map.getTile(absPos).hasStructure())
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 100;
-				}
-				else if(map.hasStructure(abs_pos.x, abs_pos.y))
-				{
-					this->lp_pixels[(j * this->size + i) * 4] = 200;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 100;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
+					this->lp_pixels[pixelIndex] = 200;
+					this->lp_pixels[pixelIndex + 1] = 100;
+					this->lp_pixels[pixelIndex + 2] = 50;
 				}
 				else
 				{
-					this->lp_pixels[(j * this->size + i) * 4] = 50;
-					this->lp_pixels[(j * this->size + i) * 4 + 1] = 100;
-					this->lp_pixels[(j * this->size + i) * 4 + 2] = 50;
+					this->lp_pixels[pixelIndex] = 50;
+					this->lp_pixels[pixelIndex + 1] = 100;
+					this->lp_pixels[pixelIndex + 2] = 50;
 				}
 			}
 			else
 			{
-				this->lp_pixels[(j * this->size + i) * 4] = 0;
-				this->lp_pixels[(j * this->size + i) * 4 + 1] = 0;
-				this->lp_pixels[(j * this->size + i) * 4 + 2] = 0;
+				this->lp_pixels[pixelIndex] = 0;
+				this->lp_pixels[pixelIndex + 1] = 0;
+				this->lp_pixels[pixelIndex + 2] = 0;
 			}
-
-
 		}
 	}
 
@@ -178,11 +113,15 @@ sf::Vector2i Minimap::realPosFromMapPos(sf::Vector2i map_pos, int range)
 			range - (range*2*map_pos.y)/size);
 }
 
+sf::Vector2i Minimap::realPosFromMinimapPos(const sf::Vector2i& minimapPos, const sf::Vector2f& mapPos) const
+{
+	return sf::Vector2i(mapPos.x + 2*this->range/this->size*minimapPos.x,
+			            mapPos.y - 2*this->range/this->size*minimapPos.y);
+}
+
 void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const
 {
 	sf::Sprite sprite;
-	//sf::Texture texture;
-	//this->texture.update(this->lp_pixels);
 	sprite.setTexture(this->texture);
 	sprite.setPosition(
 			0.0,
@@ -190,7 +129,7 @@ void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(sprite);
 
 	sf::ConvexShape shape;
-	float ang = -(camera.getRpy().z + 90.f) * 3.1416 / 180.0;
+	float ang = -(camera.getRpy().z - 90.f) * 3.1416 / 180.0;
 	shape.setPointCount(3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setPoint(0, sf::Vector2f(this->size / 2.0 + 15.0*cos(ang), this->size / 2.0 - 15.0*sin(ang)));

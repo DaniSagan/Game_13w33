@@ -61,11 +61,11 @@ void Tree::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 {
 	if(this->type == 0)
 	{
-		glBindTexture(GL_TEXTURE_2D, resources.img_tree.getHandle());
+		glBindTexture(GL_TEXTURE_2D, resources.imgTree.getHandle());
 	}
 	else
 	{
-		glBindTexture(GL_TEXTURE_2D, resources.img_tree_2.getHandle());
+		glBindTexture(GL_TEXTURE_2D, resources.imgTree2.getHandle());
 	}
 
 	float yaw = camera.getRpy().z;
@@ -106,7 +106,7 @@ void Tree::drawQuad(const unsigned int index, const dfv::Resources& resources) c
 	glBegin(GL_QUADS);
 		for(unsigned int i = 0; i < 4; i++)
 		{
-			glTexCoord2d(resources.img_tree.getTexCoords(i).x, resources.img_tree.getTexCoords(i).y);
+			glTexCoord2d(resources.imgTree.getTexCoords(i).x, resources.imgTree.getTexCoords(i).y);
 			glNormal3f(this->quads[index].getNormal(i).x, this->quads[index].getNormal(i).y, this->quads[index].getNormal(i).z);
 			glVertex3f(this->quads[index].getVertex(i).x, this->quads[index].getVertex(i).y, this->quads[index].getVertex(i).z);
 		}

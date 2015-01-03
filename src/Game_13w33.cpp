@@ -15,20 +15,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//#include "App.h"
 #include "engine/GameEngine.h"
 #include "engine/StartMenuState.h"
 #include <SFML/Graphics.hpp>
 
 int main()
 {
-	dfv::GameEngine game_engine;
-	game_engine.changeState(dfv::StartMenuState::getInstance());
-	while(game_engine.isRunning())
+	dfv::GameEngine gameEngine;
+	gameEngine.changeState(dfv::StartMenuState::getInstance());
+	while(gameEngine.isRunning())
 	{
-		game_engine.handleInput();
-		game_engine.update();
-		game_engine.draw();
+		gameEngine.handleInput();
+		gameEngine.update();
+		gameEngine.draw();
 	}
 	return 0;
 }

@@ -37,8 +37,8 @@ Lot::Lot(const std::vector<sf::Vector2i> & tile_indices,
 	     const std::vector<Quad> & tile_quads,
 	     const sf::Vector3f & origin)
 {
-	this->tile_indices = tile_indices;
-	this->tile_quads = tile_quads;
+	this->tileIndices = tile_indices;
+	this->tileQuads = tile_quads;
 	this->origin = origin;
 }
 
@@ -49,24 +49,24 @@ Lot::~Lot()
 
 void Lot::addStructure(Structure* lp_structure)
 {
-	this->lp_structures.push_back(lp_structure);
+	this->lpStructures.push_back(lp_structure);
 }
 
 void Lot::clearStructures()
 {
-	for(Structure* lpStructure: this->lp_structures)
+	for(Structure* lpStructure: this->lpStructures)
 	{
 		if(lpStructure != nullptr)
 		{
 			delete lpStructure;
 		}
 	}
-	this->lp_structures.clear();
+	this->lpStructures.clear();
 }
 
 void Lot::drawStructureBoxes() const
 {
-	for(auto lp_structure: this->lp_structures)
+	for(auto lp_structure: this->lpStructures)
 	{
 		lp_structure->drawBox();
 	}
@@ -74,7 +74,7 @@ void Lot::drawStructureBoxes() const
 
 void Lot::drawStructureOutlines() const
 {
-	for(auto lp_structure: this->lp_structures)
+	for(auto lp_structure: this->lpStructures)
 	{
 		lp_structure->drawOutline();
 	}
@@ -82,13 +82,13 @@ void Lot::drawStructureOutlines() const
 
 bool Lot::hasStructure() const
 {
-	return !this->lp_structures.empty();
+	return !this->lpStructures.empty();
 }
 
 float Lot::getMinHeight() const
 {
 	std::vector<float> vertex_heights;
-	for(Quad tile_quad: this->tile_quads)
+	for(Quad tile_quad: this->tileQuads)
 	{
 		vertex_heights.push_back(tile_quad.getMinHeight());
 	}
@@ -98,7 +98,7 @@ float Lot::getMinHeight() const
 float Lot::getMaxHeight() const
 {
 	std::vector<float> vertex_heights;
-	for(Quad tile_quad: this->tile_quads)
+	for(Quad tile_quad: this->tileQuads)
 	{
 		vertex_heights.push_back(tile_quad.getMaxheight());
 	}
@@ -117,12 +117,12 @@ sf::Vector2f Lot::getOrigin2d() const
 
 sf::Vector2i Lot::getOriginTileIndices() const
 {
-	return this->tile_indices.at(0);
+	return this->tileIndices.at(0);
 }
 
 const vector<sf::Vector2i>& Lot::getTileIndices() const
 {
-	return this->tile_indices;
+	return this->tileIndices;
 }
 
 void Lot::setInhabitants(unsigned int value)
@@ -147,12 +147,12 @@ unsigned int Lot::getJobs() const
 
 float Lot::getStructureHeight() const
 {
-	if(this->lp_structures.size() == 0)
+	if(this->lpStructures.size() == 0)
 	{
 		return 0.f;
 	}
 	std::vector<float> heights;
-	for(Structure* lp_structure: this->lp_structures)
+	for(Structure* lp_structure: this->lpStructures)
 	{
 		heights.push_back(lp_structure->getModelHeight());
 	}
@@ -161,12 +161,12 @@ float Lot::getStructureHeight() const
 
 unsigned int Lot::getStructureFloorCount() const
 {
-	if(this->lp_structures.size() == 0)
+	if(this->lpStructures.size() == 0)
 	{
 		return 0;
 	}
 	std::vector<unsigned int> floors;
-	for(Structure* lp_structure: this->lp_structures)
+	for(Structure* lp_structure: this->lpStructures)
 	{
 		floors.push_back(lp_structure->getModelFloorCount());
 	}

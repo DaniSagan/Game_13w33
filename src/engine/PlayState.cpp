@@ -850,6 +850,7 @@ void PlayState::createSelectedShapes(GameEngine* lp_game_engine)
 	for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 	{
 		sf::Vector2i pos(it->x, it->y);
+		if(!this->map.contains(pos)) continue;
 		std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
 		std::vector<sf::Vector2f> sel_vertices(4);
 		for(unsigned int k = 0; k < 4; k++)
