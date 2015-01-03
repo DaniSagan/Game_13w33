@@ -26,6 +26,8 @@
 namespace dfv
 {
 
+Camera cameraInstance;
+
 Camera::Camera():
 		mode(Free),
 		currPitch(0.0),

@@ -100,5 +100,7 @@ private:
 	float totalDist;
 };
 
+extern Camera cameraInstance;
+
 } /* namespace dfv */
 #endif /* CAMERA_H_ */

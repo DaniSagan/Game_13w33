@@ -27,35 +27,13 @@ namespace dfv
 {
 
 CmdServer::CmdServer(const int portno):
-		cmd_received(false)
+		cmdReceived(false), running(true)
 {
-	//this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	bzero((char*) &(this->serv_addr), sizeof serv_addr);
-	this->serv_addr.sin_family = AF_INET;
-	this->serv_addr.sin_addr.s_addr = INADDR_ANY;
-	this->serv_addr.sin_port = htons(portno);
-	//if(bind(this->sockfd,
-	//		(struct sockaddr*) &(this->serv_addr),
-	//		sizeof this->serv_addr) < 0)
-	//{
-	//	std::cout << "ERROR on binding" << std::endl;
-	//}
-	//listen(this->sockfd, 5);
-	this->clilen = sizeof cli_addr;
-	//this->newsockfd = accept(this->sockfd, (struct sockaddr*) &(this->cli_addr), &(this->clilen));
-	//if(this->newsockfd < 0)
-	//{
-	//	std::cout << "ERROR on accept" << std::endl;
-	//}
-	//bzero(this->buffer, 256);
-	//n = read(this->newsockfd, this->buffer, 255);
-	//if(n < 0)
-	//{
-	//	std::cout << "ERROR reading from socket" << std::endl;
-	//}
-	//std::cout << "Message: " << this->buffer << std::endl;
-	//this->init();
-	//this->run();
+	bzero((char*) &(this->serverAddr), sizeof serverAddr);
+	this->serverAddr.sin_family = AF_INET;
+	this->serverAddr.sin_addr.s_addr = INADDR_ANY;
+	this->serverAddr.sin_port = htons(portno);
+	this->clilen = sizeof clientAddr;
 }
 
 CmdServer::~CmdServer()
@@ -67,37 +45,35 @@ CmdServer::~CmdServer()
 bool CmdServer::init()
 {
 	this->sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	//bzero((char*) &(this->serv_addr), sizeof serv_addr);
 	if(bind(this->sockfd,
-			(struct sockaddr*) &(this->serv_addr),
-			sizeof this->serv_addr) < 0)
+			(struct sockaddr*) &(this->serverAddr),
+			sizeof this->serverAddr) < 0)
 	{
 		std::cout << "ERROR on binding" << std::endl;
 		return false;
 	}
 	std::cout << "listening" << std::endl;
 	listen(this->sockfd, 5);
-	//this->clilen = sizeof cli_addr;
 	return true;
 }
 
 void CmdServer::run()
 {
-	this->run_thread = std::thread(&CmdServer::runThread, this);
+	this->thread = std::thread(&CmdServer::runThread, this);
 }
 
 void CmdServer::runThread()
 {
-	while(true)
+	while(this->running)
 	{
-		this->newsockfd = accept(this->sockfd, (struct sockaddr*) &(this->cli_addr), &(this->clilen));
+		this->newsockfd = accept(this->sockfd, (struct sockaddr*) &(this->clientAddr), &(this->clilen));
 		//std::cout << "accepted" << std::endl;
 		if(this->newsockfd < 0)
 		{
 			std::cout << "ERROR on accept" << std::endl;
 			continue;
 		}
-		while(true)
+		while(this->running)
 		{
 			std::cout << "waiting for message" << std::endl;
 
@@ -110,16 +86,16 @@ void CmdServer::runThread()
 			}
 			std::cout << "Message: " << this->buffer << std::endl;
 			this->cmd = std::string(this->buffer);
-			this->cmd_received = true;
+			this->cmdReceived = true;
 		}
 	}
 }
 
 std::string CmdServer::getCmd()
 {
-	if(this->cmd_received)
+	if(this->cmdReceived)
 	{
-		this->cmd_received = false;
+		this->cmdReceived = false;
 		return this->cmd;
 	}
 	else
@@ -133,6 +109,8 @@ void CmdServer::terminate()
 {
 	close(this->newsockfd);
 	close(this->sockfd);
+	this->running = false;
+	//this->run_thread.join();
 }
 
 } /* namespace dfv */

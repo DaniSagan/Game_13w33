@@ -129,7 +129,7 @@ void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const
 	window.draw(sprite);
 
 	sf::ConvexShape shape;
-	float ang = -(camera.getRpy().z - 90.f) * 3.1416 / 180.0;
+	float ang = -(camera.getRpy().z - 90.f) * M_PI / 180.0;
 	shape.setPointCount(3);
 	shape.setFillColor(sf::Color::Red);
 	shape.setPoint(0, sf::Vector2f(this->size / 2.0 + 15.0*cos(ang), this->size / 2.0 - 15.0*sin(ang)));

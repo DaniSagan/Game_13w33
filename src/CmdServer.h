@@ -55,12 +55,13 @@ private:
 	int portno;
 	socklen_t clilen;
 	char buffer[256];
-	struct sockaddr_in serv_addr;
-	struct sockaddr_in cli_addr;
+	struct sockaddr_in serverAddr;
+	struct sockaddr_in clientAddr;
 	int n;
 	std::string cmd;
-	bool cmd_received;
-	std::thread run_thread;
+	bool cmdReceived;
+	std::thread thread;
+	bool running;
 };
 
 } /* namespace dfv */

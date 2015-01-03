@@ -30,7 +30,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	}
 
 	// Size of the map obtained from the start screen
-	unsigned int map_size = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
+	//unsigned int çmapSize = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
 
 	// Execute folder select dialog
 	string filePath = Utils::exec("python script/filemanager.py f");
@@ -53,39 +53,40 @@ void PlayState::init(GameEngine* lp_game_engine)
 	{
 		for(unsigned int j = 0; j < this->map.getSize(); j++)
 		{
-			/*if(!this->map.isWater(i, j) &&
-			   !this->map.isBeach(i, j) &&
-			   this->map.getMaxInclination(i, j) < 0.25f &&
-			   this->map.getAvgHeight(i, j) < 9.f)*/
-			if(this->map.getTile(i, j).canBuildRoad())
+			Tile& tile = this->map.getTile(i, j);
+			if(tile.canBuildRoad())
 			{
-				sf::Vector2i pos(i, j);
 				if(((i%6 == 0) || (i%30 == 1)) && !((j%6==0) || (j%30==1)))
 				{
-					this->map.addRoad(pos, Road::straight, 0);
+					tile.addRoad(Road::straight, 0);
 				}
 				else if(!((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
 				{
-					this->map.addRoad(pos, Road::straight, 1);
+					tile.addRoad(Road::straight, 1);
 				}
 				else if(((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
 				{
-					this->map.addRoad(pos, Road::cross, 0);
+					tile.addRoad(Road::cross, 0);
 				}
 			}
 		}
 	}
 
+	default_random_engine generator;
+
 	// Add random rondabouts
 	cout << "Adding roundabouts" << endl;
 	for(size_t k = 0; k < 100000; k++)
 	{
-		size_t x = rand() % this->map.getSize();
-		size_t y = rand() % this->map.getSize();
+		uniform_int_distribution<int> distribution(1, this->map.getSize()-2);
+		size_t x = distribution(generator);
+		size_t y = distribution(generator);
+		cout << "Trying to add roundabout @" << x << "," << y << endl;
+		//size_t x = rand() % this->map.getSize();
+		//size_t y = rand() % this->map.getSize();
+		Tile& tile = this->map.getTile(x, y);
 		// make sure it's a cross
-		if(x >= 1 && x < this->map.getSize() - 1 &&
-		   y >= 1 && y < this->map.getSize() - 1 &&
-		   this->map.getTile(x, y).isRoad())
+		if(tile.isRoad())
 		{
 			if(this->map.getTile(x, y).getRoadId() == Road::cross)
 			{
@@ -103,15 +104,16 @@ void PlayState::init(GameEngine* lp_game_engine)
 				   !this->map.getTile(x-1, y-1).isRoad() &&
 				   !this->map.getTile(x+1, y-1).isRoad())
 				{
-					this->map.addRoad(sf::Vector2i(x, y), Road::roundabout_center, 0);
-					this->map.addRoad(sf::Vector2i(x+1, y), Road::roundabout_exit, 1);
-					this->map.addRoad(sf::Vector2i(x+1, y+1), Road::roundabout_corner, 3);
-					this->map.addRoad(sf::Vector2i(x, y+1), Road::roundabout_exit, 0);
-					this->map.addRoad(sf::Vector2i(x-1, y+1), Road::roundabout_corner, 2);
-					this->map.addRoad(sf::Vector2i(x-1, y), Road::roundabout_exit, 3);
-					this->map.addRoad(sf::Vector2i(x-1, y-1), Road::roundabout_corner, 1);
-					this->map.addRoad(sf::Vector2i(x, y-1), Road::roundabout_exit, 2);
-					this->map.addRoad(sf::Vector2i(x+1, y-1), Road::roundabout_corner, 0);
+					cout << "Added roundabout @" << x << "," << y << endl;
+					this->map.getTile(x, y).addRoad(Road::roundabout_center, 0);
+					this->map.getTile(x+1, y).addRoad(Road::roundabout_exit, 1);
+					this->map.getTile(x+1, y+1).addRoad(Road::roundabout_corner, 3);
+					this->map.getTile(x, y+1).addRoad(Road::roundabout_exit, 0);
+					this->map.getTile(x-1, y+1).addRoad(Road::roundabout_corner, 2);
+					this->map.getTile(x-1, y).addRoad(Road::roundabout_exit, 3);
+					this->map.getTile(x-1, y-1).addRoad(Road::roundabout_corner, 1);
+					this->map.getTile(x, y-1).addRoad(Road::roundabout_exit, 2);
+					this->map.getTile(x+1, y-1).addRoad(Road::roundabout_corner, 0);
 				}
 			}
 		}
@@ -222,18 +224,23 @@ void PlayState::init(GameEngine* lp_game_engine)
 	Tree* lp_tree = new Tree();
 	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/5; i++)
 	{
-		unsigned int x = rand() % this->map.getSize();
-		unsigned int y = rand() % this->map.getSize();
-		if(!this->map.isWater(x, y) &&
-		   !this->map.isBeach(x, y) &&
+		uniform_int_distribution<int> distribution(0, this->map.getSize()-1);
+		size_t x = distribution(generator);
+		size_t y = distribution(generator);
+		//unsigned int x = rand() % this->map.getSize();
+		//unsigned int y = rand() % this->map.getSize();
+		Tile& tile = this->map.getTile(x, y);
+		if(!tile.isWater() &&
+		   !tile.isBeach() &&
 		   //!this->map.hasBuilding(x, y) &&
 		   this->map.getAvgHeight(x, y) < 18.f &&
-		   !this->map.isRoad(x, y))
+		   !tile.isRoad())
 		{
 			lp_tree = new Tree();
 			std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
 			lp_tree->create(tile_vertices);
-			this->map.addProp(x, y, lp_tree);
+			//this->map.addProp(x, y, lp_tree);
+			tile.addProp(lp_tree);
 		}
 	}
 
@@ -329,8 +336,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 	std::cout << "Homes: " << homes << std::endl;
 	std::cout << "Population: " << population << std::endl;
 
-	this->camera.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
-	this->camera.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
+	cameraInstance.setPosition(sf::Vector3f(this->map.getSize() / 2, this->map.getSize() / 2, 5.f));
+	cameraInstance.setRpy(sf::Vector3f(-90.0, 0.0, 0.0));
 	this->resources.load();
 
 	this->generateLists();
@@ -382,6 +389,7 @@ void PlayState::cleanup()
 	this->map.clear();
 	this->map.deleteLists();
 	this->gui_root.clear();
+	this->cmd_server.terminate();
 }
 
 void PlayState::pause()
@@ -407,7 +415,7 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 	sf::Event event;
 	while(lp_game_engine->window.pollEvent(event))
 	{
-		this->camera.handleInput(event);
+		cameraInstance.handleInput(event);
 		const GuiEvent guiEvent = this->gui_root.handleInput(event);
 		if(guiEvent.type != GuiEvent::None)
 		{
@@ -420,17 +428,17 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 				}
 				else if(guiEvent.click.id == BUTTON_CAMERA_FREE)
 				{
-					this->camera.setMode(Camera::Free);
+					cameraInstance.setMode(Camera::Free);
 					return;
 				}
 				else if(guiEvent.click.id == BUTTON_CAMERA_WALKING)
 				{
-					this->camera.setMode(Camera::Walking);
+					cameraInstance.setMode(Camera::Walking);
 					return;
 				}
 				else if(guiEvent.click.id == BUTTON_CAMERA_DRIVING)
 				{
-					this->camera.setMode(Camera::Driving);
+					cameraInstance.setMode(Camera::Driving);
 					return;
 				}
 			}
@@ -474,10 +482,10 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		}
 		else if(event.type == sf::Event::MouseWheelMoved)
 		{
-			float height = this->map.getHeight(sf::Vector2f(this->camera.getPosition().x, this->camera.getPosition().y));
-			this->camera.move(sf::Vector3f(0.f,
+			float height = this->map.getHeight(sf::Vector2f(cameraInstance.getPosition().x, cameraInstance.getPosition().y));
+			cameraInstance.move(sf::Vector3f(0.f,
 										   0.f,
-										   -0.02f * (float)event.mouseWheel.delta * (this->camera.getPosition().z - height)));
+										   -0.02f * (float)event.mouseWheel.delta * (cameraInstance.getPosition().z - height)));
 		}
 		else if(event.type == sf::Event::MouseButtonPressed)
 		{
@@ -504,32 +512,8 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		}
 		else if(event.type == sf::Event::MouseMoved)
 		{
-			//sf::Vector2f mouse_pos(event.mouseMove.x, event.mouseMove.y);
-			//sf::Vector2f mouse_pos = sf::Mouse::getPosition(lp_game_engine->window);
 			sf::Vector2f panel_size = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->size;
-			sf::Vector2i map_pos(this->map_pos.x, this->map_pos.y);// = this->map.getMapPosFromMouse(sf::Vector2i(mouse_pos.x, mouse_pos.y));
-			//this->gui_root.getById(INFO_PANEL)->setPosition(mouse_pos + sf::Vector2f(20.f, -20.f-panel_size.y));
-			/*if(this->map.hasStructure(map_pos.x, map_pos.y))
-			{
-				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = true;
-				const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
-				const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
-				const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
-				std::stringstream ss;
-				ss << "Height: " << static_cast<int>(structure_height * 32.f) << " m";
-				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
-				ss.str("");
-				ss << "#floors: " << structure_floors;
-				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(2) = ss.str();
-				ss.str("");
-				ss << "#inhabitants: " << inhabitants;
-				static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
-			}
-			else
-			{
-				static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
-			}*/
-
+			sf::Vector2i map_pos(this->map_pos.x, this->map_pos.y);
 		}
 	}
 }
@@ -539,16 +523,16 @@ void PlayState::update(GameEngine* lp_game_engine)
 	++this->frame;
 	this->frame_time = this->clock.restart().asSeconds();
 
-	sf::Vector2f camera_pos = this->camera.getPosition2d();
+	sf::Vector2f camera_pos = cameraInstance.getPosition2d();
 	sf::Vector3f normal = this->map.getNormal(camera_pos.x, camera_pos.y);
-	this->camera.update(this->frame_time,
-						this->map.getHeight(sf::Vector2f(this->camera.getPosition().x, this->camera.getPosition().y)),
+	cameraInstance.update(this->frame_time,
+						this->map.getHeight(sf::Vector2f(cameraInstance.getPosition().x, cameraInstance.getPosition().y)),
 						normal);
 
 	// update gui data
 	this->gui.setFps(1.0 / this->frame_time);
-	this->gui.setQuadrant(this->camera.getQuadrant());
-	this->gui.update(this->map, this->camera.getPosition2d());
+	this->gui.setQuadrant(cameraInstance.getQuadrant());
+	this->gui.update(this->map, cameraInstance.getPosition2d());
 
 	// window vertices of selected tile;
 	sf::Vector2i tile_pos(floor(this->map_pos.x), floor(this->map_pos.y));
@@ -556,20 +540,6 @@ void PlayState::update(GameEngine* lp_game_engine)
 	if(tile_pos.x >= (int)this->map.getSize()) tile_pos.x = this->map.getSize() - 1;
 	if(tile_pos.y < 0) tile_pos.y = 0;
 	if(tile_pos.y >= (int)this->map.getSize()) tile_pos.y = this->map.getSize() - 1;
-
-	/*
-	if(this->map.getRect().contains(sf::Vector2f(tile_pos.x, tile_pos.y)))
-	{
-		if(this->map.getTile(tile_pos.x, tile_pos.y).isRoad())
-		{
-			vector<string> roadPattern = this->map.getRoadPattern(tile_pos, 1);
-			for(string& s: roadPattern)
-			{
-				cout << s << endl;
-			}
-			cout << "*****************" << endl;
-		}
-	}*/
 
 	std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(tile_pos);
 	std::vector<sf::Vector2f> sel_vertices(4);
@@ -618,14 +588,14 @@ void PlayState::draw(GameEngine* lp_game_engine)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
 	lp_game_engine->window.setActive();
-	this->camera.setView(lp_game_engine->window);
+	cameraInstance.setView(lp_game_engine->window);
 
 	glDisable(GL_FOG);
 	this->map.drawSky();
 	glEnable(GL_FOG);
 	this->map.setLight(sf::Vector3f(800.f, -200.f, 800.f));
 
-	dfv::RealIntRect view_rect = this->camera.getRectFromView(this->map.getTileRect());
+	dfv::RealIntRect view_rect = cameraInstance.getRectFromView(this->map.getTileRect());
 	this->map.callTileList();
 	this->map_pos = this->map.getMapPosFromMouse(this->mouse_pos);
 	this->createSelectedShapes(lp_game_engine);
@@ -634,23 +604,23 @@ void PlayState::draw(GameEngine* lp_game_engine)
 	this->map.callStructureBoxList();
 
 	// TODO set this to camera height meassured from ground
-	if(this->camera.getPosition().z < 50.f)
+	if(cameraInstance.getPosition().z < 50.f)
 	{
 		dfv::RealIntRect road_rect;
-		road_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 50);
-		road_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
+		road_rect.setFromCenterRadius(dfv::Utils::toVector2i(cameraInstance.getPosition2d()), 50);
+		road_rect.trim(cameraInstance.getRectFromView(this->map.getTileRect()));
 
-		this->map.drawRoads(road_rect, this->camera, this->resources);
+		this->map.drawRoads(road_rect, cameraInstance, this->resources);
 
 		dfv::RealIntRect outlines_rect;
-		outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(this->camera.getPosition2d()), 30);
-		outlines_rect.trim(this->camera.getRectFromView(this->map.getTileRect()));
+		outlines_rect.setFromCenterRadius(dfv::Utils::toVector2i(cameraInstance.getPosition2d()), 30);
+		outlines_rect.trim(cameraInstance.getRectFromView(this->map.getTileRect()));
 
 		glDisable(GL_CULL_FACE);
 		this->map.drawStructureOutlines(outlines_rect);
 
 		glDisable(GL_LIGHTING);
-		this->map.drawProps(road_rect, this->camera, this->resources);
+		this->map.drawProps(road_rect, cameraInstance, this->resources);
 		glEnable(GL_LIGHTING);
 	}
 
@@ -659,7 +629,7 @@ void PlayState::draw(GameEngine* lp_game_engine)
 	lp_game_engine->window.pushGLStates();
 
 	this->drawSelection(lp_game_engine->window);
-	this->gui.draw(lp_game_engine->window, this->camera);
+	this->gui.draw(lp_game_engine->window, cameraInstance);
 	//this->gui_root.draw(lp_game_engine->window, lp_game_engine->assets);
 	lp_game_engine->window.draw(this->gui_root);
 
@@ -738,7 +708,7 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				{
 					this->map.clearRoad(it->x, it->y);
 				}
-				this->map.generateTileList(this->camera, this->resources);
+				this->map.generateTileList(cameraInstance, this->resources);
 				return true;
 			}
 			/*else if(tokens.at(1) == std::string("building"))
@@ -773,7 +743,7 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				{
 					this->map.buildRoad(it->x, it->y, id, orientation);
 				}
-				this->map.generateTileList(this->camera, this->resources);
+				this->map.generateTileList(cameraInstance, this->resources);
 				return true;
 			}
 		}
@@ -878,7 +848,8 @@ void PlayState::drawSelection(sf::RenderWindow& window) const
 
 sf::Vector2i PlayState::getCameraTile() const
 {
-	sf::Vector2f camera_pos = this->camera.getPosition2d();
+	//sf::Vector2f camera_pos = this->camera.getPosition2d();
+	sf::Vector2f camera_pos = cameraInstance.getPosition2d();
 	sf::Vector2i pos(floor(camera_pos.x), floor(camera_pos.y));
 	return pos;
 }
@@ -886,11 +857,11 @@ sf::Vector2i PlayState::getCameraTile() const
 void PlayState::generateLists()
 {
 	std::cout << "generating tile list" << std::endl;
-	this->map.generateTileList(this->camera, this->resources);
+	this->map.generateTileList(cameraInstance, this->resources);
 	std::cout << "generating road list" << std::endl;
-	this->map.generateRoadList(this->camera, this->resources);
+	this->map.generateRoadList(cameraInstance, this->resources);
 	std::cout << "generating structure's boxes list" << std::endl;
-	this->map.generateStructureBoxList(this->camera, this->resources);
+	this->map.generateStructureBoxList(cameraInstance, this->resources);
 }
 
 bool PlayState::test()

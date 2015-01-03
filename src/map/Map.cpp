@@ -31,20 +31,12 @@ Map::Map():
 		tile_list(0),
 		population(0)
 {
-	// TODO Auto-generated constructor stub
 
 }
 
 Map::~Map()
 {
 	this->clear();
-	/*for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
-	{
-		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
-		{
-			delete this->lp_tiles.at(i).at(j);
-		}
-	}*/
 }
 
 void Map::clear()
@@ -67,20 +59,6 @@ void Map::clear()
 	}
 	this->lp_tiles.clear();
 	this->size = 0;
-	/*
-	for(size_t x = 0; x < this->size; x++)
-	{
-		for(size_t y = 0; y < this->size; y++)
-		{
-			cout << "clearing tile " << x << ", " << y << endl;
-			this->lp_tiles.at(x).at(y)->clear();
-			if(this->lp_tiles.at(x).at(y) != nullptr)
-			{
-				delete this->lp_tiles.at(x).at(y);
-			}
-		}
-	}*/
-	//this->size = 0;
 }
 
 void Map::clearLot(const sf::Vector2i& tileIndex)
@@ -337,7 +315,7 @@ void Map::generateMapImg(const unsigned int tile_size)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles[i][j]->isRoad())
+			if(this->lp_tiles.at(i).at(j)->isRoad())
 			{
 				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
 			}
@@ -389,7 +367,7 @@ void Map::loadHeightMap(const string& filename, size_t smoothingCount)
 	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
-bool Map::isRoad(unsigned int x, unsigned int y) const
+/*bool Map::isRoad(unsigned int x, unsigned int y) const
 {
 	if(x >= 0 && x < this->size &&
 	   y >= 0 && y < this->size)
@@ -400,8 +378,9 @@ bool Map::isRoad(unsigned int x, unsigned int y) const
 	{
 		return false;
 	}
-}
+}*/
 
+/*
 bool Map::changeRoadType(const sf::Vector2i& tile_pos)
 {
 	if(this->isRoad(tile_pos.x, tile_pos.y))
@@ -446,7 +425,7 @@ bool Map::changeRoadOrientation(const sf::Vector2i& tile_pos)
 	{
 		return false;
 	}
-}
+}*/
 
 sf::Vector3f Map::getMapPosFromMouse(sf::Vector2i mouse_pos)
 {
@@ -604,6 +583,7 @@ void Map::setLight(const sf::Vector3f& position) const
 	glEnable(GL_LIGHT1);
 }
 
+/*
 bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation)
 {
 	if(tile_pos.x >= 0 && tile_pos.x < (int)this->size &&
@@ -616,7 +596,7 @@ bool Map::addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int or
 	{
 		return false;
 	}
-}
+}*/
 
 void Map::generateRoadList(const Camera& camera, const Resources& resources)
 {
@@ -767,15 +747,17 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 	}
 }
 
+/*
 void Map::addProp(const unsigned int x, const unsigned int y, Prop* lp_prop)
 {
 	this->lp_tiles.at(x).at(y)->addProp(lp_prop);
-}
+}*/
 
+/*
 bool Map::hasProp(const unsigned int x, const unsigned int y) const
 {
 	return this->lp_tiles.at(x).at(y)->hasProp();
-}
+}*/
 
 unsigned int Map::getRoadId(const sf::Vector2i& pos) const
 {
@@ -812,6 +794,7 @@ bool Map::setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation)
 	}
 }
 
+/*
 bool Map::isWater(unsigned int x, unsigned int y) const
 {
 	return this->lp_tiles.at(x).at(y)->isWater();
@@ -821,6 +804,7 @@ bool Map::isBeach(unsigned int x, unsigned int y) const
 {
 	return this->lp_tiles.at(x).at(y)->isBeach();
 }
+*/
 
 sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
 {
@@ -981,13 +965,20 @@ Lot* Map::getLot(unsigned int x, unsigned int y) const
 	return this->lp_tiles.at(x).at(y)->lp_lot;
 }
 
+/*
 const Tile& Map::getTile(size_t x, size_t y) const
 {
 	return *(this->lp_tiles.at(x).at(y));
+}*/
+
+Tile& Map::getTile(int x, int y) const
+{
+	return this->getTile(sf::Vector2i(x, y));
 }
 
-const Tile& Map::getTile(const sf::Vector2i& pos) const
+Tile& Map::getTile(const sf::Vector2i& pos) const
 {
+	assert(this->contains(pos));
 	return *(this->lp_tiles.at(pos.x).at(pos.y));
 }
 
@@ -1011,7 +1002,7 @@ vector<string> Map::getRoadPattern(const sf::Vector2i& pos, size_t radius) const
 		string s;
 		for(int x = pos.x - static_cast<int>(radius); x <= pos.x + static_cast<int>(radius); x++)
 		{
-			cout << x << ", " << y << endl;
+			//cout << x << ", " << y << endl;
 			if(this->contains(sf::Vector2i(x, y)))
 			{
 				s += this->getRoadChar(sf::Vector2i(x, y));
