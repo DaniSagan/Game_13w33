@@ -139,8 +139,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::tcross);
-						this->map.setRoadOrientation(pos, 0);
+						//this->map.setRoadId(pos, Road::tcross);
+						//this->map.setRoadOrientation(pos, 0);
+						this->map.getTile(pos).setRoadId(Road::tcross);
+						this->map.getTile(pos).setRoadOrientation(0);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -149,8 +151,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::tcross);
-						this->map.setRoadOrientation(pos, 1);
+						//this->map.setRoadId(pos, Road::tcross);
+						//this->map.setRoadOrientation(pos, 1);
+						this->map.getTile(pos).setRoadId(Road::tcross);
+						this->map.getTile(pos).setRoadOrientation(1);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -159,8 +163,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::tcross);
-						this->map.setRoadOrientation(pos, 2);
+						//this->map.setRoadId(pos, Road::tcross);
+						//this->map.setRoadOrientation(pos, 2);
+						this->map.getTile(pos).setRoadId(Road::tcross);
+						this->map.getTile(pos).setRoadOrientation(2);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -169,8 +175,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::tcross);
-						this->map.setRoadOrientation(pos, 3);
+						//this->map.setRoadId(pos, Road::tcross);
+						//this->map.setRoadOrientation(pos, 3);
+						this->map.getTile(pos).setRoadId(Road::tcross);
+						this->map.getTile(pos).setRoadOrientation(3);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -179,8 +187,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::curve);
-						this->map.setRoadOrientation(pos, 0);
+						//this->map.setRoadId(pos, Road::curve);
+						//this->map.setRoadOrientation(pos, 0);
+						this->map.getTile(pos).setRoadId(Road::curve);
+						this->map.getTile(pos).setRoadOrientation(0);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -189,8 +199,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::curve);
-						this->map.setRoadOrientation(pos, 1);
+						//this->map.setRoadId(pos, Road::curve);
+						//this->map.setRoadOrientation(pos, 1);
+						this->map.getTile(pos).setRoadId(Road::curve);
+						this->map.getTile(pos).setRoadOrientation(1);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -199,8 +211,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::curve);
-						this->map.setRoadOrientation(pos, 2);
+						//this->map.setRoadId(pos, Road::curve);
+						//this->map.setRoadOrientation(pos, 2);
+						this->map.getTile(pos).setRoadId(Road::curve);
+						this->map.getTile(pos).setRoadOrientation(2);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -209,8 +223,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						this->map.setRoadId(pos, Road::curve);
-						this->map.setRoadOrientation(pos, 3);
+						//this->map.setRoadId(pos, Road::curve);
+						//this->map.setRoadOrientation(pos, 3);
+						this->map.getTile(pos).setRoadId(Road::curve);
+						this->map.getTile(pos).setRoadOrientation(3);
 						continue;
 					}
 
@@ -237,7 +253,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 		   !tile.isRoad())
 		{
 			lp_tree = new Tree();
-			std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
+			//std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
+			vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
 			lp_tree->create(tile_vertices);
 			//this->map.addProp(x, y, lp_tree);
 			tile.addProp(lp_tree);
@@ -541,8 +558,8 @@ void PlayState::update(GameEngine* lp_game_engine)
 	if(tile_pos.y < 0) tile_pos.y = 0;
 	if(tile_pos.y >= (int)this->map.getSize()) tile_pos.y = this->map.getSize() - 1;
 
-	std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(tile_pos);
-	std::vector<sf::Vector2f> sel_vertices(4);
+	vector<sf::Vector3f> tile_vertices = this->map.getTile(tile_pos).getVertices();//this->map.getTileVertices(tile_pos);
+	vector<sf::Vector2f> sel_vertices(4);
 	try
 	{
 		for(unsigned int k = 0; k < 4; k++)
@@ -556,29 +573,33 @@ void PlayState::update(GameEngine* lp_game_engine)
 		std::cout << "Error getting view pos vertices" << std::endl;
 	}
 
-	if(this->map.hasStructure(map_pos.x, map_pos.y))
+	//if(this->map.hasStructure(map_pos.x, map_pos.y))
+	if(this->map.contains(this->map_pos.x, this->map_pos.y))
 	{
-		Panel* info_panel = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL));
-		info_panel->visible = true;
-		const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
-		const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
-		const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
-		std::stringstream ss;
-		ss << "Height: " << static_cast<int>(structure_height * 16.f) << " m";
-		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
-		ss.str("");
-		ss << "#floors: " << structure_floors;
-		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(2) = ss.str();
-		ss.str("");
-		ss << "#inhabitants: " << inhabitants;
-		static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
-		sf::Vector2f info_panel_pos(sf::Mouse::getPosition(lp_game_engine->window).x + 20.f,
-				sf::Mouse::getPosition(lp_game_engine->window).y - 20.f - info_panel->size.y);
-		info_panel->setPosition(info_panel_pos);
-	}
-	else
-	{
-		static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
+		if(this->map.getTile(this->map_pos.x, this->map_pos.y).hasStructure())
+		{
+			Panel* info_panel = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL));
+			info_panel->visible = true;
+			const float structure_height = this->map.getLot(map_pos.x, map_pos.y)->getStructureHeight();
+			const unsigned int structure_floors = this->map.getLot(map_pos.x, map_pos.y)->getStructureFloorCount();
+			const unsigned int inhabitants = this->map.getLot(map_pos.x, map_pos.y)->getInhabitants();
+			std::stringstream ss;
+			ss << "Height: " << static_cast<int>(structure_height * 16.f) << " m";
+			static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(1) = ss.str();
+			ss.str("");
+			ss << "#floors: " << structure_floors;
+			static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(2) = ss.str();
+			ss.str("");
+			ss << "#inhabitants: " << inhabitants;
+			static_cast<Multitext*>(this->gui_root.getById(INFO_TEXT))->lines.at(3) = ss.str();
+			sf::Vector2f info_panel_pos(sf::Mouse::getPosition(lp_game_engine->window).x + 20.f,
+					sf::Mouse::getPosition(lp_game_engine->window).y - 20.f - info_panel->size.y);
+			info_panel->setPosition(info_panel_pos);
+		}
+		else
+		{
+			static_cast<Panel*>(this->gui_root.getById(INFO_PANEL))->visible = false;
+		}
 	}
 
 }
@@ -706,7 +727,8 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 				{
-					this->map.clearRoad(it->x, it->y);
+					//this->map.clearRoad(it->x, it->y);
+					this->map.getTile(*it).clearRoad();
 				}
 				this->map.generateTileList(cameraInstance, this->resources);
 				return true;
@@ -726,7 +748,8 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 				{
-					this->map.clearProp(it->x, it->y);
+					//this->map.clearProp(it->x, it->y);
+					this->map.getTile(*it).clearProp();
 				}
 				//this->map.generateBuildingList();
 				return true;
@@ -741,7 +764,23 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 				{
-					this->map.buildRoad(it->x, it->y, id, orientation);
+					//this->map.buildRoad(it->x, it->y, id, orientation);
+					Road::Type type;
+					switch(id)
+					{
+					case 0: 	type = Road::straight; 			break;
+					case 1: 	type = Road::cross; 			break;
+					case 2: 	type = Road::tcross; 			break;
+					case 3: 	type = Road::curve; 			break;
+					case 4: 	type = Road::av_straight; 		break;
+					case 5: 	type = Road::av_cross; 			break;
+					case 6: 	type = Road::av_tcross; 		break;
+					case 7: 	type = Road::roundabout_center; break;
+					case 8: 	type = Road::roundabout_side; 	break;
+					case 9: 	type = Road::roundabout_corner; break;
+					case 10:	type = Road::roundabout_exit; 	break;
+					}
+					this->map.getTile(*it).addRoad(type, orientation);
 				}
 				this->map.generateTileList(cameraInstance, this->resources);
 				return true;
@@ -821,7 +860,8 @@ void PlayState::createSelectedShapes(GameEngine* lp_game_engine)
 	{
 		sf::Vector2i pos(it->x, it->y);
 		if(!this->map.contains(pos)) continue;
-		std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
+		//std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
+		std::vector<sf::Vector3f> tile_vertices = this->map.getTile(pos).getVertices();
 		std::vector<sf::Vector2f> sel_vertices(4);
 		for(unsigned int k = 0; k < 4; k++)
 		{

@@ -60,17 +60,11 @@ public:
 	void createFlat(const unsigned int size, float height);
 	void createValley(const unsigned int size, const float a, const float b);
 	unsigned int getSize() const;
-	float getTileHeight(int x, int y);
 	void generateMapImg(const unsigned int tile_size);
 	void loadHeightMap(const string& filename, size_t smoothingCount = 0);
 
-	//bool isRoad(unsigned int x, unsigned int y) const;
-	//bool changeRoadType(const sf::Vector2i& tile_pos);
-	//bool changeRoadOrientation(const sf::Vector2i& tile_pos);
-
 	sf::Vector3f getMapPosFromMouse(sf::Vector2i mouse_pos);
 	sf::Vector3f getViewPos(sf::Vector3f map_pos, const sf::Window& window) const;
-	const std::vector<sf::Vector3f> & getTileVertices(sf::Vector2i pos) const;
 
 	void drawTiles(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawStructureBoxes(dfv::RealIntRect rect) const;
@@ -83,7 +77,6 @@ public:
 
 	void drawSky() const;
 	void setLight(const sf::Vector3f& position) const;
-	//bool addRoad(const sf::Vector2i& tile_pos, Road::Type type, unsigned int orientation);
 
 	void generateRoadList(const Camera& camera, const Resources& resources);
 	void callRoadList() const;
@@ -98,41 +91,21 @@ public:
 
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
-	//void addProp(const unsigned int x, const unsigned int y, Prop* lp_prop);
-	//bool hasProp(const unsigned int x, const unsigned int y) const;
-	unsigned int getRoadId(const sf::Vector2i& pos) const;
-	unsigned int getRoadOrientation(const sf::Vector2i& pos) const;
-	bool setRoadId(const sf::Vector2i& pos, unsigned int id);
-	bool setRoadOrientation(const sf::Vector2i& pos, unsigned int orientation);
-
-	//bool isWater(unsigned int x, unsigned int y) const;
-	//bool isBeach(unsigned int x, unsigned int y) const;
 	sf::Vector3f getNormal(unsigned int x, unsigned int y);
-
-	bool clearRoad(unsigned int x, unsigned int y);
-	bool buildRoad(unsigned int x, unsigned int y, unsigned int id, unsigned int orientation);
-	bool clearProp(unsigned int x, unsigned int y);
 	sf::Vector2i getTileFromMapPos(sf::Vector3f map_pos) const;
-
-	void addStructure(const unsigned int x, const unsigned int y,
-			          Quad base, const unsigned int floor_count);
-	bool hasStructure(const unsigned int x, const unsigned int y) const;
-
 	float getAvgHeight(const unsigned int x, const unsigned int y) const;
 	float getMaxInclination(const unsigned int x, const unsigned int y) const;
-
-	Model test_model;
 
 	bool addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax, unsigned int ymax);
 	Lot* getLot(unsigned int x, unsigned int y) const;
 
-	//const Tile& getTile(size_t x, size_t y) const;
 	Tile& getTile(int x, int y) const;
 	Tile& getTile(const sf::Vector2i& pos) const;
 	char getRoadChar(const sf::Vector2i& pos) const;
 	vector<string> getRoadPattern(const sf::Vector2i& pos, size_t radius) const;
 	bool matchRoadPattern(sf::Vector2i pos, const string& pattern) const;
 	bool contains(const sf::Vector2i& pos) const;
+	bool contains(int x, int y) const;
 
 	static sf::Color randomGrassColor();
 
