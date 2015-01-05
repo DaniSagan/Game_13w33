@@ -198,5 +198,7 @@ protected:
 	map<string, string> m_data;
 };
 
+const sf::Vector3f operator^(const sf::Vector3f& v1, const sf::Vector3f& v2);
+
 } /* namespace dfv */
 #endif /* UTILS_H_ */

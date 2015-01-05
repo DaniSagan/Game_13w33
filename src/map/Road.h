@@ -42,7 +42,7 @@ public:
 
 	enum Type
 	{
-		straight,
+		straight = 0,
 		cross,
 		tcross,
 		curve,
@@ -58,7 +58,8 @@ public:
 
 	void create(const std::vector<sf::Vector3f>& vertices, Type type, unsigned int orientation);
 	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
-	void setId(unsigned int id);
+	//void setId(unsigned int id);
+	void setType(Type type);
 	void setOrientation(unsigned int orientation);
 	unsigned int getOrientation() const;
 	unsigned int getId() const;
@@ -68,6 +69,7 @@ private:
 	//Type id;
 	unsigned int id;
 	unsigned int orientation;
+	Type type;
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
 	std::vector<sf::Vector2f> tex_coords;

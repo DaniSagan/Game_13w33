@@ -62,7 +62,7 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 			size_t pixelIndex = (j * this->size + i) * 4;
 			if(absPos.x >= 0 && absPos.x < (int)(map.getSize()) && absPos.y >= 0 && absPos.y < (int)(map.getSize()))
 			{
-				if(map.getTile(absPos).isRoad())
+				if(map.getTile(absPos).hasRoad())
 				{
 					this->lp_pixels[pixelIndex] = 50;
 					this->lp_pixels[pixelIndex + 1] = 50;
@@ -80,12 +80,13 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[pixelIndex + 1] = 200;
 					this->lp_pixels[pixelIndex + 2] = 100;
 				}
+				/*
 				else if(map.getTile(absPos).hasStructure())
 				{
 					this->lp_pixels[pixelIndex] = 200;
 					this->lp_pixels[pixelIndex + 1] = 100;
 					this->lp_pixels[pixelIndex + 2] = 50;
-				}
+				}*/
 				else
 				{
 					this->lp_pixels[pixelIndex] = 50;

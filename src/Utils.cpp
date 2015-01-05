@@ -600,6 +600,11 @@ string SimpleParser::get(const string& field)
 	return result;
 }
 
+const sf::Vector3f operator^(const sf::Vector3f& v1, const sf::Vector3f& v2)
+{
+	return Utils::cross(v1, v2);
+}
+
 } /* namespace dfv */
 
 

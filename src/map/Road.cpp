@@ -27,7 +27,8 @@ namespace dfv
 {
 
 Road::Road():
-		id(straight),
+		id(0),
+		type(straight),
 		orientation(0)
 {
 	// TODO Auto-generated constructor stub
@@ -43,6 +44,7 @@ void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
 		unsigned int orientation)
 {
 	assert(vertices.size() == 4);
+	assert(orientation < 4);
 	this->vertices.resize(4);
 	for(unsigned int i = 0; i < 4; i++)
 	{
@@ -62,7 +64,8 @@ void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
 			dfv::Utils::diff(this->vertices[0], this->vertices[3]),
 			dfv::Utils::diff(this->vertices[2], this->vertices[3]));
 
-	this->id = type;
+	this->setType(type);
+	//this->id = type;
 	this->orientation = orientation;
 
 	this->tex_coords.resize(4);
@@ -98,7 +101,7 @@ void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
 
 void Road::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	glBindTexture(GL_TEXTURE_2D, resources.imgRoadsHandles[this->id]);
+	glBindTexture(GL_TEXTURE_2D, resources.imgRoadsHandles.at(this->id));
 	glBegin(GL_QUADS);
 		//glColor3f(1.f, 1.f, 1.f);
 		for(unsigned int i = 0; i < 4; i++)
@@ -112,9 +115,30 @@ void Road::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 	//glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Road::setId(unsigned int id)
+/*void Road::setId(unsigned int id)
 {
+	assert(id < 11);
 	this->id = id;
+}*/
+
+void Road::setType(Type type)
+{
+	this->type = type;
+	switch(type)
+	{
+	case straight: 			this->id = 0; break;
+	case cross: 			this->id = 1; break;
+	case tcross: 			this->id = 2; break;
+	case curve: 			this->id = 3; break;
+	case av_straight: 		this->id = 4; break;
+	case av_cross: 			this->id = 5; break;
+	case av_tcross: 		this->id = 6; break;
+	case roundabout_center: this->id = 7; break;
+	case roundabout_side: 	this->id = 8; break;
+	case roundabout_corner: this->id = 9; break;
+	case roundabout_exit: 	this->id = 10; break;
+	}
+	assert(id < 11);
 }
 
 void Road::setOrientation(unsigned int orientation)

@@ -27,19 +27,19 @@ namespace dfv
 {
 
 Tile::Tile():
-		is_road(false),
-		lp_road(nullptr),
-		lp_prop(nullptr),
-		lp_structure(nullptr),
-		lp_lot(nullptr)
+		//is_road(false),
+		lpRoad(make_pair(false, nullptr)),
+		lpProp(make_pair(false, nullptr)),
+		//lpStructure(nullptr),
+		lpLot(make_pair(false, nullptr))
 {
 	// TODO Auto-generated constructor stub
 }
 
 Tile::~Tile()
 {
-	if(lp_road != nullptr) delete this->lp_road;
-	if(lp_structure != nullptr) delete this->lp_structure;
+	if(lpRoad.first) delete this->lpRoad.second;
+	//if(lpStructure != nullptr) delete this->lpStructure;
 }
 
 void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
@@ -51,14 +51,10 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 	this->vertices.at(3) = sf::Vector3f(pos.x , pos.y + 1.0, h3);
 
 	this->normals.resize(4);
-	this->normals.at(0) = Utils::cross(this->vertices.at(1)-this->vertices.at(0),
-									   this->vertices.at(3)-this->vertices.at(0));
-	this->normals.at(1) = Utils::cross(this->vertices.at(2)-this->vertices.at(1),
-									   this->vertices.at(0)-this->vertices.at(1));
-	this->normals.at(2) = Utils::cross(this->vertices.at(3)-this->vertices.at(2),
-									   this->vertices.at(1)-this->vertices.at(2));
-	this->normals.at(3) = Utils::cross(this->vertices.at(0)-this->vertices.at(3),
-									   this->vertices.at(2)-this->vertices.at(3));
+	this->normals.at(0) = (this->vertices.at(1)-this->vertices.at(0)) ^ (this->vertices.at(3)-this->vertices.at(0));
+	this->normals.at(1) = (this->vertices.at(2)-this->vertices.at(1)) ^ (this->vertices.at(0)-this->vertices.at(1));
+	this->normals.at(2) = (this->vertices.at(3)-this->vertices.at(2)) ^ (this->vertices.at(1)-this->vertices.at(2));
+	this->normals.at(3) = (this->vertices.at(0)-this->vertices.at(3)) ^ (this->vertices.at(2)-this->vertices.at(3));
 
 	this->colors.resize(4);
 
@@ -66,73 +62,45 @@ void Tile::create(sf::Vector2f pos, float h0, float h1, float h2, float h3)
 
 void Tile::clear()
 {
-	/*cout << "clearing road" << endl;
-	if(this->lp_road != nullptr)
-	{
-		delete this->lp_road;
-		this->lp_road = nullptr;
-	}
-	cout << "clearing prop" << endl;
-	if(this->lp_prop != nullptr)
-	{
-		delete this->lp_prop;
-		this->lp_prop = nullptr;
-	}
-	cout << "clearing structure" << endl;
-	if(this->lp_structure != nullptr)
-	{
-		delete this->lp_structure;
-		this->lp_structure = nullptr;
-	}
-	cout << "clearing lot" << endl;
-	if(this->lp_lot != nullptr)
-	{
-		cout << "clear()" << endl;
-		this->lp_lot->clear();
-		cout << "delete" << endl;
-		delete this->lp_lot;
-		cout << "nullptr" << endl;
-		this->lp_lot = nullptr;
-	}
-	cout << "finished if" << endl;*/
+
 }
 
 void Tile::setColor(sf::Color color)
 {
-	this->color.x = (float)color.r / 255.f;
-	this->color.y = (float)color.g / 255.f;
-	this->color.z = (float)color.b / 255.f;
+	this->color.x = static_cast<float>(color.r) / 255.f;
+	this->color.y = static_cast<float>(color.g) / 255.f;
+	this->color.z = static_cast<float>(color.b) / 255.f;
 
 	const float water_threshold = 0.f;
 	const float sand_threshold = 0.1f;
 	const float snow_threshold = 40.0f;
 
-	for(unsigned int i = 0; i < 4; i++)
+	for(size_t i = 0; i < 4; i++)
 	{
-		if(this->vertices[i].z < water_threshold)
+		if(this->vertices.at(i).z < water_threshold)
 		{
-			this->colors[i] = sf::Vector3f(0.05f, 0.05f, 0.25f);
+			this->colors.at(i) = sf::Vector3f(0.05f, 0.05f, 0.25f);
 		}
-		else if(this->vertices[i].z < sand_threshold)
+		else if(this->vertices.at(i).z < sand_threshold)
 		{
 			float rr1 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			float rr2 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			float rr3 = ((float)rand() / (float)RAND_MAX) * 0.1f;
 			this->colors[i] = sf::Vector3f(0.9f + rr1, 0.9f + rr2, 0.4f + rr3);
 		}
-		else if(this->vertices[i].z > snow_threshold + static_cast<float>(rand() % 100)/10.f && this->lp_road == nullptr)
+		else if(this->vertices.at(i).z > snow_threshold + static_cast<float>(rand() % 100)/10.f && !this->hasRoad())
 		{
 			float rr = ((float)rand() / (float)RAND_MAX) * 0.1f;
-			this->colors[i] = sf::Vector3f(0.9f-rr, 0.9f-rr, 0.95f-rr);
+			this->colors.at(i) = sf::Vector3f(0.9f-rr, 0.9f-rr, 0.95f-rr);
 		}
 		else
 		{
-			this->colors[i] = sf::Vector3f(this->color.x, this->color.y, this->color.z);
+			this->colors.at(i) = sf::Vector3f(this->color.x, this->color.y, this->color.z);
 		}
 	}
 }
 
-void Tile::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
+void Tile::draw(const Camera& camera, const Resources& resources) const
 {
 	glColor3f(this->colors[0].x, this->colors[0].y, this->colors[0].z);
 	glNormal3f(this->normals[0].x, this->normals[0].y, this->normals[0].z);
@@ -153,45 +121,61 @@ void Tile::draw(const dfv::Camera& camera, const dfv::Resources& resources) cons
 
 bool Tile::hasProp() const
 {
-	return this->lp_prop != nullptr;
+	return this->lpProp.first;
 }
 
-void Tile::setAsRoad(const bool r)
+bool Tile::hasRoad() const
 {
-	this->is_road = r;
+	return this->lpRoad.first;
 }
 
+bool Tile::hasLot() const
+{
+	return this->lpLot.first;
+}
+
+/*
 bool Tile::isRoad() const
 {
-	return this->lp_road != nullptr;
-}
+	return this->lpRoad != nullptr;
+}*/
 
-void Tile::addRoad(dfv::Road::Type type, unsigned int orientation)
+void Tile::addRoad(Road::Type type, unsigned int orientation)
 {
-	this->is_road = true;
-	this->lp_road = new Road;
-	this->lp_road->create(this->vertices, type, orientation);
+	if(this->lpRoad.first == true)
+	{
+		delete this->lpRoad.second;
+	}
+	this->lpRoad.second = new Road;
+	this->lpRoad.second->create(this->vertices, type, orientation);
 	this->setColor(sf::Color(32, 32, 32));
+	this->lpRoad.first = true;
 }
 
+void Tile::addLot(Lot* lpLot)
+{
+	this->lpLot.first = true;
+	this->lpLot.second = lpLot;
+}
+
+/*
 unsigned int Tile::getRoadId() const
 {
 	if(this->isRoad())
 	{
-		return this->lp_road->getId();
+		return this->lpRoad->getId();
 	}
 	else
 	{
 		return Road::straight;
 	}
-
 }
 
 unsigned int Tile::getRoadOrientation() const
 {
-	if(this->isRoad())
+	if(this->hasRoad())
 	{
-		return this->lp_road->getOrientation();
+		return this->lpRoad->getOrientation();
 	}
 	else
 	{
@@ -201,9 +185,9 @@ unsigned int Tile::getRoadOrientation() const
 
 bool Tile::setRoadId(unsigned int road_id)
 {
-	if(this->isRoad())
+	if(this->hasRoad())
 	{
-		this->lp_road->setId(road_id);
+		this->lpRoad->setId(road_id);
 		return true;
 	}
 	else
@@ -216,18 +200,19 @@ bool Tile::setRoadOrientation(unsigned int road_orientation)
 {
 	if(this->isRoad())
 	{
-		this->lp_road->setOrientation(road_orientation);
+		this->lpRoad->setOrientation(road_orientation);
 		return true;
 	}
 	else
 	{
 		return false;
 	}
-}
+}*/
 
 void Tile::addProp(Prop* lp_prop)
 {
-	this->lp_prop = lp_prop;
+	this->lpProp.first = true;
+	this->lpProp.second = lp_prop;
 }
 
 sf::Vector3f Tile::getVertex(const unsigned int index) const
@@ -266,17 +251,17 @@ sf::Color Tile::getSfmlColor() const
 
 void Tile::drawRoad(const Camera& camera, const Resources& resources) const
 {
-	if(this->isRoad())
+	if(this->lpRoad.first)
 	{
-		this->lp_road->draw(camera, resources);
+		this->lpRoad.second->draw(camera, resources);
 	}
 }
 
 void Tile::drawProp(const Camera& camera, const Resources& resources) const
 {
-	if(this->lp_prop != nullptr)
+	if(this->lpProp.first)
 	{
-		this->lp_prop->draw(camera, resources);
+		this->lpProp.second->draw(camera, resources);
 	}
 }
 
@@ -301,10 +286,10 @@ bool Tile::isBeach() const
 
 bool Tile::clearRoad()
 {
-	if(this->lp_road != nullptr)
+	if(this->lpRoad.first)
 	{
-		delete this->lp_road;
-		this->lp_road = nullptr;
+		delete this->lpRoad.second;
+		this->lpRoad.second = nullptr;
 		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
@@ -318,10 +303,10 @@ bool Tile::clearRoad()
 bool Tile::clearProp()
 {
 	std::cout << "Clearing prop" << std::endl;
-	if(this->lp_prop != nullptr)
+	if(this->lpProp.first)
 	{
-		delete this->lp_prop;
-		this->lp_prop = nullptr;
+		delete this->lpProp.second;
+		this->lpProp.second = nullptr;
 		this->setColor(sf::Color(10 + rand() % 20, 130 + rand() % 20, 10 + rand() % 20));
 		return true;
 	}
@@ -333,7 +318,8 @@ bool Tile::clearProp()
 
 void Tile::forgetLot()
 {
-	this->lp_lot = nullptr;
+	this->lpLot.first = false;
+	this->lpLot.second = nullptr;
 }
 
 Quad Tile::getQuad() const
@@ -343,52 +329,71 @@ Quad Tile::getQuad() const
 	return res;
 }
 
+/*
 void Tile::createStructure(Quad base, unsigned int floor_count)
 {
 	Model model;
 	model.create(this->getQuad(), base, floor_count);
-	this->lp_structure = new Structure;
-	this->lp_structure->setModel(model);
+	this->lpStructure = new Structure;
+	this->lpStructure->setModel(model);
 	this->setColor({220, 220, 220});
 }
 
 void Tile::destroyStructure()
 {
-	delete this->lp_structure;
-	this->lp_structure = nullptr;
+	delete this->lpStructure;
+	this->lpStructure = nullptr;
 }
 
 void Tile::drawStructureBox() const
 {
-	if(this->lp_structure != nullptr)
+	if(this->lpStructure != nullptr)
 	{
-		this->lp_structure->drawBox();
+		this->lpStructure->drawBox();
 	}
 }
 
 void Tile::drawStructureOutline() const
 {
-	if(this->lp_structure != nullptr)
+	if(this->lpStructure != nullptr)
 	{
-		this->lp_structure->drawOutline();
+		this->lpStructure->drawOutline();
 	}
 }
+*/
 
+/*
 bool Tile::hasStructure() const
 {
-	if(this->lp_lot != nullptr)
+	if(this->lpLot != nullptr)
 	{
-		return this->lp_lot->hasStructure();
+		return this->lpLot->hasStructure();
 	}
 	else
 	{
 		return false;
 	}
-}
+}*/
 
 Lot* Tile::getLot() const
 {
-	return this->lp_lot;
+	return this->lpLot.second;
+}
+
+Prop* Tile::getProp() const
+{
+	return this->lpProp.second;
+}
+
+/*
+Structure* Tile::getStructure() const
+{
+	return this->lpStructure;
+}*/
+
+Road* Tile::getRoad() const
+{
+	return this->lpRoad.second;
 }
 
 bool Tile::canBuildRoad() const

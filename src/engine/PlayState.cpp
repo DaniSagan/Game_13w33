@@ -86,9 +86,9 @@ void PlayState::init(GameEngine* lp_game_engine)
 		//size_t y = rand() % this->map.getSize();
 		Tile& tile = this->map.getTile(x, y);
 		// make sure it's a cross
-		if(tile.isRoad())
+		if(tile.hasRoad())
 		{
-			if(this->map.getTile(x, y).getRoadId() == Road::cross)
+			if(this->map.getTile(x, y).getRoad()->getId() == Road::cross)
 			{
 				if(this->map.getTile(x, y).canBuildRoad() &&
 				   this->map.getTile(x+1, y).canBuildRoad() &&
@@ -99,10 +99,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 				   this->map.getTile(x-1, y-1).canBuildRoad() &&
 				   this->map.getTile(x, y-1).canBuildRoad() &&
 				   this->map.getTile(x+1, y-1).canBuildRoad() &&
-				   !this->map.getTile(x+1, y+1).isRoad() &&
-				   !this->map.getTile(x-1, y+1).isRoad() &&
-				   !this->map.getTile(x-1, y-1).isRoad() &&
-				   !this->map.getTile(x+1, y-1).isRoad())
+				   !this->map.getTile(x+1, y+1).hasRoad() &&
+				   !this->map.getTile(x-1, y+1).hasRoad() &&
+				   !this->map.getTile(x-1, y-1).hasRoad() &&
+				   !this->map.getTile(x+1, y-1).hasRoad())
 				{
 					cout << "Added roundabout @" << x << "," << y << endl;
 					this->map.getTile(x, y).addRoad(Road::roundabout_center, 0);
@@ -127,9 +127,9 @@ void PlayState::init(GameEngine* lp_game_engine)
 		{
 			// x-crosses to t-crosses
 			sf::Vector2i pos(x, y);
-			if(this->map.getTile(pos).isRoad())
+			if(this->map.getTile(pos).hasRoad())
 			{
-				if(this->map.getTile(pos).getRoadId() == Road::cross)
+				if(this->map.getTile(pos).getRoad()->getId() == Road::cross)
 				{
 					vector<string> pattern = this->map.getRoadPattern(sf::Vector2i(x, y), 1);
 					vector<string> matchPattern;
@@ -141,8 +141,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::tcross);
 						//this->map.setRoadOrientation(pos, 0);
-						this->map.getTile(pos).setRoadId(Road::tcross);
-						this->map.getTile(pos).setRoadOrientation(0);
+						this->map.getTile(pos).getRoad()->setType(Road::tcross);
+						this->map.getTile(pos).getRoad()->setOrientation(0);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -153,8 +153,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::tcross);
 						//this->map.setRoadOrientation(pos, 1);
-						this->map.getTile(pos).setRoadId(Road::tcross);
-						this->map.getTile(pos).setRoadOrientation(1);
+						this->map.getTile(pos).getRoad()->setType(Road::tcross);
+						this->map.getTile(pos).getRoad()->setOrientation(1);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -165,8 +165,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::tcross);
 						//this->map.setRoadOrientation(pos, 2);
-						this->map.getTile(pos).setRoadId(Road::tcross);
-						this->map.getTile(pos).setRoadOrientation(2);
+						this->map.getTile(pos).getRoad()->setType(Road::tcross);
+						this->map.getTile(pos).getRoad()->setOrientation(2);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -177,8 +177,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::tcross);
 						//this->map.setRoadOrientation(pos, 3);
-						this->map.getTile(pos).setRoadId(Road::tcross);
-						this->map.getTile(pos).setRoadOrientation(3);
+						this->map.getTile(pos).getRoad()->setType(Road::tcross);
+						this->map.getTile(pos).getRoad()->setOrientation(3);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -189,8 +189,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::curve);
 						//this->map.setRoadOrientation(pos, 0);
-						this->map.getTile(pos).setRoadId(Road::curve);
-						this->map.getTile(pos).setRoadOrientation(0);
+						this->map.getTile(pos).getRoad()->setType(Road::curve);
+						this->map.getTile(pos).getRoad()->setOrientation(0);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -201,8 +201,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::curve);
 						//this->map.setRoadOrientation(pos, 1);
-						this->map.getTile(pos).setRoadId(Road::curve);
-						this->map.getTile(pos).setRoadOrientation(1);
+						this->map.getTile(pos).getRoad()->setType(Road::curve);
+						this->map.getTile(pos).getRoad()->setOrientation(1);
 						continue;
 					}
 					matchPattern = {"   ",
@@ -213,8 +213,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::curve);
 						//this->map.setRoadOrientation(pos, 2);
-						this->map.getTile(pos).setRoadId(Road::curve);
-						this->map.getTile(pos).setRoadOrientation(2);
+						this->map.getTile(pos).getRoad()->setType(Road::curve);
+						this->map.getTile(pos).getRoad()->setOrientation(2);
 						continue;
 					}
 					matchPattern = {" | ",
@@ -225,8 +225,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 						cout << "Fixing cross" << endl;
 						//this->map.setRoadId(pos, Road::curve);
 						//this->map.setRoadOrientation(pos, 3);
-						this->map.getTile(pos).setRoadId(Road::curve);
-						this->map.getTile(pos).setRoadOrientation(3);
+						this->map.getTile(pos).getRoad()->setType(Road::curve);
+						this->map.getTile(pos).getRoad()->setOrientation(3);
 						continue;
 					}
 
@@ -250,7 +250,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 		   !tile.isBeach() &&
 		   //!this->map.hasBuilding(x, y) &&
 		   this->map.getAvgHeight(x, y) < 18.f &&
-		   !tile.isRoad())
+		   !tile.hasRoad())
 		{
 			lp_tree = new Tree();
 			//std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
@@ -573,10 +573,14 @@ void PlayState::update(GameEngine* lp_game_engine)
 		std::cout << "Error getting view pos vertices" << std::endl;
 	}
 
+
 	//if(this->map.hasStructure(map_pos.x, map_pos.y))
+
 	if(this->map.contains(this->map_pos.x, this->map_pos.y))
 	{
-		if(this->map.getTile(this->map_pos.x, this->map_pos.y).hasStructure())
+		Tile& tile = this->map.getTile(this->map_pos.x, this->map_pos.y);
+		if(tile.hasLot() && tile.getLot()->hasStructure())
+		//if(this->map.getTile(this->map_pos.x, this->map_pos.y).hasStructure())
 		{
 			Panel* info_panel = static_cast<Panel*>(this->gui_root.getById(INFO_PANEL));
 			info_panel->visible = true;

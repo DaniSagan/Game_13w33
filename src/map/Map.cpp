@@ -305,7 +305,7 @@ void Map::generateMapImg(const unsigned int tile_size)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->isRoad())
+			if(this->lp_tiles.at(i).at(j)->hasRoad())
 			{
 				dfv::Utils::drawRectangle(this->map_img, sf::Vector2i(i*tile_size, j*tile_size), sf::Vector2i((i+1)*tile_size- 1, (j+1)*tile_size - 1), sf::Color(50, 50, 50));
 			}
@@ -424,7 +424,7 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 			{
 				for(int j = rect.ymin; j <= rect.ymax; j++)
 				{
-					Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+					Lot* lp_lot = this->getTile(i, j).getLot();
 					if(lp_lot != NULL)
 					{
 						if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
@@ -449,7 +449,7 @@ void Map::drawStructureOutlines(dfv::RealIntRect rect) const
 		{
 			for(int j = rect.ymin; j <= rect.ymax; j++)
 			{
-				Lot* lp_lot = this->lp_tiles.at(i).at(j)->lp_lot;
+				Lot* lp_lot = this->getTile(i, j).getLot();
 				if(lp_lot != NULL)
 				{
 					if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
@@ -517,7 +517,7 @@ void Map::generateRoadList(const Camera& camera, const Resources& resources)
 	{
 		for(unsigned int j = 0; j < this->size; j++)
 		{
-			if(this->lp_tiles.at(i).at(j)->isRoad())
+			if(this->lp_tiles.at(i).at(j)->hasRoad())
 			{
 				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
 			}
@@ -574,7 +574,11 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 		{
 			for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
 			{
-				this->lp_tiles.at(i).at(j)->drawRoad(camera, resources);
+				Tile& tile = this->getTile(i, j);
+				if(tile.hasRoad())
+				{
+					tile.drawRoad(camera, resources);
+				}
 			}
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -707,16 +711,17 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 	{
 		for(unsigned int i = xmin; i <= xmax; i++)
 		{
-			if(this->lp_tiles.at(i).at(j)->lp_lot == NULL &&
-			   this->lp_tiles.at(i).at(j)->lp_road == NULL &&
-			   !this->lp_tiles.at(i).at(j)->isBeach() &&
-			   !this->lp_tiles.at(i).at(j)->isWater() &&
-			   this->lp_tiles.at(i).at(j)->lp_prop == NULL &&
-			   this->lp_tiles.at(i).at(j)->getQuad().getMaxheight() < 9.f &&
-			   this->lp_tiles.at(i).at(j)->getQuad().getMaxInclination() < 0.2f)
+			if(!this->getTile(i, j).hasLot() &&
+			   !this->getTile(i, j).hasRoad() &&
+			   !this->getTile(i, j).isBeach() &&
+			   !this->getTile(i, j).isWater() &&
+			   //this->lp_tiles.at(i).at(j)->lpProp == NULL &&
+			   !this->getTile(i, j).hasProp() &&
+			   this->getTile(i, j).getQuad().getMaxheight() < 9.f &&
+			   this->getTile(i, j).getQuad().getMaxInclination() < 0.2f)
 			{
 				// add tile to the list of tiles for the lot
-				tile_quads.push_back(this->lp_tiles.at(i).at(j)->getQuad());
+				tile_quads.push_back(this->getTile(i, j).getQuad());
 				tile_indices.push_back(sf::Vector2i(i, j));
 			}
 			else
@@ -735,7 +740,8 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 		for(unsigned int i = xmin; i <= xmax; i++)
 		{
 			// each tile has a pointer to the lot
-			this->lp_tiles.at(i).at(j)->lp_lot = lp_new_lot;
+			//this->lp_tiles.at(i).at(j)->lpLot = lp_new_lot;
+			this->getTile(i, j).addLot(lp_new_lot);
 			if(xmin != xmax || ymin != ymax)
 			{
 				this->lp_tiles.at(i).at(j)->setColor(sf::Color(180+(rand()%10), 180+(rand()%10), 180+(rand()%10)));
@@ -748,7 +754,8 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 
 Lot* Map::getLot(unsigned int x, unsigned int y) const
 {
-	return this->lp_tiles.at(x).at(y)->lp_lot;
+	//return this->lp_tiles.at(x).at(y)->lpLot;
+	return this->getTile(x, y).getLot();
 }
 
 Tile& Map::getTile(int x, int y) const
@@ -764,13 +771,15 @@ Tile& Map::getTile(const sf::Vector2i& pos) const
 
 char Map::getRoadChar(const sf::Vector2i& pos) const
 {
-	if(!this->getTile(pos).isRoad())
+	if(!this->getTile(pos).hasRoad())
 	{
 		return ' ';
 	}
 	else
 	{
-		return Road::asChar(this->getTile(pos).getRoadId(), this->getTile(pos).getRoadOrientation());
+		//return Road::asChar(this->getTile(pos).getRoadId(), this->getTile(pos).getRoadOrientation());
+		Road* lpRoad = this->getTile(pos).getRoad();
+		return Road::asChar(lpRoad->getId(), lpRoad->getOrientation());
 	}
 }
 

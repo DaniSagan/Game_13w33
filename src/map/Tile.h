@@ -27,7 +27,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
-//#include "Building.h"
 #include "../Utils.h"
 #include "../Resources.h"
 #include "../Camera.h"
@@ -50,25 +49,29 @@ public:
 
 	enum Type
 	{
-		grass,
-		road,
-		building,
-		tree,
-		count
+		GRASS,
+		ROAD,
+		BUILDING,
+		TREE,
+		COUNT
 	};
 
 	void create(sf::Vector2f pos, float h0, float h1, float h2, float h3);
 	void clear();
 	void setColor(sf::Color color);
-	void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+	void draw(const Camera& camera, const Resources& resources) const;
+
 	bool hasProp() const;
-	void setAsRoad(const bool r);
-	bool isRoad() const;
-	void addRoad(dfv::Road::Type type, unsigned int orientation);
-	unsigned int getRoadId() const;
-	unsigned int getRoadOrientation() const;
-	bool setRoadId(unsigned int road_id);
-	bool setRoadOrientation(unsigned int road_orientation);
+	bool hasRoad() const;
+	bool hasLot() const;
+	//bool isRoad() const;
+
+	void addRoad(Road::Type type, unsigned int orientation);
+	void addLot(Lot* lpLot);
+	//unsigned int getRoadId() const;
+	//unsigned int getRoadOrientation() const;
+	//bool setRoadId(unsigned int road_id);
+	//bool setRoadOrientation(unsigned int road_orientation);
 	void addProp(Prop* lp_prop);
 	sf::Vector3f getVertex(const unsigned int index) const;
 	const std::vector<sf::Vector3f> & getVertices() const;
@@ -88,12 +91,17 @@ public:
 
 	Quad getQuad() const;
 
-	void createStructure(Quad base, unsigned int floor_count);
-	void destroyStructure();
-	void drawStructureBox() const;
-	void drawStructureOutline() const;
-	bool hasStructure() const;
+	//void createStructure(Quad base, unsigned int floor_count);
+	//void destroyStructure();
+	//void drawStructureBox() const;
+	//void drawStructureOutline() const;
+	//bool hasStructure() const;
+
 	Lot* getLot() const;
+	Prop* getProp() const;
+	//Structure* getStructure() const;
+	Road* getRoad() const;
+
 
 	bool canBuildRoad() const;
 
@@ -104,11 +112,10 @@ private:
 	std::vector<sf::Vector3f> normals;
 	std::vector<sf::Vector3f> colors;
 	sf::Vector3f color;
-	bool is_road;
-	dfv::Road* lp_road;
-	dfv::Prop* lp_prop;
-	Structure* lp_structure;
-	Lot* lp_lot;
+	pair<bool, Road*> lpRoad;
+	pair<bool, Prop*> lpProp;
+	//Structure* lpStructure;
+	pair<bool, Lot*> lpLot;
 };
 
 } /* namespace dfv */
