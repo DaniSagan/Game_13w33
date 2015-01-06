@@ -27,7 +27,7 @@ namespace dfv
 {
 
 CmdServer::CmdServer(const int portno):
-		cmdReceived(false), running(true)
+		cmdReceived(false), running(true), newsockfd(0)
 {
 	bzero((char*) &(this->serverAddr), sizeof serverAddr);
 	this->serverAddr.sin_family = AF_INET;
@@ -67,7 +67,6 @@ void CmdServer::runThread()
 	while(this->running)
 	{
 		this->newsockfd = accept(this->sockfd, (struct sockaddr*) &(this->clientAddr), &(this->clilen));
-		//std::cout << "accepted" << std::endl;
 		if(this->newsockfd < 0)
 		{
 			std::cout << "ERROR on accept" << std::endl;
@@ -78,7 +77,7 @@ void CmdServer::runThread()
 			std::cout << "waiting for message" << std::endl;
 
 			bzero(this->buffer, 256);
-			n = read(this->newsockfd, this->buffer, 255);
+			ssize_t n = read(this->newsockfd, this->buffer, 255);
 			if(n <= 0)
 			{
 				std::cout << "ERROR reading from socket" << std::endl;
@@ -110,7 +109,6 @@ void CmdServer::terminate()
 	close(this->newsockfd);
 	close(this->sockfd);
 	this->running = false;
-	//this->run_thread.join();
 }
 
 } /* namespace dfv */

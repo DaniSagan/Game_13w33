@@ -57,7 +57,6 @@ private:
 	char buffer[256];
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
-	int n;
 	std::string cmd;
 	bool cmdReceived;
 	std::thread thread;

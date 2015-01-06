@@ -27,15 +27,15 @@ namespace dfv
 {
 
 Lot::Lot():
-		inhabitants(0),
-		jobs(0)
+		inhabitants(0), jobs(0)
 {
 
 }
 
 Lot::Lot(const std::vector<sf::Vector2i> & tile_indices,
 	     const std::vector<Quad> & tile_quads,
-	     const sf::Vector3f & origin)
+	     const sf::Vector3f & origin):
+	    		 inhabitants(0), jobs(0)
 {
 	this->tileIndices = tile_indices;
 	this->tileQuads = tile_quads;

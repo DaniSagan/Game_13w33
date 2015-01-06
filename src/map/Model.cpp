@@ -25,7 +25,9 @@
 
 namespace dfv {
 
-Model::Model()
+Model::Model():
+		floor_count(0),
+		height(0)
 {
 	// TODO Auto-generated constructor stub
 

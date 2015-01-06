@@ -128,7 +128,6 @@ size_t Map::getSize() const
 
 void Map::generateMapImg(const size_t tile_size)
 {
-
 	this->map_img.create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
 
 	for(unsigned int i = 0; i < this->size; i++)
@@ -160,28 +159,15 @@ void Map::loadHeightMap(const string& filename, size_t smoothingCount)
 		this->lp_tiles.at(i).resize(this->size);
 		for(size_t j = 0; j < this->size; j++)
 		{
-			float x = (float)i - (float)(this->size + 1)/2.0;
-			float y = (float)j - (float)(this->size + 1)/2.0;
-
-			dfv::Tile* lp_tile = new Tile;
+			Tile* lp_tile = new Tile;
 			lp_tile->create(
 					sf::Vector2f(i, j),
 					this->heightMap.at(i  , j  ),
 					this->heightMap.at(i+1, j  ),
 					this->heightMap.at(i+1, j+1),
 					this->heightMap.at(i  , j+1));
-			lp_tile->setColor(sf::Color(5 + rand() % 10, 40 + rand() % 10, 5 + rand() % 10));
+			lp_tile->setColor(Tile::randomGrassColor());
 			this->lp_tiles.at(i).at(j) = lp_tile;
-
-			// If it's a beach
-			if(this->heightMap.at(i  , j  ) < 0.1f &&
-			   this->heightMap.at(i+1, j  ) < 0.1f &&
-			   this->heightMap.at(i+1, j+1) < 0.1f &&
-			   this->heightMap.at(i  , j+1) < 0.1f)
-			{
-				// beach
-				this->lp_tiles.at(i).at(j)->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
-			}
 		}
 	}
 	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
@@ -245,8 +231,8 @@ void Map::drawStructureBoxes(dfv::RealIntRect rect) const
 {
 	if(rect.trim(this->getTileRect()))
 	{
-		if(rect.xmin >= 0 && rect.xmax < this->size &&
-		   rect.ymin >= 0 && rect.ymax < this->size)
+		if(rect.xmin >= 0 && rect.xmax < static_cast<int>(this->size) &&
+		   rect.ymin >= 0 && rect.ymax < static_cast<int>(this->size))
 		{
 			glBegin(GL_QUADS);
 			glColor3f(0.65, 0.65, 0.65);
