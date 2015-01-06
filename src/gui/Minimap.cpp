@@ -31,7 +31,12 @@ Minimap::Minimap():
 		range(16),
 		lp_pixels(NULL)
 {
-
+	this->colors.none = sf::Color(0, 0, 0);
+	this->colors.road = sf::Color(50, 50, 50);
+	this->colors.grass = sf::Color(50, 100, 50);
+	this->colors.structure = sf::Color(200, 100, 50);
+	this->colors.water = sf::Color(0, 0, 128);
+	this->colors.sand = sf::Color(200, 200, 100);
 }
 
 Minimap::~Minimap()
@@ -64,41 +69,55 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 			{
 				if(map.getTile(absPos).hasRoad())
 				{
-					this->lp_pixels[pixelIndex] = 50;
+					/*this->lp_pixels[pixelIndex] = 50;
 					this->lp_pixels[pixelIndex + 1] = 50;
-					this->lp_pixels[pixelIndex + 2] = 50;
+					this->lp_pixels[pixelIndex + 2] = 50;*/
+					this->lp_pixels[pixelIndex] = this->colors.road.r;
+					this->lp_pixels[pixelIndex + 1] = this->colors.road.g;
+					this->lp_pixels[pixelIndex + 2] = this->colors.road.b;
 				}
 				else if(map.getTile(absPos).isWater())
 				{
-					this->lp_pixels[pixelIndex] = 0;
+					/*this->lp_pixels[pixelIndex] = 0;
 					this->lp_pixels[pixelIndex + 1] = 0;
-					this->lp_pixels[pixelIndex + 2] = 200;
+					this->lp_pixels[pixelIndex + 2] = 200;*/
+					this->lp_pixels[pixelIndex] = this->colors.water.r;
+					this->lp_pixels[pixelIndex + 1] = this->colors.water.g;
+					this->lp_pixels[pixelIndex + 2] = this->colors.water.b;
 				}
 				else if(map.getTile(absPos).isBeach())
 				{
-					this->lp_pixels[pixelIndex] = 200;
+					/*this->lp_pixels[pixelIndex] = 200;
 					this->lp_pixels[pixelIndex + 1] = 200;
-					this->lp_pixels[pixelIndex + 2] = 100;
+					this->lp_pixels[pixelIndex + 2] = 100;*/
+					this->lp_pixels[pixelIndex] = this->colors.sand.r;
+					this->lp_pixels[pixelIndex + 1] = this->colors.sand.g;
+					this->lp_pixels[pixelIndex + 2] = this->colors.sand.b;
 				}
-				/*
-				else if(map.getTile(absPos).hasStructure())
+				else if(map.getTile(absPos).hasLot() && map.getTile(absPos).getLot()->hasStructure())
 				{
 					this->lp_pixels[pixelIndex] = 200;
 					this->lp_pixels[pixelIndex + 1] = 100;
 					this->lp_pixels[pixelIndex + 2] = 50;
-				}*/
+				}
 				else
 				{
-					this->lp_pixels[pixelIndex] = 50;
+					/*this->lp_pixels[pixelIndex] = 50;
 					this->lp_pixels[pixelIndex + 1] = 100;
-					this->lp_pixels[pixelIndex + 2] = 50;
+					this->lp_pixels[pixelIndex + 2] = 50;*/
+					this->lp_pixels[pixelIndex] = this->colors.grass.r;
+					this->lp_pixels[pixelIndex + 1] = this->colors.grass.g;
+					this->lp_pixels[pixelIndex + 2] = this->colors.grass.b;
 				}
 			}
 			else
 			{
-				this->lp_pixels[pixelIndex] = 0;
+				/*this->lp_pixels[pixelIndex] = 0;
 				this->lp_pixels[pixelIndex + 1] = 0;
-				this->lp_pixels[pixelIndex + 2] = 0;
+				this->lp_pixels[pixelIndex + 2] = 0;*/
+				this->lp_pixels[pixelIndex] = this->colors.none.r;
+				this->lp_pixels[pixelIndex + 1] = this->colors.none.g;
+				this->lp_pixels[pixelIndex + 2] = this->colors.none.b;
 			}
 		}
 	}
@@ -116,8 +135,8 @@ sf::Vector2i Minimap::realPosFromMapPos(sf::Vector2i map_pos, int range)
 
 sf::Vector2i Minimap::realPosFromMinimapPos(const sf::Vector2i& minimapPos, const sf::Vector2f& mapPos) const
 {
-	return sf::Vector2i(mapPos.x + 2*this->range/this->size*minimapPos.x,
-			            mapPos.y - 2*this->range/this->size*minimapPos.y);
+	return sf::Vector2i((mapPos.x-range) + (2*this->range*minimapPos.x)/this->size,
+			            (mapPos.y+range) - (2*this->range*minimapPos.y)/this->size);
 }
 
 void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const

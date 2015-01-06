@@ -48,6 +48,16 @@ public:
 	std::string handleInput(const Camera& camera, const sf::Event& event, const sf::Vector2i& mouse_pos);
 	unsigned int getSize() const;
 
+	struct Colors
+	{
+		sf::Color none;
+		sf::Color road;
+		sf::Color grass;
+		sf::Color structure;
+		sf::Color water;
+		sf::Color sand;
+	} colors;
+
 private:
 	sf::Image img;
 	unsigned int size;

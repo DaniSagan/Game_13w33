@@ -298,7 +298,9 @@ std::vector<std::string>& Gui::handleButtonInput(const sf::Event& event, std::ve
 
 void Gui::update(const Map& map, const sf::Vector2f& position)
 {
-	this->minimap.generateFromMap(map, position, 64);
+	int range = static_cast<int>(2.f*cameraInstance.getPosition().z) + 8;
+	//this->minimap.generateFromMap(map, position, 64);
+	this->minimap.generateFromMap(map, position, range);
 }
 
 void Gui::drawShapes(sf::RenderWindow& window) const
