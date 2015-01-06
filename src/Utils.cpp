@@ -605,6 +605,11 @@ const sf::Vector3f operator^(const sf::Vector3f& v1, const sf::Vector3f& v2)
 	return Utils::cross(v1, v2);
 }
 
+const float operator*(const sf::Vector3f& v1, const sf::Vector3f& v2)
+{
+	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+}
+
 } /* namespace dfv */
 
 

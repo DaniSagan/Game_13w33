@@ -64,21 +64,16 @@ public:
 	bool hasProp() const;
 	bool hasRoad() const;
 	bool hasLot() const;
-	//bool isRoad() const;
 
 	void addRoad(Road::Type type, unsigned int orientation);
 	void addLot(Lot* lpLot);
-	//unsigned int getRoadId() const;
-	//unsigned int getRoadOrientation() const;
-	//bool setRoadId(unsigned int road_id);
-	//bool setRoadOrientation(unsigned int road_orientation);
+
 	void addProp(Prop* lp_prop);
 	sf::Vector3f getVertex(const unsigned int index) const;
 	const std::vector<sf::Vector3f> & getVertices() const;
-	sf::Vector3f getColor(unsigned int index) const;
+	sf::Color getColor(unsigned int index) const;
 	sf::Vector3f getNormal(unsigned int index) const;
 	void setVertex(const unsigned int index, const sf::Vector3f& vertex);
-	sf::Color getSfmlColor() const;
 	void drawRoad(const Camera& camera, const Resources& resources) const;
 	void drawProp(const Camera& camera, const Resources& resources) const;
 
@@ -91,30 +86,27 @@ public:
 
 	Quad getQuad() const;
 
-	//void createStructure(Quad base, unsigned int floor_count);
-	//void destroyStructure();
-	//void drawStructureBox() const;
-	//void drawStructureOutline() const;
-	//bool hasStructure() const;
-
 	Lot* getLot() const;
 	Prop* getProp() const;
-	//Structure* getStructure() const;
 	Road* getRoad() const;
 
-
 	bool canBuildRoad() const;
+
+	static sf::Color randomGrassColor();
+	static sf::Color randomSnowColor();
+	static sf::Color randomSandColor();
+	static sf::Color randomWaterColor();
 
 	friend class Map;
 
 private:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;
-	std::vector<sf::Vector3f> colors;
-	sf::Vector3f color;
+	std::vector<sf::Color> colors;
+	//sf::Vector3f color;
+	sf::Color color;
 	pair<bool, Road*> lpRoad;
 	pair<bool, Prop*> lpProp;
-	//Structure* lpStructure;
 	pair<bool, Lot*> lpLot;
 };
 

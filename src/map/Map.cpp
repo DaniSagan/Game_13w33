@@ -31,7 +31,6 @@ Map::Map():
 		tile_list(0),
 		population(0)
 {
-
 }
 
 Map::~Map()
@@ -70,14 +69,14 @@ void Map::clearLot(const sf::Vector2i& tileIndex)
 		for(const sf::Vector2i& tileIndex: lpLot->getTileIndices())
 		{
 			Tile& tile = *(this->lp_tiles.at(tileIndex.x).at(tileIndex.y));
-			tile.setColor(Map::randomGrassColor());
+			tile.setColor(Tile::randomGrassColor());
 			tile.forgetLot();
 		}
 		delete lpLot;
 	}
 }
 
-void Map::create(unsigned int size)
+void Map::create(size_t size)
 {
 	this->size = size;
 
@@ -117,186 +116,17 @@ void Map::generateTiles()
 					this->heights.at(i+1).at(j),
 					this->heights.at(i+1).at(j+1),
 					this->heights.at(i).at(j+1));
-			this->lp_tiles.at(i).at(j)->setColor(Map::randomGrassColor());
+			this->lp_tiles.at(i).at(j)->setColor(Tile::randomGrassColor());
 		}
 	}
 }
 
-void Map::createRandom(const unsigned int size)
-{
-	this->size = size;
-
-	// Create height data
-	this->heights.resize(size + 1);
-	for(unsigned int i = 0; i < size + 1; i++)
-	{
-		this->heights[i].resize(size + 1);
-		for(unsigned int j = 0; j < size + 1; j++)
-		{
-			float x = (float)i - (float)(size + 1)/2.0;
-			float y = (float)j - (float)(size + 1)/2.0;
-			float x1 = x + 300;
-			float y1 = y + 300;
-			float x2 = x - 200;
-			float y2 = y - 400;
-			this->heights[i][j] = 5.0 * (2.0 * pow(sin(0.01 * sqrt(pow(x - 50, 2.0) + pow(y - 50, 2.0))), 4.0) -
-										  0.9 * pow(sin(0.02 * sqrt(pow(x1, 2.0) + pow(y1, 2.0))), 2.0) -
-										  0.3 * pow(sin(0.04 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
-										  0.1 * pow(sin(0.1 * sqrt(pow(x2, 2.0) + pow(y2, 2.0))), 2.0) +
-										  0.1 * pow((sin(0.1* x) + sin(0.1*y)), 2.0) +
-										  0.05 * pow((sin(0.23* x + 89.0) + sin(0.345*y - 123.0)), 2.0) +
-										  0.03 * pow((sin(0.32* x - 121.3) + sin(0.4*y + 57.56)), 2.0) +
-										  0.01 * pow((sin(0.41* x - 11.0) + sin(0.52*y + 570.0)), 2.0));
-			this->heights[i][j] = 0.1 * pow(this->heights[i][j], 2) + 0.80f;
-			if(this->heights[i][j] < 1.0)
-			{
-				this->heights[i][j] = 0.99;
-			}
-		}
-	}
-
-	// Create tile data
-	this->lp_tiles.resize(size);
-	int building_count = 0;
-	for(unsigned int i = 0; i < size; i++)
-	{
-		this->lp_tiles[i].resize(size);
-		for(unsigned int j = 0; j < size; j++)
-		{
-			float x = (float)i - (float)(size + 1)/2.0;
-			float y = (float)j - (float)(size + 1)/2.0;
-
-			dfv::Tile* lp_tile = new Tile;
-			lp_tile->create(
-					sf::Vector2f(i, j),
-					this->heights[i][j],
-					this->heights[i+1][j],
-					this->heights[i+1][j+1],
-					this->heights[i][j+1]);
-			lp_tile->setColor(sf::Color(10 + rand() % 20, 80 + rand() % 20, 10 + rand() % 20));
-			this->lp_tiles[i][j] = lp_tile;
-
-			// If it's a beach
-			if(this->heights[i][j] < 1.1f &&
-			   this->heights[i+1][j] < 1.1f &&
-			   this->heights[i+1][j+1] < 1.1f &&
-			   this->heights[i][j+1] < 1.1f)
-			{
-				// beach
-				this->lp_tiles[i][j]->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
-			}
-		}
-	}
-	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
-}
-
-void Map::createFlat(const unsigned int size, float height)
-{
-	this->size = size;
-
-	// Create height data
-	this->heights.resize(size + 1);
-	for(unsigned int i = 0; i < size + 1; i++)
-	{
-		this->heights.at(i).resize(size + 1);
-		for(unsigned int j = 0; j < size + 1; j++)
-		{
-			this->heights.at(i).at(j) = height;
-		}
-	}
-
-	// Create tile data
-	this->lp_tiles.resize(size);
-	int building_count = 0;
-	for(unsigned int i = 0; i < size; i++)
-	{
-		this->lp_tiles[i].resize(size);
-		for(unsigned int j = 0; j < size; j++)
-		{
-			float x = (float)i - (float)(size + 1)/2.0;
-			float y = (float)j - (float)(size + 1)/2.0;
-
-			dfv::Tile* lp_tile = new Tile;
-			lp_tile->create(
-					sf::Vector2f(i, j),
-					this->heights[i][j],
-					this->heights[i+1][j],
-					this->heights[i+1][j+1],
-					this->heights[i][j+1]);
-			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
-			this->lp_tiles[i][j] = lp_tile;
-
-			// If it's a beach
-			if(this->heights[i][j] < 1.1f &&
-			   this->heights[i+1][j] < 1.1f &&
-			   this->heights[i+1][j+1] < 1.1f &&
-			   this->heights[i][j+1] < 1.1f)
-			{
-				// beach
-				this->lp_tiles[i][j]->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
-			}
-		}
-	}
-	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
-}
-
-void Map::createValley(const unsigned int size, const float a, const float b)
-{
-	this->size = size;
-
-	// Create height data
-	this->heights.resize(size + 1);
-	for(unsigned int i = 0; i < size + 1; i++)
-	{
-		this->heights.at(i).resize(size + 1);
-		for(unsigned int j = 0; j < size + 1; j++)
-		{
-			float x = float(i)-float(size/2);
-			this->heights.at(i).at(j) = a*sqrt(1.f + (x*x)/(b*b));
-		}
-	}
-
-	// Create tile data
-	this->lp_tiles.resize(size);
-	int building_count = 0;
-	for(unsigned int i = 0; i < size; i++)
-	{
-		this->lp_tiles[i].resize(size);
-		for(unsigned int j = 0; j < size; j++)
-		{
-			float x = (float)i - (float)(size + 1)/2.0;
-			float y = (float)j - (float)(size + 1)/2.0;
-
-			dfv::Tile* lp_tile = new Tile;
-			lp_tile->create(
-					sf::Vector2f(i, j),
-					this->heights[i][j],
-					this->heights[i+1][j],
-					this->heights[i+1][j+1],
-					this->heights[i][j+1]);
-			lp_tile->setColor(sf::Color(13 + rand() % 20, 115 + rand() % 20, 13 + rand() % 20));
-			this->lp_tiles[i][j] = lp_tile;
-
-			// If it's a beach
-			if(this->heights[i][j] < 1.1f &&
-			   this->heights[i+1][j] < 1.1f &&
-			   this->heights[i+1][j+1] < 1.1f &&
-			   this->heights[i][j+1] < 1.1f)
-			{
-				// beach
-				this->lp_tiles[i][j]->setColor(sf::Color(220 + rand() % 10, 220 + rand() % 10, 120 + rand() % 10));
-			}
-		}
-	}
-	this->sky.create(1500, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
-}
-
-unsigned int Map::getSize() const
+size_t Map::getSize() const
 {
 	return this->size;
 }
 
-void Map::generateMapImg(const unsigned int tile_size)
+void Map::generateMapImg(const size_t tile_size)
 {
 
 	this->map_img.create(this->size * tile_size, this->size * tile_size, sf::Color(200,200,200));
@@ -661,39 +491,6 @@ void Map::drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources
 	}
 }
 
-sf::Vector3f Map::getNormal(unsigned int x, unsigned int y)
-{
-	if(x >= 0 && x < this->size &&
-	   y >= 0 && y < this->size)
-	{
-		std::vector<sf::Vector3f> vertices;
-		//vertices = this->getTileVertices(sf::Vector2i(x, y));
-		vertices = this->getTile(x, y).getVertices();
-		sf::Vector3f v = Utils::cross(vertices[1]-vertices[0], vertices[3]-vertices[0]);
-		float len = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-		return sf::Vector3f(v.x/len, v.y/len, v.z/len);
-	}
-	else
-	{
-		return sf::Vector3f(0.0, 0.0, 1.0);
-	}
-}
-
-sf::Vector2i Map::getTileFromMapPos(sf::Vector3f map_pos) const
-{
-	return sf::Vector2i(floor(map_pos.x), floor(map_pos.y));
-}
-
-float Map::getAvgHeight(const unsigned int x, const unsigned int y) const
-{
-	return this->lp_tiles.at(x).at(y)->getQuad().getAvgHeight();
-}
-
-float Map::getMaxInclination(const unsigned int x, const unsigned int y) const
-{
-	return this->lp_tiles.at(x).at(y)->getQuad().getMaxInclination();
-}
-
 bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 		unsigned int ymax)
 {
@@ -715,7 +512,6 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 			   !this->getTile(i, j).hasRoad() &&
 			   !this->getTile(i, j).isBeach() &&
 			   !this->getTile(i, j).isWater() &&
-			   //this->lp_tiles.at(i).at(j)->lpProp == NULL &&
 			   !this->getTile(i, j).hasProp() &&
 			   this->getTile(i, j).getQuad().getMaxheight() < 9.f &&
 			   this->getTile(i, j).getQuad().getMaxInclination() < 0.2f)
@@ -740,7 +536,6 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 		for(unsigned int i = xmin; i <= xmax; i++)
 		{
 			// each tile has a pointer to the lot
-			//this->lp_tiles.at(i).at(j)->lpLot = lp_new_lot;
 			this->getTile(i, j).addLot(lp_new_lot);
 			if(xmin != xmax || ymin != ymax)
 			{
@@ -777,7 +572,6 @@ char Map::getRoadChar(const sf::Vector2i& pos) const
 	}
 	else
 	{
-		//return Road::asChar(this->getTile(pos).getRoadId(), this->getTile(pos).getRoadOrientation());
 		Road* lpRoad = this->getTile(pos).getRoad();
 		return Road::asChar(lpRoad->getId(), lpRoad->getOrientation());
 	}
@@ -820,11 +614,6 @@ bool Map::contains(const sf::Vector2i& pos) const
 bool Map::contains(int x, int y) const
 {
 	return this->contains(sf::Vector2i(x, y));
-}
-
-sf::Color Map::randomGrassColor()
-{
-	return sf::Color(5 + rand() % 10, 40 + rand() % 10, 5 + rand() % 10);
 }
 
 } /* namespace dfv */

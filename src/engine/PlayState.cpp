@@ -29,9 +29,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 		this->cmd_server.run();
 	}
 
-	// Size of the map obtained from the start screen
-	//unsigned int çmapSize = std::stoi(static_cast<Text*>(StartMenuState::getInstance()->gui.getById(StartMenuState::SIZE_EDIT))->text);
-
 	// Execute folder select dialog
 	string filePath = Utils::exec("python script/filemanager.py f");
 	string cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
@@ -82,8 +79,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 		size_t x = distribution(generator);
 		size_t y = distribution(generator);
 		cout << "Trying to add roundabout @" << x << "," << y << endl;
-		//size_t x = rand() % this->map.getSize();
-		//size_t y = rand() % this->map.getSize();
 		Tile& tile = this->map.getTile(x, y);
 		// make sure it's a cross
 		if(tile.hasRoad())
@@ -139,8 +134,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::tcross);
-						//this->map.setRoadOrientation(pos, 0);
 						this->map.getTile(pos).getRoad()->setType(Road::tcross);
 						this->map.getTile(pos).getRoad()->setOrientation(0);
 						continue;
@@ -151,8 +144,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::tcross);
-						//this->map.setRoadOrientation(pos, 1);
 						this->map.getTile(pos).getRoad()->setType(Road::tcross);
 						this->map.getTile(pos).getRoad()->setOrientation(1);
 						continue;
@@ -163,8 +154,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::tcross);
-						//this->map.setRoadOrientation(pos, 2);
 						this->map.getTile(pos).getRoad()->setType(Road::tcross);
 						this->map.getTile(pos).getRoad()->setOrientation(2);
 						continue;
@@ -175,8 +164,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::tcross);
-						//this->map.setRoadOrientation(pos, 3);
 						this->map.getTile(pos).getRoad()->setType(Road::tcross);
 						this->map.getTile(pos).getRoad()->setOrientation(3);
 						continue;
@@ -187,8 +174,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::curve);
-						//this->map.setRoadOrientation(pos, 0);
 						this->map.getTile(pos).getRoad()->setType(Road::curve);
 						this->map.getTile(pos).getRoad()->setOrientation(0);
 						continue;
@@ -199,8 +184,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::curve);
-						//this->map.setRoadOrientation(pos, 1);
 						this->map.getTile(pos).getRoad()->setType(Road::curve);
 						this->map.getTile(pos).getRoad()->setOrientation(1);
 						continue;
@@ -211,8 +194,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::curve);
-						//this->map.setRoadOrientation(pos, 2);
 						this->map.getTile(pos).getRoad()->setType(Road::curve);
 						this->map.getTile(pos).getRoad()->setOrientation(2);
 						continue;
@@ -223,8 +204,6 @@ void PlayState::init(GameEngine* lp_game_engine)
 					if(matchPattern == pattern)
 					{
 						cout << "Fixing cross" << endl;
-						//this->map.setRoadId(pos, Road::curve);
-						//this->map.setRoadOrientation(pos, 3);
 						this->map.getTile(pos).getRoad()->setType(Road::curve);
 						this->map.getTile(pos).getRoad()->setOrientation(3);
 						continue;
@@ -243,20 +222,13 @@ void PlayState::init(GameEngine* lp_game_engine)
 		uniform_int_distribution<int> distribution(0, this->map.getSize()-1);
 		size_t x = distribution(generator);
 		size_t y = distribution(generator);
-		//unsigned int x = rand() % this->map.getSize();
-		//unsigned int y = rand() % this->map.getSize();
 		Tile& tile = this->map.getTile(x, y);
-		if(!tile.isWater() &&
-		   !tile.isBeach() &&
-		   //!this->map.hasBuilding(x, y) &&
-		   this->map.getAvgHeight(x, y) < 18.f &&
+		if(!tile.isWater() && !tile.isBeach() && tile.getQuad().getAvgHeight() < 18.f &&
 		   !tile.hasRoad())
 		{
 			lp_tree = new Tree();
-			//std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(sf::Vector2i(x, y));
 			vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
 			lp_tree->create(tile_vertices);
-			//this->map.addProp(x, y, lp_tree);
 			tile.addProp(lp_tree);
 		}
 	}
@@ -508,14 +480,16 @@ void PlayState::handleInput(GameEngine* lp_game_engine)
 		{
 			if(event.mouseButton.button == sf::Mouse::Left)
 			{
-				this->select_from = this->map.getTileFromMapPos(this->map_pos);//sf::Vector2i(floor(v.x), floor(v.y));
+				//this->select_from = this->map.getTileFromMapPos(this->map_pos);//sf::Vector2i(floor(v.x), floor(v.y));
+				this->select_from = sf::Vector2i(this->map_pos.x, this->map_pos.y);
 				std::cout << "select_from:" << this->select_from.x << ", " << this->select_from.y << std::endl;
 				this->selected_tiles.clear();
 				this->selected_tiles.push_back(this->select_from);
 			}
 			else if(event.mouseButton.button == sf::Mouse::Right)
 			{
-				this->select_to = this->map.getTileFromMapPos(this->map_pos);
+				//this->select_to = this->map.getTileFromMapPos(this->map_pos);
+				this->select_to = sf::Vector2i(this->map_pos.x, this->map_pos.y);
 				this->selected_tiles.clear();
 				std::cout << "select_to:" << this->select_to.x << ", " << this->select_to.y << std::endl;
 				for(int i = std::min(this->select_from.x, this->select_to.x); i <= std::max(this->select_from.x, this->select_to.x); i++)
@@ -541,7 +515,16 @@ void PlayState::update(GameEngine* lp_game_engine)
 	this->frame_time = this->clock.restart().asSeconds();
 
 	sf::Vector2f camera_pos = cameraInstance.getPosition2d();
-	sf::Vector3f normal = this->map.getNormal(camera_pos.x, camera_pos.y);
+	//sf::Vector3f normal = this->map.getNormal(camera_pos.x, camera_pos.y);
+	sf::Vector3f normal;
+	if(this->map.contains(sf::Vector2i(camera_pos.x, camera_pos.y)))
+	{
+		normal = this->map.getTile(camera_pos.x, camera_pos.y).getQuad().getNormal(0);
+	}
+	else
+	{
+		normal = sf::Vector3f(0.f, 0.f, 1.f);
+	}
 	cameraInstance.update(this->frame_time,
 						this->map.getHeight(sf::Vector2f(cameraInstance.getPosition().x, cameraInstance.getPosition().y)),
 						normal);

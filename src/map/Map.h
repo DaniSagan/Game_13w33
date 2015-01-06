@@ -52,15 +52,12 @@ public:
 	Map();
 	virtual ~Map();
 
-	void create(unsigned int size);
+	void create(size_t size);
 	void clear();
 	void clearLot(const sf::Vector2i& tileIndex);
 	void generateTiles();
-	void createRandom(const unsigned int size);
-	void createFlat(const unsigned int size, float height);
-	void createValley(const unsigned int size, const float a, const float b);
-	unsigned int getSize() const;
-	void generateMapImg(const unsigned int tile_size);
+	size_t getSize() const;
+	void generateMapImg(const size_t tile_size);
 	void loadHeightMap(const string& filename, size_t smoothingCount = 0);
 
 	sf::Vector3f getMapPosFromMouse(sf::Vector2i mouse_pos);
@@ -91,10 +88,6 @@ public:
 
 	void drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
-	sf::Vector3f getNormal(unsigned int x, unsigned int y);
-	sf::Vector2i getTileFromMapPos(sf::Vector3f map_pos) const;
-	float getAvgHeight(const unsigned int x, const unsigned int y) const;
-	float getMaxInclination(const unsigned int x, const unsigned int y) const;
 
 	bool addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax, unsigned int ymax);
 	Lot* getLot(unsigned int x, unsigned int y) const;
@@ -107,12 +100,10 @@ public:
 	bool contains(const sf::Vector2i& pos) const;
 	bool contains(int x, int y) const;
 
-	static sf::Color randomGrassColor();
-
 	HeightMap heightMap;
 
 private:
-	unsigned int size;
+	size_t size;
 	std::vector<std::vector<float> > heights;
 	std::vector<std::vector<dfv::Tile*> > lp_tiles;
 	sf::Image map_img;
