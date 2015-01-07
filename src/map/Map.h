@@ -39,6 +39,7 @@
 #include "Tree.h"
 #include "Model.h"
 #include "HeightMap.h"
+#include "../Serializer.h"
 
 
 namespace dfv
@@ -99,13 +100,20 @@ public:
 	bool matchRoadPattern(sf::Vector2i pos, const string& pattern) const;
 	bool contains(const sf::Vector2i& pos) const;
 	bool contains(int x, int y) const;
+	string getName() const;
+	void setName(const string& name);
 
 	HeightMap heightMap;
 
+	friend string osString(size_t level, const string& name, const Map& map);
+	friend ostream& operator<<(ostream& os, Map& map);
+
 private:
 	size_t size;
+	string name;
 	std::vector<std::vector<float> > heights;
 	std::vector<std::vector<dfv::Tile*> > lp_tiles;
+	std::vector<Lot*> lpLots;
 	sf::Image map_img;
 	dfv::Sky sky;
 	GLuint tile_list;
@@ -113,6 +121,8 @@ private:
 	unsigned int population;
 	GLuint structure_box_list;
 };
+
+
 
 } /* namespace dfv */
 #endif /* MAP_H_ */

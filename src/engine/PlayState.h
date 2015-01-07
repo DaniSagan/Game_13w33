@@ -43,6 +43,7 @@
 #include "../gui/MenuButton.h"
 #include "../Utils.h"
 #include "../CmdServer.h"
+#include "../Serializer.h"
 
 namespace dfv
 {

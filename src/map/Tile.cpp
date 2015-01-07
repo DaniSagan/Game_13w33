@@ -295,6 +295,47 @@ sf::Color Tile::randomWaterColor()
 	return sf::Color(12-rr, 12-rr, 64-rr);
 }
 
+string osString(size_t level, const string& name, const Tile& tile)
+{
+	stringstream ss;
+	if(name.empty())
+	{
+		ss << strRepeat(level, string("\t")) << "{" << endl;
+	}
+	else
+	{
+		ss << strRepeat(level, string("\t")) << "Tile " << name << " = {" << endl;
+	}
+	ss << osString(level+1, "x", static_cast<int>(tile.vertices.at(0).x));
+	ss << osString(level+1, "y", static_cast<int>(tile.vertices.at(0).y));
+	ss << osString(level+1, "v0", tile.vertices.at(0));
+	ss << osString(level+1, "v1", tile.vertices.at(1));
+	ss << osString(level+1, "v2", tile.vertices.at(2));
+	ss << osString(level+1, "v3", tile.vertices.at(3));
+	ss << strRepeat(level, string("\t")) << "}" << endl;
+	return ss.str();
+}
+
+string osString(size_t level, const string& name, const Tile* lpTile)
+{
+	return osString(level, name, *lpTile);
+}
+
+string osString(size_t level, const string& name, const vector<vector<Tile*>>& lpTiles, const string& type)
+{
+	stringstream ss;
+	ss << strRepeat(level, "\t") << type << "[" << lpTiles.size() << ", " << lpTiles.at(0).size() << "] " << name << " = [" << "\n";
+	for(const vector<Tile*>& v: lpTiles)
+	{
+		for(Tile* lpTile: v)
+		{
+			ss << osString(level+1, string(""), *lpTile);
+		}
+	}
+	ss << "]\n";
+	return ss.str();
+}
+
 } /* namespace dfv */
 
 

@@ -30,6 +30,7 @@
 #include "../Resources.h"
 #include "../Camera.h"
 #include "../Utils.h"
+#include "Quad.h"
 
 namespace dfv {
 

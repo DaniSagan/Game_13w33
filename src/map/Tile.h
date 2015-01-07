@@ -35,6 +35,8 @@
 #include "Structure.h"
 #include "Model.h"
 #include "Lot.h"
+#include "../Serializer.h"
+#include "Quad.h"
 
 namespace dfv
 {
@@ -98,6 +100,9 @@ public:
 	static sf::Color randomWaterColor();
 
 	friend class Map;
+	friend string osString(size_t level, const string& name, const Tile& tile);
+	friend string osString(size_t level, const string& name, const Tile* lpTile);
+	friend string osString(size_t level, const string& name, const vector<vector<Tile*>>& lpTiles, const string& type);
 
 private:
 	std::vector<sf::Vector3f> vertices;

@@ -529,6 +529,7 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 			}
 		}
 	}
+	this->lpLots.push_back(lp_new_lot);
 
 	return true;
 }
@@ -600,6 +601,33 @@ bool Map::contains(const sf::Vector2i& pos) const
 bool Map::contains(int x, int y) const
 {
 	return this->contains(sf::Vector2i(x, y));
+}
+
+string Map::getName() const
+{
+	return this->name;
+}
+
+void Map::setName(const string& name)
+{
+	this->name = name;
+}
+
+string osString(size_t level, const string& name, const Map& map)
+{
+	stringstream ss;
+	ss << strRepeat(level, string("\t")) << "Map " << name << " = {\n";
+	ss << osString(level+1, "name", map.getName());
+	ss << osString(level+1, "size", map.getSize());
+	ss << osString(level+1, "tiles", map.lp_tiles, "Tile");
+	ss << strRepeat(level, string("\t")) << "}\n";
+	return ss.str();
+}
+
+ostream& operator<<(ostream& os, Map& map)
+{
+	os << osString(0, "map", map);
+	return os;
 }
 
 } /* namespace dfv */

@@ -63,11 +63,11 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 	{
 		for(size_t j = 0; j < this->size; j++)
 		{
-			sf::Vector2i absPos = this->realPosFromMinimapPos(sf::Vector2i(i, j), position);
+			sf::Vector2f absPos = this->realPosFromMinimapPos(sf::Vector2i(i, j), position);
 			size_t pixelIndex = (j * this->size + i) * 4;
 			if(absPos.x >= 0 && absPos.x < (int)(map.getSize()) && absPos.y >= 0 && absPos.y < (int)(map.getSize()))
 			{
-				if(map.getTile(absPos).hasRoad())
+				if(map.getTile(absPos.x, absPos.y).hasRoad())
 				{
 					/*this->lp_pixels[pixelIndex] = 50;
 					this->lp_pixels[pixelIndex + 1] = 50;
@@ -76,7 +76,7 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[pixelIndex + 1] = this->colors.road.g;
 					this->lp_pixels[pixelIndex + 2] = this->colors.road.b;
 				}
-				else if(map.getTile(absPos).isWater())
+				else if(map.getTile(absPos.x, absPos.y).isWater())
 				{
 					/*this->lp_pixels[pixelIndex] = 0;
 					this->lp_pixels[pixelIndex + 1] = 0;
@@ -85,7 +85,7 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[pixelIndex + 1] = this->colors.water.g;
 					this->lp_pixels[pixelIndex + 2] = this->colors.water.b;
 				}
-				else if(map.getTile(absPos).isBeach())
+				else if(map.getTile(absPos.x, absPos.y).isBeach())
 				{
 					/*this->lp_pixels[pixelIndex] = 200;
 					this->lp_pixels[pixelIndex + 1] = 200;
@@ -94,7 +94,7 @@ void Minimap::generateFromMap(const Map& map, const sf::Vector2f position, unsig
 					this->lp_pixels[pixelIndex + 1] = this->colors.sand.g;
 					this->lp_pixels[pixelIndex + 2] = this->colors.sand.b;
 				}
-				else if(map.getTile(absPos).hasLot() && map.getTile(absPos).getLot()->hasStructure())
+				else if(map.getTile(absPos.x, absPos.y).hasLot() && map.getTile(absPos.x, absPos.y).getLot()->hasStructure())
 				{
 					this->lp_pixels[pixelIndex] = 200;
 					this->lp_pixels[pixelIndex + 1] = 100;
@@ -133,10 +133,10 @@ sf::Vector2i Minimap::realPosFromMapPos(sf::Vector2i map_pos, int range)
 			range - (range*2*map_pos.y)/size);
 }
 
-sf::Vector2i Minimap::realPosFromMinimapPos(const sf::Vector2i& minimapPos, const sf::Vector2f& mapPos) const
+sf::Vector2f Minimap::realPosFromMinimapPos(const sf::Vector2i& minimapPos, const sf::Vector2f& mapPos) const
 {
-	return sf::Vector2i((mapPos.x-range) + (2*this->range*minimapPos.x)/this->size,
-			            (mapPos.y+range) - (2*this->range*minimapPos.y)/this->size);
+	return sf::Vector2f(static_cast<float>(mapPos.x-range) + static_cast<float>(2*this->range*minimapPos.x)/static_cast<float>(this->size),
+			            static_cast<float>(mapPos.y+range) - static_cast<float>(2*this->range*minimapPos.y)/static_cast<float>(this->size));
 }
 
 void Minimap::draw(sf::RenderWindow& window, const Camera& camera) const

@@ -121,27 +121,7 @@ protected:
 /// \brief Class for creating an OpenGL quad which calculates its normal vectors.
 ///
 ////////////////////////////////////////////////////////////////////////////////////
-class Quad
-{
-public:
-	Quad();
-	void create(const std::vector<sf::Vector3f>& vertices);
-	void create(const sf::Vector3f & v0,
-			    const sf::Vector3f & v1,
-			    const sf::Vector3f & v2,
-			    const sf::Vector3f & v3);
-	sf::Vector3f getVertex(const unsigned int index) const;
-	sf::Vector3f getNormal(const unsigned int vertex_index) const;
-	sf::Vector3f getNormal() const;
-	void draw() const;
-	float getAvgHeight() const;
-	float getMaxInclination() const;
-	float getMinHeight() const;
-	float getMaxheight() const;
-protected:
-	std::vector<sf::Vector3f> vertices;
-	std::vector<sf::Vector3f> normals;
-};
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 /// \brief Storage class for utility functions.
@@ -200,6 +180,8 @@ protected:
 
 const sf::Vector3f operator^(const sf::Vector3f& v1, const sf::Vector3f& v2);
 const float operator*(const sf::Vector3f& v1, const sf::Vector3f& v2);
+
+string strRepeat(size_t count, const string& str);
 
 } /* namespace dfv */
 #endif /* UTILS_H_ */

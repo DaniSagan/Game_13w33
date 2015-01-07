@@ -43,6 +43,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	this->map.heightMap.minHeight = stof(parser.get("minheight"));
 	this->map.heightMap.maxHeight = stof(parser.get("maxheight"));
 	this->map.loadHeightMap(filePath + "/" + parser.get("heightmap"), 2);
+	this->map.setName(parser.get("name"));
 
 	// create roads
 	cout << "Creating roads" << endl;
@@ -371,6 +372,46 @@ void PlayState::init(GameEngine* lp_game_engine)
 	MenuButton* lpButtonCameraDriving = new MenuButton(&this->gui_root, BUTTON_CAMERA_DRIVING);
 	lpButtonCameraDriving->loadTexture("res/gui/button_camera_driving.png");
 	lpButtonCameraDriving->setPosition(sf::Vector2f(lp_game_engine->window.getSize().x - 32, 32+16+36*3));
+
+	/*cout << "Creating map file..." << endl;
+	ofstream fobj("testmap.txt", ofstream::out);
+	string str = osString(0, "map", this->map);
+	cout << str << endl;
+	fobj << this->map;
+	fobj.close();
+	cout << "File created." << endl;*/
+
+	cout << "Serializing..." << endl;
+	Serializer ser;
+	ser.openOutFile("testmap.txt");
+	ser.write("map", this->map);
+	ser.closeOutFile();
+	cout << "Finished serializing." << endl;
+
+	/*ser.openInFile("testmap.txt");
+	bool isReading = true;
+	while(isReading)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position rpos = ser.read(reading);
+		if(rpos == Serializer::Reading::FILE_END)
+		{
+			isReading = false;
+		}
+		else if(rpos == Serializer::Reading::OBJECT_START)
+		{
+			cout << "Object " << reading.name << " start." << endl;
+		}
+		else if(rpos == Serializer::Reading::OBJECT_END)
+		{
+			cout << "Object end" << endl;
+		}
+		else if(rpos == Serializer::Reading::VALUE)
+		{
+			cout << "Value " << reading.name << " = " << reading.value << endl;
+		}
+	}
+	ser.closeInFile();*/
 }
 
 void PlayState::cleanup()
@@ -720,22 +761,11 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 				this->map.generateTileList(cameraInstance, this->resources);
 				return true;
 			}
-			/*else if(tokens.at(1) == std::string("building"))
-			{
-				std::vector<sf::Vector2i>::iterator it;
-				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
-				{
-					this->map.clearBuilding(it->x, it->y);
-				}
-				this->map.generateBuildingList();
-				return true;
-			}*/
 			else if(tokens.at(1) == std::string("prop"))
 			{
 				std::vector<sf::Vector2i>::iterator it;
 				for(it = this->selected_tiles.begin(); it != this->selected_tiles.end(); it++)
 				{
-					//this->map.clearProp(it->x, it->y);
 					this->map.getTile(*it).clearProp();
 				}
 				//this->map.generateBuildingList();
@@ -847,7 +877,6 @@ void PlayState::createSelectedShapes(GameEngine* lp_game_engine)
 	{
 		sf::Vector2i pos(it->x, it->y);
 		if(!this->map.contains(pos)) continue;
-		//std::vector<sf::Vector3f> tile_vertices = this->map.getTileVertices(pos);
 		std::vector<sf::Vector3f> tile_vertices = this->map.getTile(pos).getVertices();
 		std::vector<sf::Vector2f> sel_vertices(4);
 		for(unsigned int k = 0; k < 4; k++)
