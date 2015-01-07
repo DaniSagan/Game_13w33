@@ -27,6 +27,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <map>
 #include "../Resources.h"
 #include "../Camera.h"
 #include "../Utils.h"
@@ -42,6 +43,7 @@ public:
 
 	enum Type
 	{
+		none = -1,
 		straight = 0,
 		cross,
 		tcross,
@@ -63,7 +65,12 @@ public:
 	void setOrientation(unsigned int orientation);
 	unsigned int getOrientation() const;
 	unsigned int getId() const;
+	Type getType() const;
 	static char asChar(int type, int orientation);
+	static string asString(Road::Type);
+	static Type fromString(const string& str);
+
+	static map<string, Type> strType;
 
 private:
 	//Type id;

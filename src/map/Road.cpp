@@ -26,18 +26,31 @@
 namespace dfv
 {
 
+map<string, Road::Type> Road::strType = {
+		{"none", 				Road::none},
+		{"undefined", 			Road::none},
+		{"straight", 			Road::straight},
+		{"cross", 				Road::cross},
+		{"tcross", 				Road::tcross},
+		{"curve", 				Road::curve},
+		{"av_straight", 		Road::av_straight},
+		{"av_cross", 			Road::av_cross},
+		{"av_tcross", 			Road::av_tcross},
+		{"roundabout_center", 	Road::roundabout_center},
+		{"roundabout_side", 	Road::roundabout_side},
+		{"roundabout_corner",	Road::roundabout_corner},
+		{"roundabout_exit", 	Road::roundabout_exit}
+};
+
 Road::Road():
 		id(0),
 		type(straight),
 		orientation(0)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 Road::~Road()
 {
-	// TODO Auto-generated destructor stub
 }
 
 void Road::create(const std::vector<sf::Vector3f>& vertices, Type type,
@@ -184,6 +197,11 @@ unsigned int Road::getId() const
 	return this->id;
 }
 
+Road::Type Road::getType() const
+{
+	return this->type;
+}
+
 char Road::asChar(int type, int orientation)
 {
 	if(type == Road::straight && (orientation == 0 || orientation == 2)) return '|';
@@ -192,6 +210,37 @@ char Road::asChar(int type, int orientation)
 	else if(type == Road::curve && (orientation == 1 || orientation == 3)) return '\\';
 	else if(type == Road::cross) return '+';
 	else return ' ';
+}
+
+string Road::asString(Road::Type type)
+{
+	switch(type)
+	{
+	case Road::straight: 			return "straight"; 			break;
+	case Road::cross: 				return "cross"; 			break;
+	case Road::tcross: 				return "tcross"; 			break;
+	case Road::curve: 				return "curve"; 			break;
+	case Road::av_straight: 		return "av_straight"; 		break;
+	case Road::av_cross: 			return "av_cross"; 			break;
+	case Road::av_tcross: 			return "av_tcross"; 		break;
+	case Road::roundabout_center: 	return "roundabout_center"; break;
+	case Road::roundabout_side: 	return "roundabout_side"; 	break;
+	case Road::roundabout_corner: 	return "roundabout_corner"; break;
+	case Road::roundabout_exit: 	return "roundabout_exit"; 	break;
+	default: 						return "undefined"; 		break;
+	}
+}
+
+Road::Type Road::fromString(const string& str)
+{
+	if(Road::strType.find(str) != strType.end())
+	{
+		return Road::strType.at(str);
+	}
+	else
+	{
+		return Road::none;
+	}
 }
 
 } /* namespace dfv */

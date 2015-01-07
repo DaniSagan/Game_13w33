@@ -131,6 +131,22 @@ bool isRead(const Serializer::Reading& reading, size_t& var)
 	var = stoi(reading.value);
 }
 
+string osString(size_t level, const string& name, const unsigned int& value)
+{
+	stringstream ss;
+	for(size_t k = 0; k < level; k++)
+	{
+		ss << "\t";
+	}
+	ss << "unsigned_int " << name << " = " << to_string(value) << "\n";
+	return ss.str();
+}
+
+bool isRead(const Serializer::Reading& reading, unsigned int& var)
+{
+	var = stoi(reading.value);
+}
+
 string osString(size_t level, const string& name, const float& value)
 {
 	stringstream ss;
@@ -160,7 +176,7 @@ string osString(size_t level, const string& name, const string& value)
 
 bool isRead(const Serializer::Reading& reading, string& var)
 {
-	var = reading.value.substr(1, reading.value.size()-1);
+	var = reading.value.substr(1, reading.value.size()-2);
 }
 
 string osString(size_t level, const string& name, const sf::Vector3f& value)

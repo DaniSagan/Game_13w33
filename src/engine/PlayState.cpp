@@ -41,22 +41,11 @@ void PlayState::init(GameEngine* lp_game_engine)
 	parser.parse(fileName);
 
 	Serializer ser;
-	ser.openInFile("testmap.txt");
+	ser.openInFile("testmap2.txt");
 	isRead(ser, this->map);
 
-	Tile& tile = this->map.getTile(0, 1);
-	cout << tile.getQuad().getVertex(0).x << ", " <<
-			tile.getQuad().getVertex(0).y << ", " <<
-			tile.getQuad().getVertex(0).z << endl;
-	cout << tile.getQuad().getVertex(1).x << ", " <<
-			tile.getQuad().getVertex(1).y << ", " <<
-			tile.getQuad().getVertex(1).z << endl;
-	cout << tile.getQuad().getVertex(2).x << ", " <<
-			tile.getQuad().getVertex(2).y << ", " <<
-			tile.getQuad().getVertex(2).z << endl;
-	cout << tile.getQuad().getVertex(3).x << ", " <<
-			tile.getQuad().getVertex(3).y << ", " <<
-			tile.getQuad().getVertex(3).z << endl;
+	default_random_engine generator;
+
 	//this->map.deserialize("testmap.txt");
 
 	/*
@@ -67,6 +56,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	*/
 
 	// create roads
+	/*
 	cout << "Creating roads" << endl;
 	for(unsigned int i = 0; i < this->map.getSize(); i++)
 	{
@@ -91,7 +81,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 		}
 	}
 
-	default_random_engine generator;
+
 
 	// Add random rondabouts
 	cout << "Adding roundabouts" << endl;
@@ -234,7 +224,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 				}
 			}
 		}
-	}
+	}*/
 
 	// generate random trees
 	cout << "Creating trees" << endl;
@@ -402,12 +392,13 @@ void PlayState::init(GameEngine* lp_game_engine)
 	fobj.close();
 	cout << "File created." << endl;*/
 
+
 	/*
 	cout << "Serializing..." << endl;
-	Serializer ser;
-	ser.openOutFile("testmap.txt");
-	ser.write("map", this->map);
-	ser.closeOutFile();
+	Serializer serOut;
+	serOut.openOutFile("testmap2.txt");
+	serOut.write("map", this->map);
+	serOut.closeOutFile();
 	cout << "Finished serializing." << endl;
 	*/
 

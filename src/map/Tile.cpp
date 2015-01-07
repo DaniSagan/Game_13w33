@@ -312,6 +312,11 @@ string osString(size_t level, const string& name, const Tile& tile)
 	ss << osString(level+1, "v1", tile.vertices.at(1));
 	ss << osString(level+1, "v2", tile.vertices.at(2));
 	ss << osString(level+1, "v3", tile.vertices.at(3));
+	if(tile.hasRoad())
+	{
+		ss << osString(level+1, "roadType", Road::asString(tile.getRoad()->getType()));
+		ss << osString(level+1, "roadOrientation", tile.getRoad()->getOrientation());
+	}
 	ss << strRepeat(level, string("\t")) << "}" << endl;
 	return ss.str();
 }
@@ -332,7 +337,7 @@ string osString(size_t level, const string& name, const vector<vector<Tile*>>& l
 			ss << osString(level+1, string(""), *lpTile);
 		}
 	}
-	ss << "]\n";
+	ss << strRepeat(level, "\t") << "]\n";
 	return ss.str();
 }
 
@@ -340,6 +345,9 @@ bool isRead(Serializer& ser, Tile& tile)
 {
 	sf::Vector2i id;
 	vector<sf::Vector3f> vs(4);
+	Road::Type roadType = Road::none;
+	unsigned int roadOrientation;
+
 	bool finished = false;
 	while(!finished)
 	{
@@ -388,10 +396,24 @@ bool isRead(Serializer& ser, Tile& tile)
 				isRead(reading, v);
 				vs.at(3) = v;
 			}
+			else if(reading.name == "roadType")
+			{
+				string str;
+				isRead(reading, str);
+				roadType = Road::fromString(str);
+			}
+			else if(reading.name == "roadOrientation")
+			{
+				isRead(reading, roadOrientation);
+			}
 		}
 	}
 	tile.create(sf::Vector2f(id.x, id.y), vs.at(0).z, vs.at(1).z, vs.at(2).z, vs.at(3).z);
 	tile.setColor(Tile::randomGrassColor());
+	if(roadType != Road::none)
+	{
+		tile.addRoad(roadType, roadOrientation);
+	}
 	return true;
 }
 

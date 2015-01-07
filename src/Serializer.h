@@ -66,6 +66,8 @@ string osString(size_t level, const string& name, const int& value);
 bool isRead(const Serializer::Reading& reading, int& var);
 string osString(size_t level, const string& name, const size_t& value);
 bool isRead(const Serializer::Reading& reading, size_t& var);
+string osString(size_t level, const string& name, const unsigned int& value);
+bool isRead(const Serializer::Reading& reading, unsigned int& var);
 string osString(size_t level, const string& name, const float& value);
 bool isRead(const Serializer::Reading& reading, float& var);
 string osString(size_t level, const string& name, const string& value);
