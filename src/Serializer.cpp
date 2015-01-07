@@ -65,7 +65,7 @@ Serializer::Reading::Position Serializer::read(Reading& reading)
 		}
 		else
 		{
-			value = line;
+			value = line.substr(line.find_first_not_of(" \t\r\n"), line.size());
 		}
 		reading = Reading(type, name, value);
 		if(value == "{")
@@ -110,6 +110,11 @@ string osString(size_t level, const string& name, const int& value)
 	return ss.str();
 }
 
+bool isRead(const Serializer::Reading& reading, int& var)
+{
+	var = stoi(reading.value);
+}
+
 string osString(size_t level, const string& name, const size_t& value)
 {
 	stringstream ss;
@@ -119,6 +124,11 @@ string osString(size_t level, const string& name, const size_t& value)
 	}
 	ss << "size_t " << name << " = " << to_string(value) << "\n";
 	return ss.str();
+}
+
+bool isRead(const Serializer::Reading& reading, size_t& var)
+{
+	var = stoi(reading.value);
 }
 
 string osString(size_t level, const string& name, const float& value)
@@ -132,6 +142,11 @@ string osString(size_t level, const string& name, const float& value)
 	return ss.str();
 }
 
+bool isRead(const Serializer::Reading& reading, float& var)
+{
+	var = stof(reading.value);
+}
+
 string osString(size_t level, const string& name, const string& value)
 {
 	stringstream ss;
@@ -143,6 +158,11 @@ string osString(size_t level, const string& name, const string& value)
 	return ss.str();
 }
 
+bool isRead(const Serializer::Reading& reading, string& var)
+{
+	var = reading.value.substr(1, reading.value.size()-1);
+}
+
 string osString(size_t level, const string& name, const sf::Vector3f& value)
 {
 	stringstream ss;
@@ -152,6 +172,18 @@ string osString(size_t level, const string& name, const sf::Vector3f& value)
 	}
 	ss << "sf::Vector3f " << name << " = " << to_string(value.x) << ", " << to_string(value.y) << ", " << to_string(value.z) << "\n";
 	return ss.str();
+}
+
+bool isRead(const Serializer::Reading& reading, sf::Vector3f& var)
+{
+	float x, y, z;
+	stringstream ss(reading.value);
+	ss >> x;
+	ss.ignore();
+	ss >> y;
+	ss.ignore();
+	ss >> z;
+	var = sf::Vector3f(x, y, z);
 }
 
 string osString(size_t level, const string& name, const sf::Color& value)

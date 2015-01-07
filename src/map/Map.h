@@ -102,11 +102,13 @@ public:
 	bool contains(int x, int y) const;
 	string getName() const;
 	void setName(const string& name);
+	void deserialize(const string& filename);
 
 	HeightMap heightMap;
 
 	friend string osString(size_t level, const string& name, const Map& map);
 	friend ostream& operator<<(ostream& os, Map& map);
+	friend bool isRead(Serializer& ser, Map& map);
 
 private:
 	size_t size;

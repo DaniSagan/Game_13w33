@@ -324,7 +324,7 @@ string osString(size_t level, const string& name, const Tile* lpTile)
 string osString(size_t level, const string& name, const vector<vector<Tile*>>& lpTiles, const string& type)
 {
 	stringstream ss;
-	ss << strRepeat(level, "\t") << type << "[" << lpTiles.size() << ", " << lpTiles.at(0).size() << "] " << name << " = [" << "\n";
+	ss << strRepeat(level, "\t") << type << "[" << lpTiles.size() << "," << lpTiles.at(0).size() << "] " << name << " = [" << "\n";
 	for(const vector<Tile*>& v: lpTiles)
 	{
 		for(Tile* lpTile: v)
@@ -334,6 +334,65 @@ string osString(size_t level, const string& name, const vector<vector<Tile*>>& l
 	}
 	ss << "]\n";
 	return ss.str();
+}
+
+bool isRead(Serializer& ser, Tile& tile)
+{
+	sf::Vector2i id;
+	vector<sf::Vector3f> vs(4);
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos;
+		pos = ser.read(reading);
+		if(pos == Serializer::Reading::OBJECT_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::VALUE)
+		{
+			if(reading.name == "x")
+			{
+				int x;
+				isRead(reading, x);
+				id.x = x;
+			}
+			else if(reading.name == "y")
+			{
+				int y;
+				isRead(reading, y);
+				id.y = y;
+			}
+			else if(reading.name == "v0")
+			{
+				sf::Vector3f v;
+				isRead(reading, v);
+				vs.at(0) = v;
+			}
+			else if(reading.name == "v1")
+			{
+				sf::Vector3f v;
+				isRead(reading, v);
+				vs.at(1) = v;
+			}
+			else if(reading.name == "v2")
+			{
+				sf::Vector3f v;
+				isRead(reading, v);
+				vs.at(2) = v;
+			}
+			else if(reading.name == "v3")
+			{
+				sf::Vector3f v;
+				isRead(reading, v);
+				vs.at(3) = v;
+			}
+		}
+	}
+	tile.create(sf::Vector2f(id.x, id.y), vs.at(0).z, vs.at(1).z, vs.at(2).z, vs.at(3).z);
+	tile.setColor(Tile::randomGrassColor());
+	return true;
 }
 
 } /* namespace dfv */

@@ -103,6 +103,7 @@ public:
 	friend string osString(size_t level, const string& name, const Tile& tile);
 	friend string osString(size_t level, const string& name, const Tile* lpTile);
 	friend string osString(size_t level, const string& name, const vector<vector<Tile*>>& lpTiles, const string& type);
+	friend bool isRead(Serializer& ser, Tile& tile);
 
 private:
 	std::vector<sf::Vector3f> vertices;

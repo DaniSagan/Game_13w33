@@ -40,10 +40,31 @@ void PlayState::init(GameEngine* lp_game_engine)
 	SimpleParser parser;
 	parser.parse(fileName);
 
+	Serializer ser;
+	ser.openInFile("testmap.txt");
+	isRead(ser, this->map);
+
+	Tile& tile = this->map.getTile(0, 1);
+	cout << tile.getQuad().getVertex(0).x << ", " <<
+			tile.getQuad().getVertex(0).y << ", " <<
+			tile.getQuad().getVertex(0).z << endl;
+	cout << tile.getQuad().getVertex(1).x << ", " <<
+			tile.getQuad().getVertex(1).y << ", " <<
+			tile.getQuad().getVertex(1).z << endl;
+	cout << tile.getQuad().getVertex(2).x << ", " <<
+			tile.getQuad().getVertex(2).y << ", " <<
+			tile.getQuad().getVertex(2).z << endl;
+	cout << tile.getQuad().getVertex(3).x << ", " <<
+			tile.getQuad().getVertex(3).y << ", " <<
+			tile.getQuad().getVertex(3).z << endl;
+	//this->map.deserialize("testmap.txt");
+
+	/*
 	this->map.heightMap.minHeight = stof(parser.get("minheight"));
 	this->map.heightMap.maxHeight = stof(parser.get("maxheight"));
 	this->map.loadHeightMap(filePath + "/" + parser.get("heightmap"), 2);
 	this->map.setName(parser.get("name"));
+	*/
 
 	// create roads
 	cout << "Creating roads" << endl;
@@ -381,12 +402,14 @@ void PlayState::init(GameEngine* lp_game_engine)
 	fobj.close();
 	cout << "File created." << endl;*/
 
+	/*
 	cout << "Serializing..." << endl;
 	Serializer ser;
 	ser.openOutFile("testmap.txt");
 	ser.write("map", this->map);
 	ser.closeOutFile();
 	cout << "Finished serializing." << endl;
+	*/
 
 	/*ser.openInFile("testmap.txt");
 	bool isReading = true;

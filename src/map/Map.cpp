@@ -78,8 +78,10 @@ void Map::clearLot(const sf::Vector2i& tileIndex)
 
 void Map::create(size_t size)
 {
+	cout << "Creating map of size " << size << endl;
 	this->size = size;
 
+	/*
 	this->heights.resize(size + 1);
 	for(std::size_t i = 0; i < this->heights.size(); i++)
 	{
@@ -88,17 +90,18 @@ void Map::create(size_t size)
 		{
 			this->heights.at(i).at(j) = 0.f;
 		}
-	}
+	}*/
 
-	this->lp_tiles.resize(size);
+	/*this->lp_tiles.resize(size);
 	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
 	{
-		this->lp_tiles.at(i).resize(size + 1);
+		this->lp_tiles.at(i).resize(size);
 		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
 		{
-			this->lp_tiles.at(i).at(j) = NULL;
+			this->lp_tiles.at(i).at(j) = nullptr;
 		}
-	}
+	}*/
+	this->lp_tiles = vector<vector<Tile*>>(size, vector<Tile*>(size, nullptr));
 
 	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
@@ -613,6 +616,13 @@ void Map::setName(const string& name)
 	this->name = name;
 }
 
+void Map::deserialize(const string& filename)
+{
+	Serializer ser;
+	ser.openInFile(filename);
+	isRead(ser, *this);
+}
+
 string osString(size_t level, const string& name, const Map& map)
 {
 	stringstream ss;
@@ -628,6 +638,55 @@ ostream& operator<<(ostream& os, Map& map)
 {
 	os << osString(0, "map", map);
 	return os;
+}
+
+bool isRead(Serializer& ser, Map& map)
+{
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos;
+		pos = ser.read(reading);
+		if(pos == Serializer::Reading::OBJECT_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::VALUE)
+		{
+			if(reading.name == "name")
+			{
+				string name;
+				isRead(reading, name);
+				map.setName(name);
+			}
+			else if(reading.name == "size")
+			{
+				size_t size;
+				isRead(reading, size);
+				map.create(size);
+			}
+		}
+		else if(pos == Serializer::Reading::ARRAY_START)
+		{
+			if(reading.name == "tiles")
+			{
+				for(size_t i = 0; i < map.size; i++)
+				{
+					for(size_t j = 0; j < map.size; j++)
+					{
+						pos = ser.read(reading);
+						assert(pos == Serializer::Reading::OBJECT_START);
+						//cout << "Creating tile @" << i << "," << j << endl;
+						Tile* lpTile = new Tile;
+						isRead(ser, *lpTile);
+						map.lp_tiles.at(i).at(j) = lpTile;
+					}
+				}
+			}
+		}
+	}
+	return true;
 }
 
 } /* namespace dfv */
