@@ -268,7 +268,8 @@ void Map::drawStructureOutlines(dfv::RealIntRect rect) const
 		{
 			for(int j = rect.ymin; j <= rect.ymax; j++)
 			{
-				Lot* lp_lot = this->getTile(i, j).getLot();
+				//Lot* lp_lot = this->getTile(i, j).getLot();
+				Lot* lp_lot = this->lp_tiles[i][j]->getLot();
 				if(lp_lot != NULL)
 				{
 					if(lp_lot->getOriginTileIndices() == sf::Vector2i(i, j))
@@ -393,10 +394,10 @@ void Map::drawRoads(dfv::RealIntRect rect, const Camera& camera, const Resources
 		{
 			for(int j = floor(rect.ymin); j <= floor(rect.ymax); j++)
 			{
-				Tile& tile = this->getTile(i, j);
-				if(tile.hasRoad())
+				Tile* lpTile = this->lp_tiles[i][j];// this->getTile(i, j);
+				if(lpTile->hasRoad())
 				{
-					tile.drawRoad(camera, resources);
+					lpTile->drawRoad(camera, resources);
 				}
 			}
 		}

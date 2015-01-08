@@ -32,6 +32,7 @@
 #include "../Camera.h"
 #include "Road.h"
 #include "Prop.h"
+#include "Tree.h"
 #include "Structure.h"
 #include "Model.h"
 #include "Lot.h"
@@ -71,6 +72,7 @@ public:
 	void addLot(Lot* lpLot);
 
 	void addProp(Prop* lp_prop);
+	void addProp(Prop::Type type, unsigned int id);
 	sf::Vector3f getVertex(const unsigned int index) const;
 	const std::vector<sf::Vector3f> & getVertices() const;
 	sf::Color getColor(unsigned int index) const;

@@ -53,6 +53,9 @@ bool Resources::load()
 	this->imgTree2.loadFromFile("res/prop/tree-1.png");
 	this->imgTree.loadFromFile("res/prop/tree-2.png");
 
+	this->images.trees.push_back(Utils::loadGLTexture("res/prop/tree-1.png"));
+	this->images.trees.push_back(Utils::loadGLTexture("res/prop/tree-2.png"));
+
 	return true;
 }
 

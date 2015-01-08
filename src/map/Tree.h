@@ -35,13 +35,15 @@ class Tree: public Prop
 public:
 	Tree();
 	virtual ~Tree();
-	void create(const std::vector<sf::Vector3f>& tile_vertices);
+	void create(const std::vector<sf::Vector3f>& tile_vertices, unsigned int id);
 	void draw(const Camera& camera, const Resources& resources) const;
 	void drawQuad(const unsigned int index, const dfv::Resources& resources) const;
+	unsigned int getId() const;
+	virtual Prop::Type getType() const;
 protected:
 	std::vector<Quad> quads;
 	OpenGLImage *lp_img;
-	unsigned int type;
+	unsigned int id;
 };
 
 } /* namespace dfv */

@@ -41,7 +41,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	parser.parse(fileName);
 
 	Serializer ser;
-	ser.openInFile("testmap2.txt");
+	ser.openInFile("testmap3.txt");
 	isRead(ser, this->map);
 
 	default_random_engine generator;
@@ -227,23 +227,26 @@ void PlayState::init(GameEngine* lp_game_engine)
 	}*/
 
 	// generate random trees
+	/*
 	cout << "Creating trees" << endl;
 	Tree* lp_tree = new Tree();
-	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/5; i++)
+	for(unsigned int i = 0; i < pow(this->map.getSize(), 2)/4; i++)
 	{
 		uniform_int_distribution<int> distribution(0, this->map.getSize()-1);
 		size_t x = distribution(generator);
 		size_t y = distribution(generator);
 		Tile& tile = this->map.getTile(x, y);
-		if(!tile.isWater() && !tile.isBeach() && tile.getQuad().getAvgHeight() < 18.f &&
-		   !tile.hasRoad())
+		if(!tile.isWater() && !tile.isBeach() && tile.getQuad().getAvgHeight() < 45.f &&
+		   !tile.hasRoad() && !tile.hasProp() && tile.getQuad().getMaxInclination() < 0.6f)
 		{
-			lp_tree = new Tree();
-			vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
-			lp_tree->create(tile_vertices);
-			tile.addProp(lp_tree);
+			//lp_tree = new Tree();
+			//vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
+			//lp_tree->create(tile_vertices, rand() % 2);
+			//tile.addProp(lp_tree);
+			tile.addProp(Prop::TREE, rand() % 2);
 		}
 	}
+	*/
 
 	// generate lots
 	cout << "Creating structures" << endl;
@@ -396,7 +399,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	/*
 	cout << "Serializing..." << endl;
 	Serializer serOut;
-	serOut.openOutFile("testmap2.txt");
+	serOut.openOutFile("testmap3.txt");
 	serOut.write("map", this->map);
 	serOut.closeOutFile();
 	cout << "Finished serializing." << endl;

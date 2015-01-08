@@ -27,6 +27,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <map>
 #include "../Resources.h"
 #include "../Camera.h"
 #include "../Utils.h"
@@ -41,8 +42,22 @@ public:
 	virtual ~Prop();
 	virtual void create(const std::vector<sf::Vector3f>& tile_vertices);
 	virtual void draw(const dfv::Camera& camera, const dfv::Resources& resources) const;
+
+	enum Type
+	{
+		NONE = 0,
+		TREE,
+		BOULDER
+	};
+
+	virtual Type getType() const;
+	static string asString(Type type);
+	static Type fromString(const string& str);
+
+	static map<string, Type> strType;
+
 protected:
-	OpenGLImage img;
+	//OpenGLImage img;
 	std::vector<Quad> quads;
 };
 

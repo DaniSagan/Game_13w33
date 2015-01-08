@@ -29,7 +29,7 @@ namespace dfv {
 
 Tree::Tree():
 	lp_img(NULL),
-	type(0)
+	id(0)
 {
 	// TODO Auto-generated constructor stub
 }
@@ -39,10 +39,10 @@ Tree::~Tree()
 	// TODO Auto-generated destructor stub
 }
 
-void Tree::create(const std::vector<sf::Vector3f>& tile_vertices)
+void Tree::create(const std::vector<sf::Vector3f>& tile_vertices, unsigned int id)
 {
 	assert(tile_vertices.size() == 4);
-
+	assert(id >= 0 && id <= 1);
 	sf::Vector3f mid_point = (tile_vertices.at(1) + tile_vertices.at(3)) * 0.5f;
 	std::vector<sf::Vector3f> quad_vertices(4);
 	this->quads.resize(4);
@@ -54,19 +54,20 @@ void Tree::create(const std::vector<sf::Vector3f>& tile_vertices)
 		quad_vertices.at(3) = tile_vertices[i] + sf::Vector3f(0.0, 0.0, 1.0);
 		this->quads.at(i).create(quad_vertices);
 	}
-	this->type = rand() % 2;
+	this->id = id;
 }
 
 void Tree::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
-	if(this->type == 0)
+	/*if(this->type == 0)
 	{
 		glBindTexture(GL_TEXTURE_2D, resources.imgTree.getHandle());
 	}
 	else
 	{
 		glBindTexture(GL_TEXTURE_2D, resources.imgTree2.getHandle());
-	}
+	}*/
+	glBindTexture(GL_TEXTURE_2D, resources.images.trees[this->id]);
 
 	float yaw = camera.getRpy().z;
 	glColor4f(1.f, 1.f, 1.f, 1.0f);
@@ -106,11 +107,22 @@ void Tree::drawQuad(const unsigned int index, const dfv::Resources& resources) c
 	glBegin(GL_QUADS);
 		for(unsigned int i = 0; i < 4; i++)
 		{
+			//glTexCoord2d(resources.imgTree.getTexCoords(i).x, resources.imgTree.getTexCoords(i).y);
 			glTexCoord2d(resources.imgTree.getTexCoords(i).x, resources.imgTree.getTexCoords(i).y);
 			glNormal3f(this->quads[index].getNormal(i).x, this->quads[index].getNormal(i).y, this->quads[index].getNormal(i).z);
 			glVertex3f(this->quads[index].getVertex(i).x, this->quads[index].getVertex(i).y, this->quads[index].getVertex(i).z);
 		}
 	glEnd();
+}
+
+unsigned int Tree::getId() const
+{
+	return this->id;
+}
+
+Prop::Type Tree::getType() const
+{
+	return Prop::TREE;
 }
 
 } /* namespace dfv */

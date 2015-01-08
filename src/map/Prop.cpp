@@ -26,6 +26,12 @@
 namespace dfv
 {
 
+map<string, Prop::Type> Prop::strType = {
+		{"none", NONE},
+		{"tree", TREE},
+		{"boulder", BOULDER}
+};
+
 Prop::Prop()
 {
 	// TODO Auto-generated constructor stub
@@ -45,6 +51,34 @@ void Prop::create(const std::vector<sf::Vector3f>& tile_vertices)
 void Prop::draw(const dfv::Camera& camera, const dfv::Resources& resources) const
 {
 
+}
+
+Prop::Type Prop::getType() const
+{
+	return Prop::NONE;
+}
+
+string Prop::asString(Prop::Type type)
+{
+	switch(type)
+	{
+	case Prop::NONE: 	return "none"; 		break;
+	case Prop::TREE: 	return "tree"; 		break;
+	case Prop::BOULDER: return "boulder"; 	break;
+	default: 			return "none"; 		break;
+	}
+}
+
+Prop::Type Prop::fromString(const string& str)
+{
+	if(Prop::strType.find(str) != Prop::strType.end())
+	{
+		return Prop::strType.at(str);
+	}
+	else
+	{
+		return Prop::NONE;
+	}
 }
 
 } /* namespace dfv */

@@ -50,6 +50,11 @@ public:
 
 	OpenGLImage imgTree;
 	OpenGLImage imgTree2;
+
+	struct Images
+	{
+		vector<GLuint> trees;
+	} images;
 };
 
 } /* namespace dfv */

@@ -137,6 +137,17 @@ void Tile::addProp(Prop* lp_prop)
 	this->lpProp.second = lp_prop;
 }
 
+void Tile::addProp(Prop::Type type, unsigned int id)
+{
+	if(type == Prop::TREE)
+	{
+		Tree* lp_tree = new Tree();
+		vector<sf::Vector3f> tile_vertices = this->getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
+		lp_tree->create(tile_vertices, id);
+		this->addProp(lp_tree);
+	}
+}
+
 sf::Vector3f Tile::getVertex(const unsigned int index) const
 {
 	if(index < 4)
@@ -317,6 +328,15 @@ string osString(size_t level, const string& name, const Tile& tile)
 		ss << osString(level+1, "roadType", Road::asString(tile.getRoad()->getType()));
 		ss << osString(level+1, "roadOrientation", tile.getRoad()->getOrientation());
 	}
+	if(tile.hasProp())
+	{
+		if(tile.getProp()->getType() == Prop::TREE)
+		{
+			Tree* lpTree = static_cast<Tree*>(tile.getProp());
+			ss << osString(level+1, "propType", Prop::asString(lpTree->getType()));
+			ss << osString(level+1, "propId", lpTree->getId());
+		}
+	}
 	ss << strRepeat(level, string("\t")) << "}" << endl;
 	return ss.str();
 }
@@ -347,6 +367,8 @@ bool isRead(Serializer& ser, Tile& tile)
 	vector<sf::Vector3f> vs(4);
 	Road::Type roadType = Road::none;
 	unsigned int roadOrientation;
+	Prop::Type propType = Prop::NONE;
+	unsigned int propId;
 
 	bool finished = false;
 	while(!finished)
@@ -406,6 +428,16 @@ bool isRead(Serializer& ser, Tile& tile)
 			{
 				isRead(reading, roadOrientation);
 			}
+			else if(reading.name == "propType")
+			{
+				string str;
+				isRead(reading, str);
+				propType = Prop::fromString(str);
+			}
+			else if(reading.name == "propId")
+			{
+				isRead(reading, propId);
+			}
 		}
 	}
 	tile.create(sf::Vector2f(id.x, id.y), vs.at(0).z, vs.at(1).z, vs.at(2).z, vs.at(3).z);
@@ -413,6 +445,10 @@ bool isRead(Serializer& ser, Tile& tile)
 	if(roadType != Road::none)
 	{
 		tile.addRoad(roadType, roadOrientation);
+	}
+	if(propType != Prop::NONE)
+	{
+		tile.addProp(propType, propId);
 	}
 	return true;
 }
