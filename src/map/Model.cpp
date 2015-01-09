@@ -129,7 +129,7 @@ void Model::create(const float min_terrain_height,
 {
 	const float scale = 16.f;
 	const float street_height = 5.f / scale;
-	const float floor_height = 3.f / scale;
+	const float floor_height = (floor_count > 30)? (4. / scale) : (3.f / scale);
 	const float margin = 0.015f;
 	const float line_width = 0.02f;
 

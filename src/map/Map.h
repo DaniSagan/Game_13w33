@@ -91,7 +91,9 @@ public:
 	void drawProps(dfv::RealIntRect rect, const Camera& camera, const Resources& resources) const;
 
 	bool addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax, unsigned int ymax);
+	bool addLot(const vector<sf::Vector2i>& tileIdList);
 	Lot* getLot(unsigned int x, unsigned int y) const;
+	vector<Lot*> getLots() const;
 
 	Tile& getTile(int x, int y) const;
 	Tile& getTile(const sf::Vector2i& pos) const;

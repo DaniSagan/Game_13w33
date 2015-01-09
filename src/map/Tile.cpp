@@ -281,6 +281,17 @@ bool Tile::canBuildRoad() const
     this->getQuad().getAvgHeight() < 9.f;
 }
 
+bool Tile::canHaveLot() const
+{
+	return
+	!this->hasLot() &&
+	!this->hasRoad() &&
+	!this->isBeach() &&
+	!this->isWater() &&
+	!this->hasProp() &&
+	this->getQuad().getMaxInclination() < 0.2f;
+}
+
 sf::Color Tile::randomGrassColor()
 {
 	return sf::Color(5 + rand() % 10, 40 + rand() % 10, 5 + rand() % 10);
@@ -304,6 +315,11 @@ sf::Color Tile::randomWaterColor()
 {
 	int rr = rand() % 3;
 	return sf::Color(12-rr, 12-rr, 64-rr);
+}
+
+sf::Color Tile::randomSidewalkColor()
+{
+	return sf::Color(180+(rand()%10), 180+(rand()%10), 180+(rand()%10));
 }
 
 string osString(size_t level, const string& name, const Tile& tile)

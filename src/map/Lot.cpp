@@ -173,4 +173,46 @@ unsigned int Lot::getStructureFloorCount() const
 	return *(std::max_element(floors.begin(), floors.end()));
 }
 
+string osString(size_t level, const string& name, const Lot& lot)
+{
+	stringstream ss;
+	if(name.empty())
+	{
+		ss << strRepeat(level, string("\t")) << "{" << endl;
+	}
+	else
+	{
+		ss << strRepeat(level, string("\t")) << "Tile " << name << " = {" << endl;
+	}
+
+	// TODO lot serialization
+	ss << osString(level+1, "idCount", lot.tileIndices.size());
+	ss << osString(level+1, "tileIds", lot.tileIndices);
+
+	ss << strRepeat(level, string("\t")) << "}" << endl;
+	return ss.str();
+}
+
+string osString(size_t level, const string& name, const Lot* lpLot)
+{
+	return osString(level, name, *lpLot);
+}
+
+string osString(size_t level, const string& name, const vector<Lot*>& lpLots)
+{
+	stringstream ss;
+	ss << strRepeat(level, "\t") << "sf::Vector2i" << "[" << lpLots.size() << "] " << name << " = [" << "\n";
+	for(Lot* lpLot: lpLots)
+	{
+		ss << osString(level+1, string(""), lpLot);
+	}
+	ss << strRepeat(level, "\t") << "]\n";
+	return ss.str();
+}
+
+bool isRead(Serializer& ser, Lot& lot)
+{
+	return true;
+}
+
 } /* namespace dfv */

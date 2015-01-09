@@ -99,15 +99,15 @@ void Camera::setView(const sf::Window& window) const
 	glLoadIdentity();
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 	{
-		gluPerspective(3.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+		gluPerspective(3.0f, (float)window.getSize().x / (float)window.getSize().y, 0.05f, 2000.0f);
 	}
 	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 	{
-		gluPerspective(10.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+		gluPerspective(10.0f, (float)window.getSize().x / (float)window.getSize().y, 0.05f, 2000.0f);
 	}
 	else
 	{
-		gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.01f, 2000.0f);
+		gluPerspective(55.0f, (float)window.getSize().x / (float)window.getSize().y, 0.05f, 2000.0f);
 	}
 
 	glMatrixMode(GL_MODELVIEW);

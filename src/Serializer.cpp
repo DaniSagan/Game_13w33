@@ -200,6 +200,61 @@ bool isRead(const Serializer::Reading& reading, sf::Vector3f& var)
 	ss.ignore();
 	ss >> z;
 	var = sf::Vector3f(x, y, z);
+	return true;
+}
+
+string osString(size_t level, const string& name, const sf::Vector2i& value)
+{
+	stringstream ss;
+	ss << strRepeat(level, "\t");
+	ss << "sf::Vector2i" << name << " = " << value.x << ", " << value.y << "\n";
+	return ss.str();
+}
+
+bool isRead(const Serializer::Reading& reading, sf::Vector2i& var)
+{
+	int x, y;
+	stringstream ss(reading.value);
+	ss >> x;
+	ss.ignore();
+	ss >> y;
+	var = sf::Vector2i(x, y);
+	return true;
+}
+
+string osString(size_t level, const string& name, const vector<sf::Vector2i>& value)
+{
+	stringstream ss;
+	ss << strRepeat(level, "\t") << "sf::Vector2i" << "[" << value.size() << "] " << name << " = [" << "\n";
+	for(sf::Vector2i v: value)
+	{
+		ss << osString(level+1, string(""), v);
+	}
+	ss << strRepeat(level, "\t") << "]\n";
+	return ss.str();
+}
+
+bool isRead(Serializer& ser, vector<sf::Vector2i>& var)
+{
+	vector<sf::Vector2i> res;
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos = ser.read(reading);
+		if(pos == Serializer::Reading::VALUE)
+		{
+			sf::Vector2i v;
+			isRead(reading, v);
+			res.push_back(v);
+		}
+		else if(pos == Serializer::Reading::ARRAY_END)
+		{
+			finished = true;
+		}
+	}
+	var = res;
+	return true;
 }
 
 string osString(size_t level, const string& name, const sf::Color& value)

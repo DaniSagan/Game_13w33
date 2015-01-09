@@ -64,16 +64,28 @@ protected:
 
 string osString(size_t level, const string& name, const int& value);
 bool isRead(const Serializer::Reading& reading, int& var);
+
 string osString(size_t level, const string& name, const size_t& value);
 bool isRead(const Serializer::Reading& reading, size_t& var);
+
 string osString(size_t level, const string& name, const unsigned int& value);
 bool isRead(const Serializer::Reading& reading, unsigned int& var);
+
 string osString(size_t level, const string& name, const float& value);
 bool isRead(const Serializer::Reading& reading, float& var);
+
 string osString(size_t level, const string& name, const string& value);
 bool isRead(const Serializer::Reading& reading, string& var);
+
 string osString(size_t level, const string& name, const sf::Vector3f& value);
 bool isRead(const Serializer::Reading& reading, sf::Vector3f& var);
+
+string osString(size_t level, const string& name, const sf::Vector2i& value);
+bool isRead(const Serializer::Reading& reading, sf::Vector2i& var);
+
+string osString(size_t level, const string& name, const vector<sf::Vector2i>& value);
+bool isRead(Serializer& ser, vector<sf::Vector2i>& var);
+
 string osString(size_t level, const string& name, const sf::Color& value);
 
 } /* namespace dfv */

@@ -41,7 +41,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	parser.parse(fileName);
 
 	Serializer ser;
-	ser.openInFile("testmap3.txt");
+	ser.openInFile("testmap4.txt");
 	isRead(ser, this->map);
 
 	default_random_engine generator;
@@ -257,6 +257,65 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	// Position of the city center (CBD)
 	sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
+
+	for(Lot* lpLot: this->map.getLots())
+	{
+		vector<sf::Vector2i> tileIds = lpLot->getTileIndices();
+		sf::Vector2i basePos = lpLot->getTileIndices().at(0);
+		float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(basePos.x)-center.x, 2) + pow(static_cast<int>(basePos.y)-center.y, 2)));
+		int size_x = getxmax(tileIds) - getxmin(tileIds) + 1;
+		int size_y = getymax(tileIds) - getymin(tileIds) + 1;
+		Model model;
+		Quad base_quad;
+		std::vector<sf::Vector3f> base_vertices;
+		if(distToCenter > 2.f*stof(parser.get("distrib")))
+		{
+			base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+							 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+							 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+							 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+		}
+		else
+		{
+			if(rand() % 2 == 0)
+			{
+					base_vertices = {sf::Vector3f(0.f, 0.f, 0.0),
+									 sf::Vector3f(size_x, 0.f, 0.0),
+									 sf::Vector3f(size_x, size_y, 0.0),
+									 sf::Vector3f(0.f, size_y, 0.0)};
+			}
+			else
+			{
+				base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+			}
+		}
+		base_quad.create(base_vertices);
+
+		float kCenter = exp(-pow(distToCenter/stof(parser.get("distrib")), 2.f));
+		unsigned int floor_count = floor(25.f* kCenter * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+		if(rand() % 10 == 0)
+		{
+			floor_count++;
+		}
+		model.create(lpLot->getMinHeight(), lpLot->getMaxHeight(), lpLot->getOrigin2d(), base_quad, floor_count);
+
+		Structure* lp_structure = new Structure();
+		lp_structure->setModel(model);
+		lpLot->addStructure(lp_structure);
+
+		buildings++;
+		floors += floor_count;
+		unsigned int home_count = (floor_count+1) * size_x * size_y;
+		homes += home_count;
+		unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
+		population += inhabitant_count;
+		lpLot->setInhabitants(inhabitant_count);
+	}
+
+	/*
 	for(unsigned int i = 0; i < 5000000; i++)
 	{
 		unsigned int xmin = rand() % this->map.getSize();
@@ -279,9 +338,22 @@ void PlayState::init(GameEngine* lp_game_engine)
 			size_y = 1 + floor(1.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
 		}
 
+		vector<sf::Vector2i> idList;
+		for(int x = xmin; x < xmin+size_x; x++)
+		{
+			for(int y = ymin; y < ymin+size_y; y++)
+			{
+				idList.push_back(sf::Vector2i(x, y));
+			}
+		}
 
 		// If a lot could be added to the map
-		if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
+		//if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
+		if(this->map.getTile(xmin, ymin).getQuad().getAvgHeight() > 9.f)
+		{
+			continue;
+		}
+		if(this->map.addLot(idList))
 		{
 			Model model;
 			Lot* lp_lot = this->map.getLot(xmin, ymin);
@@ -333,7 +405,8 @@ void PlayState::init(GameEngine* lp_game_engine)
 			population += inhabitant_count;
 			lp_lot->setInhabitants(inhabitant_count);
 		}
-	}
+	}*/
+
 
 	std::cout << "Buildings: " << buildings << std::endl;
 	std::cout << "Floors: " << floors << std::endl;
@@ -396,14 +469,14 @@ void PlayState::init(GameEngine* lp_game_engine)
 	cout << "File created." << endl;*/
 
 
-	/*
+
 	cout << "Serializing..." << endl;
 	Serializer serOut;
-	serOut.openOutFile("testmap3.txt");
+	serOut.openOutFile("testmap5.txt");
 	serOut.write("map", this->map);
 	serOut.closeOutFile();
 	cout << "Finished serializing." << endl;
-	*/
+
 
 	/*ser.openInFile("testmap.txt");
 	bool isReading = true;

@@ -95,11 +95,13 @@ public:
 	Road* getRoad() const;
 
 	bool canBuildRoad() const;
+	bool canHaveLot() const;
 
 	static sf::Color randomGrassColor();
 	static sf::Color randomSnowColor();
 	static sf::Color randomSandColor();
 	static sf::Color randomWaterColor();
+	static sf::Color randomSidewalkColor();
 
 	friend class Map;
 	friend string osString(size_t level, const string& name, const Tile& tile);

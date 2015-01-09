@@ -183,5 +183,49 @@ const float operator*(const sf::Vector3f& v1, const sf::Vector3f& v2);
 
 string strRepeat(size_t count, const string& str);
 
+template<typename T>
+T getxmax(const vector<sf::Vector2<T>>& v)
+{
+	T xmax = v.at(0).x;
+	for(sf::Vector2<T> vk: v)
+	{
+		if(vk.x > xmax) xmax = vk.x;
+	}
+	return xmax;
+}
+
+template<typename T>
+T getxmin(const vector<sf::Vector2<T>>& v)
+{
+	T xmin = v.at(0).x;
+	for(sf::Vector2<T> vk: v)
+	{
+		if(vk.x < xmin) xmin = vk.x;
+	}
+	return xmin;
+}
+
+template<typename T>
+T getymax(const vector<sf::Vector2<T>>& v)
+{
+	T ymax = v.at(0).y;
+	for(sf::Vector2<T> vk: v)
+	{
+		if(vk.y > ymax) ymax = vk.y;
+	}
+	return ymax;
+}
+
+template<typename T>
+T getymin(const vector<sf::Vector2<T>>& v)
+{
+	T ymin = v.at(0).y;
+	for(sf::Vector2<T> vk: v)
+	{
+		if(vk.y < ymin) ymin = vk.y;
+	}
+	return ymin;
+}
+
 } /* namespace dfv */
 #endif /* UTILS_H_ */

@@ -538,10 +538,47 @@ bool Map::addLot(unsigned int xmin, unsigned int ymin, unsigned int xmax,
 	return true;
 }
 
+bool Map::addLot(const vector<sf::Vector2i>& tileIdList)
+{
+	vector<Quad> tileQuads;
+	for(const sf::Vector2i& id: tileIdList)
+	{
+		if(!this->contains(id))
+		{
+			// tile doesn't exist
+			return false;
+		}
+		if(!this->getTile(id).canHaveLot())
+		{
+			// Lot cannot be placed here
+			return false;
+		}
+		tileQuads.push_back(this->getTile(id).getQuad());
+	}
+
+	// Everything is fine, we can create the lot
+	Lot* lpNewLot = new Lot(tileIdList, tileQuads, tileQuads.at(0).getVertex(0));
+	for(const sf::Vector2i& id: tileIdList)
+	{
+		this->getTile(id).addLot(lpNewLot);
+		if(tileIdList.size() > 1)
+		{
+			this->getTile(id).setColor(Tile::randomSidewalkColor());
+		}
+	}
+	this->lpLots.push_back(lpNewLot);
+	return true;
+}
+
 Lot* Map::getLot(unsigned int x, unsigned int y) const
 {
 	//return this->lp_tiles.at(x).at(y)->lpLot;
 	return this->getTile(x, y).getLot();
+}
+
+vector<Lot*> Map::getLots() const
+{
+	return this->lpLots;
 }
 
 Tile& Map::getTile(int x, int y) const
@@ -631,6 +668,7 @@ string osString(size_t level, const string& name, const Map& map)
 	ss << osString(level+1, "name", map.getName());
 	ss << osString(level+1, "size", map.getSize());
 	ss << osString(level+1, "tiles", map.lp_tiles, "Tile");
+	ss << osString(level+1, "lots", map.lpLots);
 	ss << strRepeat(level, string("\t")) << "}\n";
 	return ss.str();
 }
@@ -678,10 +716,51 @@ bool isRead(Serializer& ser, Map& map)
 					{
 						pos = ser.read(reading);
 						assert(pos == Serializer::Reading::OBJECT_START);
-						//cout << "Creating tile @" << i << "," << j << endl;
 						Tile* lpTile = new Tile;
 						isRead(ser, *lpTile);
 						map.lp_tiles.at(i).at(j) = lpTile;
+					}
+				}
+			}
+			if(reading.name == "lots")
+			{
+				bool finished = false;
+				while(!finished)
+				{
+					pos = ser.read(reading);
+					if(pos == Serializer::Reading::OBJECT_START)
+					{
+						size_t idCount;
+						vector<sf::Vector2i> idList;
+						bool finished = false;
+						while(!finished)
+						{
+							pos = ser.read(reading);
+							if(pos == Serializer::Reading::OBJECT_END)
+							{
+								finished = true;
+							}
+							else if(pos == Serializer::Reading::VALUE)
+							{
+								if(reading.name == "idCount")
+								{
+									isRead(reading, idCount);
+								}
+							}
+							else if(pos == Serializer::Reading::ARRAY_START)
+							{
+								if(reading.name == "tileIds")
+								{
+									isRead(ser, idList);
+									assert(idList.size() == idCount);
+								}
+							}
+						}
+						map.addLot(idList);
+					}
+					else if(pos == Serializer::Reading::ARRAY_END)
+					{
+						finished = true;
 					}
 				}
 			}

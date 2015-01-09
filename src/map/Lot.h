@@ -65,6 +65,11 @@ public:
 	float getStructureHeight() const;
 	unsigned int getStructureFloorCount() const;
 
+	friend string osString(size_t level, const string& name, const Lot& lot);
+	friend string osString(size_t level, const string& name, const Lot* lpLot);
+	friend string osString(size_t level, const string& name, const vector<Lot*>& lpLots);
+	friend bool isRead(Serializer& ser, Lot& lot);
+
 private:
 	sf::Vector3f origin;
 	std::vector<Structure*> lpStructures;
