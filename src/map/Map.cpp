@@ -689,6 +689,296 @@ ostream& operator<<(ostream& os, Map& map)
 	return os;
 }
 
+void Map::buildRandomCity(const sf::Vector2f& center, float distribParam)
+{
+	default_random_engine generator;
+	// create roads
+	cout << "Creating roads" << endl;
+	for(unsigned int i = 0; i < this->getSize(); i++)
+	{
+		for(unsigned int j = 0; j < this->getSize(); j++)
+		{
+			Tile& tile = this->getTile(i, j);
+			if(tile.canBuildRoad())
+			{
+				if(((i%6 == 0) || (i%30 == 1)) && !((j%6==0) || (j%30==1)))
+				{
+					tile.addRoad(Road::straight, 0);
+				}
+				else if(!((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
+				{
+					tile.addRoad(Road::straight, 1);
+				}
+				else if(((i%6 == 0) || (i%30 == 1)) && ((j%6==0) || (j%30==1)))
+				{
+					tile.addRoad(Road::cross, 0);
+				}
+			}
+		}
+	}
+
+	// Add random rondabouts
+	cout << "Adding roundabouts" << endl;
+	for(size_t k = 0; k < 100000; k++)
+	{
+		uniform_int_distribution<int> distribution(1, this->getSize()-2);
+		size_t x = distribution(generator);
+		size_t y = distribution(generator);
+		cout << "Trying to add roundabout @" << x << "," << y << endl;
+		Tile& tile = this->getTile(x, y);
+		// make sure it's a cross
+		if(tile.hasRoad())
+		{
+			if(this->getTile(x, y).getRoad()->getId() == Road::cross)
+			{
+				if(this->getTile(x, y).canBuildRoad() &&
+				   this->getTile(x+1, y).canBuildRoad() &&
+				   this->getTile(x+1, y+1).canBuildRoad() &&
+				   this->getTile(x, y+1).canBuildRoad() &&
+				   this->getTile(x-1, y+1).canBuildRoad() &&
+				   this->getTile(x-1, y).canBuildRoad() &&
+				   this->getTile(x-1, y-1).canBuildRoad() &&
+				   this->getTile(x, y-1).canBuildRoad() &&
+				   this->getTile(x+1, y-1).canBuildRoad() &&
+				   !this->getTile(x+1, y+1).hasRoad() &&
+				   !this->getTile(x-1, y+1).hasRoad() &&
+				   !this->getTile(x-1, y-1).hasRoad() &&
+				   !this->getTile(x+1, y-1).hasRoad())
+				{
+					cout << "Added roundabout @" << x << "," << y << endl;
+					this->getTile(x, y).addRoad(Road::roundabout_center, 0);
+					this->getTile(x+1, y).addRoad(Road::roundabout_exit, 1);
+					this->getTile(x+1, y+1).addRoad(Road::roundabout_corner, 3);
+					this->getTile(x, y+1).addRoad(Road::roundabout_exit, 0);
+					this->getTile(x-1, y+1).addRoad(Road::roundabout_corner, 2);
+					this->getTile(x-1, y).addRoad(Road::roundabout_exit, 3);
+					this->getTile(x-1, y-1).addRoad(Road::roundabout_corner, 1);
+					this->getTile(x, y-1).addRoad(Road::roundabout_exit, 2);
+					this->getTile(x+1, y-1).addRoad(Road::roundabout_corner, 0);
+				}
+			}
+		}
+	}
+
+	// Fix road connections
+	cout << "Fixing road connections" << endl;
+	for(size_t x = 1; x < this->getSize()-1; x++)
+	{
+		for(size_t y = 1; y < this->getSize()-1; y++)
+		{
+			// x-crosses to t-crosses
+			sf::Vector2i pos(x, y);
+			if(this->getTile(pos).hasRoad())
+			{
+				if(this->getTile(pos).getRoad()->getId() == Road::cross)
+				{
+					vector<string> pattern = this->getRoadPattern(sf::Vector2i(x, y), 1);
+					vector<string> matchPattern;
+					matchPattern = {" | ",
+							        "-+-",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::tcross);
+						this->getTile(pos).getRoad()->setOrientation(0);
+						continue;
+					}
+					matchPattern = {" | ",
+							        " +-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::tcross);
+						this->getTile(pos).getRoad()->setOrientation(1);
+						continue;
+					}
+					matchPattern = {"   ",
+							        "-+-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::tcross);
+						this->getTile(pos).getRoad()->setOrientation(2);
+						continue;
+					}
+					matchPattern = {" | ",
+							        "-+ ",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::tcross);
+						this->getTile(pos).getRoad()->setOrientation(3);
+						continue;
+					}
+					matchPattern = {" | ",
+							        " +-",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::curve);
+						this->getTile(pos).getRoad()->setOrientation(0);
+						continue;
+					}
+					matchPattern = {"   ",
+							        " +-",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::curve);
+						this->getTile(pos).getRoad()->setOrientation(1);
+						continue;
+					}
+					matchPattern = {"   ",
+							        "-+ ",
+							        " | "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::curve);
+						this->getTile(pos).getRoad()->setOrientation(2);
+						continue;
+					}
+					matchPattern = {" | ",
+							        "-+ ",
+							        "   "};
+					if(matchPattern == pattern)
+					{
+						cout << "Fixing cross" << endl;
+						this->getTile(pos).getRoad()->setType(Road::curve);
+						this->getTile(pos).getRoad()->setOrientation(3);
+						continue;
+					}
+
+				}
+			}
+		}
+	}
+
+	// generate random trees
+	cout << "Creating trees" << endl;
+	//Tree* lp_tree = new Tree();
+	for(unsigned int i = 0; i < pow(this->getSize(), 2)/4; i++)
+	{
+		uniform_int_distribution<int> distribution(0, this->getSize()-1);
+		size_t x = distribution(generator);
+		size_t y = distribution(generator);
+		Tile& tile = this->getTile(x, y);
+		if(!tile.isWater() && !tile.isBeach() && tile.getQuad().getAvgHeight() < 45.f &&
+		   !tile.hasRoad() && !tile.hasProp() && tile.getQuad().getMaxInclination() < 0.6f)
+		{
+			//lp_tree = new Tree();
+			//vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
+			//lp_tree->create(tile_vertices, rand() % 2);
+			//tile.addProp(lp_tree);
+			tile.addProp(Prop::TREE, rand() % 2);
+		}
+	}
+
+	// generate lots
+	cout << "Creating structures" << endl;
+	//unsigned int buildings = 0;
+	//unsigned int floors = 0;
+	//unsigned int homes = 0;
+	//unsigned int population = 0;
+
+	for(unsigned int i = 0; i < 5000000; i++)
+	{
+		unsigned int xmin = rand() % this->getSize();
+		unsigned int ymin = rand() % this->getSize();
+		float distToCenter = sqrt(static_cast<float>(pow(static_cast<int>(xmin)-center.x, 2) + pow(static_cast<int>(ymin)-center.y, 2)));
+		size_t size_x, size_y;
+		if(distToCenter < 2.f * distribParam)
+		{
+			size_x = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(5.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
+		else if(distToCenter < 3.f * distribParam)
+		{
+			size_x = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(3.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
+		else
+		{
+			size_x = 1 + floor(1.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+			size_y = 1 + floor(1.f * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 2.f) + 0.5f);
+		}
+
+		vector<sf::Vector2i> idList;
+		for(int x = xmin; x < xmin+size_x; x++)
+		{
+			for(int y = ymin; y < ymin+size_y; y++)
+			{
+				idList.push_back(sf::Vector2i(x, y));
+			}
+		}
+
+		// If a lot could be added to the map
+		//if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
+		if(this->getTile(xmin, ymin).getQuad().getAvgHeight() > 9.f)
+		{
+			continue;
+		}
+		if(this->addLot(idList))
+		{
+			Model model;
+			Lot* lp_lot = this->getLot(xmin, ymin);
+			Quad base_quad;
+			std::vector<sf::Vector3f> base_vertices;
+			if(distToCenter > 2.f*distribParam)
+			{
+				base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+								 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+			}
+			else
+			{
+				if(rand() % 2 == 0)
+				{
+						base_vertices = {sf::Vector3f(0.f, 0.f, 0.0),
+									     sf::Vector3f(size_x, 0.f, 0.0),
+									     sf::Vector3f(size_x, size_y, 0.0),
+									     sf::Vector3f(0.f, size_y, 0.0)};
+				}
+				else
+				{
+					base_vertices = {sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.f, 0.4*size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.6*size_x, size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0),
+									 sf::Vector3f(Utils::floatRandom(0.f, 0.4*size_x), Utils::floatRandom(0.6*size_y, size_y), 0.0)};
+				}
+			}
+			base_quad.create(base_vertices);
+
+			float kCenter = exp(-pow(distToCenter/distribParam, 2.f));
+			unsigned int floor_count = floor(25.f* kCenter * float(size_x*size_y) * Utils::rFunction(Utils::floatRandom(0.f, 1.f), 1));
+			if(rand() % 10 == 0)
+			{
+				floor_count++;
+			}
+			model.create(lp_lot->getMinHeight(), lp_lot->getMaxHeight(), lp_lot->getOrigin2d(), base_quad, floor_count);
+
+			Structure* lp_structure = new Structure();
+			lp_structure->setModel(model);
+			lp_lot->addStructure(lp_structure);
+
+			//buildings++;
+			//floors += floor_count;
+			unsigned int home_count = (floor_count+1) * size_x * size_y;
+			//homes += home_count;
+			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
+			//population += inhabitant_count;
+			lp_lot->setInhabitants(inhabitant_count);
+		}
+	}
+}
+
 bool isRead(Serializer& ser, Map& map)
 {
 	bool finished = false;

@@ -107,6 +107,8 @@ public:
 	void deserialize(const string& filename);
 	size_t getInhabitantCount() const;
 
+	void buildRandomCity(const sf::Vector2f& center, float distribParam);
+
 	HeightMap heightMap;
 
 	friend string osString(size_t level, const string& name, const Map& map);

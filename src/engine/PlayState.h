@@ -60,6 +60,14 @@ public:
 		Driving
 	};
 
+	enum LoadMode
+	{
+		TERRAIN,
+		CITY
+	};
+
+	void setLoadMode(LoadMode loadMode);
+
 	void init(GameEngine* lp_game_engine);
 	void cleanup();
 	void pause();
@@ -87,6 +95,7 @@ private:
 	static PlayState play_state;
 	Component root_component;
 
+	LoadMode loadMode;
 	sf::Clock clock;
 	dfv::Map map;
 	unsigned int frame;

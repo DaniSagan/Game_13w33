@@ -13,6 +13,11 @@ namespace dfv
 
 PlayState PlayState::play_state;
 
+void PlayState::setLoadMode(LoadMode loadMode)
+{
+	this->loadMode = loadMode;
+}
+
 void PlayState::init(GameEngine* lp_game_engine)
 {
 	assert(this->test());
@@ -29,20 +34,39 @@ void PlayState::init(GameEngine* lp_game_engine)
 		this->cmd_server.run();
 	}
 
-	// Execute folder select dialog
-	string filePath = Utils::exec("python script/filemanager.py f");
-	string cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
-	cout << cityName << endl;
-
-	// Path to the .cfg file
-	string fileName = filePath + "/" + cityName + ".cfg";
-	cout << "File name: " << fileName << endl;
-	SimpleParser parser;
-	parser.parse(fileName);
-
 	Serializer ser;
-	ser.openInFile("testmap5.txt");
-	isRead(ser, this->map);
+	string cityName;
+	if(this->loadMode == TERRAIN)
+	{
+		// Execute folder select dialog
+		string filePath = Utils::exec("python script/filemanager.py f");
+		cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
+		cout << cityName << endl;
+
+		// Path to the .cfg file
+		string fileName = filePath + "/" + cityName + ".cfg";
+		cout << "File name: " << fileName << endl;
+		SimpleParser parser;
+		parser.parse(fileName);
+
+		this->map.heightMap.minHeight = stof(parser.get("minheight"));
+		this->map.heightMap.maxHeight = stof(parser.get("maxheight"));
+		this->map.loadHeightMap(filePath + "/" + parser.get("heightmap"), 2);
+		this->map.setName(parser.get("name"));
+	}
+	else if(this->loadMode == CITY)
+	{
+		string filePath = Utils::exec("python script/filemanager.py t");
+		//cityName = filePath.substr(filePath.find_last_of("/"), filePath.size());
+		ser.openInFile(filePath);
+		isRead(ser, this->map);
+	}
+
+
+
+	//Serializer ser;
+	//ser.openInFile("testmap5.txt");
+	//isRead(ser, this->map);
 
 	default_random_engine generator;
 
@@ -249,7 +273,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	*/
 
 	// generate lots
-	cout << "Creating structures" << endl;
+	//cout << "Creating structures" << endl;
 	/*unsigned int buildings = 0;
 	unsigned int floors = 0;
 	unsigned int homes = 0;
@@ -262,7 +286,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 
 	// Position of the city center (CBD)
-	sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
+	//sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
 	/*
 	for(Lot* lpLot: this->map.getLots())
 	{
@@ -429,7 +453,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	Text* lp_stats_text = new Text(&this->gui_root, STATS_TEXT_BAR);
 	std::stringstream ss;
 	ss.imbue(std::locale(""));
-	ss << parser.get("name") + " ---- Population: " << population << " ---- Buildings: " << buildings;
+	ss << this->map.getName() + " ---- Population: " << this->map.getInhabitantCount() << " ---- Buildings: " << this->map.getLots().size();
 	lp_stats_text->text = ss.str();
 	lp_stats_text->setPosition(sf::Vector2f(0.f, 0.f));
 	lp_stats_text->txt_color = sf::Color::White;
@@ -476,12 +500,12 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 
 
-	cout << "Serializing..." << endl;
+	/*cout << "Serializing..." << endl;
 	Serializer serOut;
-	serOut.openOutFile("testmap6.txt");
+	serOut.openOutFile("saves/testmap6.txt");
 	serOut.write("map", this->map);
 	serOut.closeOutFile();
-	cout << "Finished serializing." << endl;
+	cout << "Finished serializing." << endl;*/
 
 
 	/*ser.openInFile("testmap.txt");
@@ -1030,6 +1054,7 @@ bool PlayState::test()
 }
 
 PlayState::PlayState():
+		loadMode(TERRAIN),
 		root_component(nullptr),
 		frame(0),
 		walking(false),

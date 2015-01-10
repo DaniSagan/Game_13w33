@@ -42,10 +42,13 @@ void StartMenuState::handleInput(GameEngine* lp_game_engine)
 			if(guiEvent.click.id == START_NEW_BUTTON)
 			{
 				cout << "Start new pressed" << endl;
+				PlayState::getInstance()->setLoadMode(PlayState::TERRAIN);
+				lp_game_engine->changeState(PlayState::getInstance());
 			}
 			else if(guiEvent.click.id == LOAD_BUTTON)
 			{
 				cout << "Load pressed" << endl;
+				PlayState::getInstance()->setLoadMode(PlayState::CITY);
 				lp_game_engine->changeState(PlayState::getInstance());
 			}
 			else if(guiEvent.click.id == GENERATE_NEW_BUTTON)
