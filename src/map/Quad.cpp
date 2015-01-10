@@ -141,10 +141,48 @@ string osString(size_t level, const string& name, const Quad& quad)
 	{
 		ss << strRepeat(level, string("\t")) << "Quad " << name << " = {" << endl;
 	}
-	ss << osString(level+1, "x", static_cast<int>(quad.vertices.at(0).x)) << endl;
-	ss << osString(level+1, "y", static_cast<int>(quad.vertices.at(0).y)) << endl;
+	ss << osString(level+1, "v0", quad.vertices.at(0));
+	ss << osString(level+1, "v1", quad.vertices.at(1));
+	ss << osString(level+1, "v2", quad.vertices.at(2));
+	ss << osString(level+1, "v3", quad.vertices.at(3));
 	ss << strRepeat(level, string("\t")) << "}" << endl;
 	return ss.str();
+}
+
+bool isRead(Serializer& ser, Quad& quad)
+{
+	sf::Vector3f v0, v1, v2, v3;
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos = ser.read(reading);
+		if(pos == Serializer::Reading::OBJECT_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::VALUE)
+		{
+			if(reading.name == "v0")
+			{
+				isRead(reading, v0);
+			}
+			else if(reading.name == "v1")
+			{
+				isRead(reading, v1);
+			}
+			else if(reading.name == "v2")
+			{
+				isRead(reading, v2);
+			}
+			else if(reading.name == "v3")
+			{
+				isRead(reading, v3);
+			}
+		}
+	}
+	quad.create(v0, v1, v2, v3);
+	return true;
 }
 
 } /* namespace dfv */

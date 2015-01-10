@@ -39,7 +39,7 @@ Structure::~Structure()
 
 void Structure::setModel(const Model& model)
 {
-	this->model = model;
+	this->model = move(model);
 }
 
 void Structure::drawBox() const
@@ -60,6 +60,79 @@ float Structure::getModelHeight() const
 unsigned int Structure::getModelFloorCount() const
 {
 	return this->model.getFloorCount();
+}
+
+string osString(size_t level, const string& name, const Structure& structure)
+{
+	stringstream ss;
+	if(name.empty())
+	{
+		ss << strRepeat(level, string("\t")) << "{" << endl;
+	}
+	else
+	{
+		ss << strRepeat(level, string("\t")) << "Structure " << name << " = {" << endl;
+	}
+	ss << osString(level+1, "model", structure.model);
+	ss << strRepeat(level, string("\t")) << "}" << endl;
+	return ss.str();
+}
+
+string osString(size_t level, const string& name, const vector<Structure*>& lpStructures)
+{
+	stringstream ss;
+	ss << strRepeat(level, "\t") << "Structure" << "[" << lpStructures.size() << "] " << name << " = [" << "\n";
+	for(const Structure* lpStructure: lpStructures)
+	{
+		ss << osString(level+1, string(""), *lpStructure);
+	}
+	ss << strRepeat(level, "\t") << "]\n";
+	return ss.str();
+}
+
+bool isRead(Serializer& ser, Structure& structure)
+{
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos = ser.read(reading);
+		if(pos == Serializer::Reading::OBJECT_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::OBJECT_START)
+		{
+			if(reading.name == "model")
+			{
+				Model model;
+				isRead(ser, model);
+				structure.setModel(model);
+			}
+		}
+	}
+	return true;
+}
+
+bool isRead(Serializer& ser, vector<Structure*>& lpStructures)
+{
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos = ser.read(reading);
+		if(pos == Serializer::Reading::ARRAY_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::OBJECT_START)
+		{
+			Structure* lpStructure = new Structure();
+			isRead(ser, *lpStructure);
+			lpStructures.push_back(lpStructure);
+		}
+	}
+	return true;
 }
 
 } /* namespace dfv */

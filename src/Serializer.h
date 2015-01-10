@@ -77,6 +77,9 @@ bool isRead(const Serializer::Reading& reading, float& var);
 string osString(size_t level, const string& name, const string& value);
 bool isRead(const Serializer::Reading& reading, string& var);
 
+string osString(size_t level, const string& name, const sf::Vector2f& value);
+bool isRead(const Serializer::Reading& reading, sf::Vector2f& var);
+
 string osString(size_t level, const string& name, const sf::Vector3f& value);
 bool isRead(const Serializer::Reading& reading, sf::Vector3f& var);
 
@@ -87,6 +90,8 @@ string osString(size_t level, const string& name, const vector<sf::Vector2i>& va
 bool isRead(Serializer& ser, vector<sf::Vector2i>& var);
 
 string osString(size_t level, const string& name, const sf::Color& value);
+
+bool testSerializer();
 
 } /* namespace dfv */
 

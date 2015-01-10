@@ -25,7 +25,10 @@
 #define STRUCTURE_H_
 
 #include <SFML/Graphics.hpp>
+#include <utility>
+#include <vector>
 #include "Model.h"
+#include "../Serializer.h"
 
 namespace dfv
 {
@@ -42,6 +45,12 @@ public:
 
 	float getModelHeight() const;
 	unsigned int getModelFloorCount() const;
+
+	friend string osString(size_t level, const string& name, const Structure& structure);
+	friend string osString(size_t level, const string& name, const vector<Structure*>& lpStructures);
+	friend bool isRead(Serializer& ser, Structure& structure);
+	friend bool isRead(Serializer& ser, vector<Structure*>& lpStructures);
+
 private:
 	Model model;
 };

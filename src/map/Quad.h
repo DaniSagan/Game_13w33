@@ -35,6 +35,7 @@ public:
 	float getMinHeight() const;
 	float getMaxheight() const;
 	friend string osString(size_t level, const string& name, const Quad& quad);
+	friend bool isRead(Serializer& ser, Quad& quad);
 protected:
 	std::vector<sf::Vector3f> vertices;
 	std::vector<sf::Vector3f> normals;

@@ -27,7 +27,9 @@ namespace dfv {
 
 Model::Model():
 		floor_count(0),
-		height(0)
+		height(0),
+		minTerrainHeight(0.f),
+		maxTerrainHeight(0.f)
 {
 	// TODO Auto-generated constructor stub
 
@@ -123,6 +125,11 @@ void Model::create(const Quad & tile_quad,
 	}
 }
 
+// @param min_terrain_height 	Minimum height of the terrain at the plot.
+// @param max_terrain_height 	Maximum height of the terrain at the plot.
+// @param position 				Coordinates of the origin point of the plot in world coordinates.
+// @param base_quad				Quad that defines the base of the building.
+// @param floor_count 			Number of floors of the building.
 void Model::create(const float min_terrain_height,
 		const float max_terrain_height, const sf::Vector2f& position,
 		const Quad& base_quad, unsigned int floor_count)
@@ -132,6 +139,11 @@ void Model::create(const float min_terrain_height,
 	const float floor_height = (floor_count > 30)? (4. / scale) : (3.f / scale);
 	const float margin = 0.015f;
 	const float line_width = 0.02f;
+
+	this->minTerrainHeight = min_terrain_height;
+	this->maxTerrainHeight = max_terrain_height;
+	this->position = position;
+	this->base_quad = base_quad;
 
 	const float building_height = floor_count * floor_height + street_height;
 	this->height = building_height;
@@ -209,6 +221,75 @@ unsigned int Model::getFloorCount() const
 float Model::getHeight() const
 {
 	return this->height;
+}
+
+string osString(size_t level, const string& name, const Model& model)
+{
+	stringstream ss;
+	if(name.empty())
+	{
+		ss << strRepeat(level, string("\t")) << "{" << endl;
+	}
+	else
+	{
+		ss << strRepeat(level, string("\t")) << "Model " << name << " = {" << endl;
+	}
+
+	ss << osString(level+1, "minTerrainHeight", model.minTerrainHeight);
+	ss << osString(level+1, "maxTerrainHeight", model.maxTerrainHeight);
+	ss << osString(level+1, "position", model.position);
+	ss << osString(level+1, "baseQuad", model.base_quad);
+	ss << osString(level+1, "floorCount", model.getFloorCount());
+	ss << strRepeat(level, string("\t")) << "}" << endl;
+	return ss.str();
+}
+
+bool isRead(Serializer& ser, Model& model)
+{
+	float minTerrainHeight;
+	float maxTerrainHeight;
+	sf::Vector2f position;
+	Quad baseQuad;
+	unsigned int floorCount;
+
+	bool finished = false;
+	while(!finished)
+	{
+		Serializer::Reading reading;
+		Serializer::Reading::Position pos = ser.read(reading);
+		if(pos == Serializer::Reading::OBJECT_END)
+		{
+			finished = true;
+		}
+		else if(pos == Serializer::Reading::VALUE)
+		{
+			if(reading.name == "minTerrainHeight")
+			{
+				isRead(reading, minTerrainHeight);
+			}
+			else if(reading.name == "maxTerrainHeight")
+			{
+				isRead(reading, maxTerrainHeight);
+			}
+			else if(reading.name == "position")
+			{
+				isRead(reading, position);
+			}
+			else if(reading.name == "floorCount")
+			{
+				isRead(reading, floorCount);
+			}
+		}
+		else if(pos == Serializer::Reading::OBJECT_START)
+		{
+			if(reading.name == "baseQuad")
+			{
+				isRead(ser, baseQuad);
+			}
+		}
+	}
+	model.create(minTerrainHeight, maxTerrainHeight, position, baseQuad, floorCount);
+	return true;
 }
 
 } /* namespace dfv */

@@ -30,6 +30,7 @@
 #include <cassert>
 #include "../Utils.h"
 #include "Quad.h"
+#include "../Serializer.h"
 
 namespace dfv {
 
@@ -53,13 +54,18 @@ public:
 	unsigned int getFloorCount() const;
 	float getHeight() const;
 
+	friend string osString(size_t level, const string& name, const Model& model);
+	friend bool isRead(Serializer& ser, Model& model);
+
 private:
 	Quad base_quad;
 	std::vector<Quad> facade_quads;
 	std::vector<Quad> outline_quads;
 	unsigned int floor_count;
 	float height;
-
+	float minTerrainHeight;
+	float maxTerrainHeight;
+	sf::Vector2f position;
 };
 
 } /* namespace dfv */

@@ -105,6 +105,7 @@ public:
 	string getName() const;
 	void setName(const string& name);
 	void deserialize(const string& filename);
+	size_t getInhabitantCount() const;
 
 	HeightMap heightMap;
 

@@ -41,7 +41,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 	parser.parse(fileName);
 
 	Serializer ser;
-	ser.openInFile("testmap4.txt");
+	ser.openInFile("testmap5.txt");
 	isRead(ser, this->map);
 
 	default_random_engine generator;
@@ -250,14 +250,20 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	// generate lots
 	cout << "Creating structures" << endl;
-	unsigned int buildings = 0;
+	/*unsigned int buildings = 0;
 	unsigned int floors = 0;
 	unsigned int homes = 0;
-	unsigned int population = 0;
+	unsigned int population = 0;*/
+	unsigned int buildings = this->map.getLots().size();
+	unsigned int floors = 0;
+	unsigned int homes = 0;
+	unsigned int population = this->map.getInhabitantCount();
+
+
 
 	// Position of the city center (CBD)
 	sf::Vector2i center(stof(parser.get("centerx")), stof(parser.get("centery")));
-
+	/*
 	for(Lot* lpLot: this->map.getLots())
 	{
 		vector<sf::Vector2i> tileIds = lpLot->getTileIndices();
@@ -279,10 +285,10 @@ void PlayState::init(GameEngine* lp_game_engine)
 		{
 			if(rand() % 2 == 0)
 			{
-					base_vertices = {sf::Vector3f(0.f, 0.f, 0.0),
-									 sf::Vector3f(size_x, 0.f, 0.0),
-									 sf::Vector3f(size_x, size_y, 0.0),
-									 sf::Vector3f(0.f, size_y, 0.0)};
+				base_vertices = {sf::Vector3f(0.f, 0.f, 0.0),
+								 sf::Vector3f(size_x, 0.f, 0.0),
+								 sf::Vector3f(size_x, size_y, 0.0),
+								 sf::Vector3f(0.f, size_y, 0.0)};
 			}
 			else
 			{
@@ -313,7 +319,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 		unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
 		population += inhabitant_count;
 		lpLot->setInhabitants(inhabitant_count);
-	}
+	}*/
 
 	/*
 	for(unsigned int i = 0; i < 5000000; i++)
@@ -472,7 +478,7 @@ void PlayState::init(GameEngine* lp_game_engine)
 
 	cout << "Serializing..." << endl;
 	Serializer serOut;
-	serOut.openOutFile("testmap5.txt");
+	serOut.openOutFile("testmap6.txt");
 	serOut.write("map", this->map);
 	serOut.closeOutFile();
 	cout << "Finished serializing." << endl;
@@ -1013,6 +1019,10 @@ void PlayState::generateLists()
 bool PlayState::test()
 {
 	if(!Utils::test())
+	{
+		return false;
+	}
+	if(!testSerializer())
 	{
 		return false;
 	}

@@ -188,6 +188,9 @@ string osString(size_t level, const string& name, const Lot& lot)
 	// TODO lot serialization
 	ss << osString(level+1, "idCount", lot.tileIndices.size());
 	ss << osString(level+1, "tileIds", lot.tileIndices);
+	ss << osString(level+1, "structures", lot.lpStructures);
+	ss << osString(level+1, "inhabitants", lot.getInhabitants());
+	ss << osString(level+1, "jobs", lot.getJobs());
 
 	ss << strRepeat(level, string("\t")) << "}" << endl;
 	return ss.str();

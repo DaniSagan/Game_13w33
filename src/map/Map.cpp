@@ -661,6 +661,16 @@ void Map::deserialize(const string& filename)
 	isRead(ser, *this);
 }
 
+size_t Map::getInhabitantCount() const
+{
+	size_t count = 0;
+	for(Lot* lpLot: this->lpLots)
+	{
+		count += lpLot->getInhabitants();
+	}
+	return count;
+}
+
 string osString(size_t level, const string& name, const Map& map)
 {
 	stringstream ss;
@@ -728,14 +738,19 @@ bool isRead(Serializer& ser, Map& map)
 				while(!finished)
 				{
 					pos = ser.read(reading);
-					if(pos == Serializer::Reading::OBJECT_START)
+					if(pos == Serializer::Reading::OBJECT_START) // a lot
 					{
 						size_t idCount;
 						vector<sf::Vector2i> idList;
+						vector<Structure*> lpStructures;
+						unsigned int inhabitants = 0;
+						unsigned int jobs = 0;
+						cout << "Reading a lot" << endl;
 						bool finished = false;
 						while(!finished)
 						{
 							pos = ser.read(reading);
+
 							if(pos == Serializer::Reading::OBJECT_END)
 							{
 								finished = true;
@@ -746,6 +761,14 @@ bool isRead(Serializer& ser, Map& map)
 								{
 									isRead(reading, idCount);
 								}
+								else if(reading.name == "inhabitants")
+								{
+									isRead(reading, inhabitants);
+								}
+								else if(reading.name == "jobs")
+								{
+									isRead(reading, jobs);
+								}
 							}
 							else if(pos == Serializer::Reading::ARRAY_START)
 							{
@@ -754,9 +777,21 @@ bool isRead(Serializer& ser, Map& map)
 									isRead(ser, idList);
 									assert(idList.size() == idCount);
 								}
+								else if(reading.name == "structures")
+								{
+									isRead(ser, lpStructures);
+									assert(lpStructures.size() >= 1);
+								}
 							}
 						}
 						map.addLot(idList);
+						Lot* lpLot = map.getTile(idList.at(0)).getLot();
+						lpLot->setInhabitants(inhabitants);
+						lpLot->setJobs(jobs);
+						for(Structure* lpStructure: lpStructures)
+						{
+							lpLot->addStructure(lpStructure);
+						}
 					}
 					else if(pos == Serializer::Reading::ARRAY_END)
 					{
