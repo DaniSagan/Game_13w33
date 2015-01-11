@@ -32,6 +32,7 @@ def main():
         openFileDialog = wx.FileDialog(None, "Open file", "", "",
                                        "Text file (*.txt)|*.txt",
                                        wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        openFileDialog.SetDirectory("saves/")
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
             return 0
         sys.stdout.write(openFileDialog.GetPath().encode('utf-8'))

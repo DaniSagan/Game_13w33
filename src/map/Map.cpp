@@ -80,29 +80,7 @@ void Map::create(size_t size)
 {
 	cout << "Creating map of size " << size << endl;
 	this->size = size;
-
-	/*
-	this->heights.resize(size + 1);
-	for(std::size_t i = 0; i < this->heights.size(); i++)
-	{
-		this->heights[i].resize(size + 1);
-		for(std::size_t j = 0; j < this->heights.size(); j++)
-		{
-			this->heights.at(i).at(j) = 0.f;
-		}
-	}*/
-
-	/*this->lp_tiles.resize(size);
-	for(std::size_t i = 0; i < this->lp_tiles.size(); i++)
-	{
-		this->lp_tiles.at(i).resize(size);
-		for(std::size_t j = 0; j < this->lp_tiles.size(); j++)
-		{
-			this->lp_tiles.at(i).at(j) = nullptr;
-		}
-	}*/
 	this->lp_tiles = vector<vector<Tile*>>(size, vector<Tile*>(size, nullptr));
-
 	this->sky.create(2000, sf::Vector2f(this->size/2, this->size/2), "res/bg/bg.png");
 }
 
@@ -872,21 +850,12 @@ void Map::buildRandomCity(const sf::Vector2f& center, float distribParam)
 		if(!tile.isWater() && !tile.isBeach() && tile.getQuad().getAvgHeight() < 45.f &&
 		   !tile.hasRoad() && !tile.hasProp() && tile.getQuad().getMaxInclination() < 0.6f)
 		{
-			//lp_tree = new Tree();
-			//vector<sf::Vector3f> tile_vertices = this->map.getTile(x, y).getVertices();//this->map.getTileVertices(sf::Vector2i(x, y));
-			//lp_tree->create(tile_vertices, rand() % 2);
-			//tile.addProp(lp_tree);
 			tile.addProp(Prop::TREE, rand() % 2);
 		}
 	}
 
 	// generate lots
 	cout << "Creating structures" << endl;
-	//unsigned int buildings = 0;
-	//unsigned int floors = 0;
-	//unsigned int homes = 0;
-	//unsigned int population = 0;
-
 	for(unsigned int i = 0; i < 5000000; i++)
 	{
 		unsigned int xmin = rand() % this->getSize();
@@ -919,7 +888,6 @@ void Map::buildRandomCity(const sf::Vector2f& center, float distribParam)
 		}
 
 		// If a lot could be added to the map
-		//if(this->map.addLot(xmin, ymin, xmin + (size_x-1), ymin + (size_y-1)))
 		if(this->getTile(xmin, ymin).getQuad().getAvgHeight() > 9.f)
 		{
 			continue;
@@ -968,12 +936,8 @@ void Map::buildRandomCity(const sf::Vector2f& center, float distribParam)
 			lp_structure->setModel(model);
 			lp_lot->addStructure(lp_structure);
 
-			//buildings++;
-			//floors += floor_count;
 			unsigned int home_count = (floor_count+1) * size_x * size_y;
-			//homes += home_count;
 			unsigned int inhabitant_count = static_cast<int>(float(home_count) * 2.61 * Utils::floatRandom(0.4, 1.6));
-			//population += inhabitant_count;
 			lp_lot->setInhabitants(inhabitant_count);
 		}
 	}
