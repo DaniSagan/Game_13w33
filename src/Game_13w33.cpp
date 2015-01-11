@@ -18,9 +18,21 @@
 #include "engine/GameEngine.h"
 #include "engine/StartMenuState.h"
 #include <SFML/Graphics.hpp>
+#include <gtest/gtest.h>
 
-int main()
+int main(int argc, char* argv[])
 {
+	::testing::InitGoogleTest(&argc, argv);
+	bool testsPassed = !RUN_ALL_TESTS();
+	if(testsPassed)
+	{
+		cout << "All tests passed." << endl;
+	}
+	else
+	{
+		cout << "There were tests not passed." << endl;
+		return EXIT_FAILURE;
+	}
 	dfv::GameEngine gameEngine;
 	gameEngine.changeState(dfv::StartMenuState::getInstance());
 	while(gameEngine.isRunning())
@@ -29,5 +41,5 @@ int main()
 		gameEngine.update();
 		gameEngine.draw();
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }

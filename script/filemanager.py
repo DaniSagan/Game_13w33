@@ -15,8 +15,8 @@ def main():
             return 0
         sys.stdout.write(openFileDialog.GetPath().encode('utf-8'))
     elif sys.argv[1] == 's':
-        saveFileDialog = wx.FileDialog(None, "Guardar archivo", "", "",
-                                       "archivo PDF (*.pdf)|*.pdf",
+        saveFileDialog = wx.FileDialog(None, "Save city", "", "",
+                                       "Text file (*.txt)|*.txt",
                                        wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if saveFileDialog.ShowModal() == wx.ID_CANCEL:
             return 0

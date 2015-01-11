@@ -66,6 +66,12 @@ public:
 		CITY
 	};
 
+	enum Tool
+	{
+		NONE,
+		ROAD
+	};
+
 	void setLoadMode(LoadMode loadMode);
 
 	void init(GameEngine* lp_game_engine);
