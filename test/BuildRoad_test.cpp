@@ -6,7 +6,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "BuildRoad.h"
+#include "../src/tool/BuildRoad.h"
 
 TEST(buidRoadTest, getTilePosTest)
 {
