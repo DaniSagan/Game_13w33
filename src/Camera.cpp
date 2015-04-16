@@ -371,6 +371,14 @@ void Camera::update(float dt, float map_height, sf::Vector3f& normal)
 	}
 }
 
+void Camera::moveForward(float ds)
+{
+	float ang = this->getRpy().z * M_PI / 180.0;
+	float angx = this->getRpy().x * M_PI / 180.0;
+	sf::Vector3f direction = sf::Vector3f(-sin(ang) * sin(angx), -cos(ang) * sin(angx), -cos(angx));
+	this->move(sf::Vector3f(direction.x*ds, direction.y*ds, direction.z*ds));
+}
+
 float Camera::getCarSpeed() const
 {
 	return this->car.getSpeed();

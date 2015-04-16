@@ -423,6 +423,18 @@ bool PlayState::executeCmd(const std::string& cmd, GameEngine* lp_game_engine)
 			std::cout << "Map saving not implemented " << std::endl;
 			return true;
 		}
+		else if(tokens.at(0) == std::string("turn_left"))
+		{
+			cameraInstance.rotate(sf::Vector3f(0.f, 0.f, -10.f));
+		}
+		else if(tokens.at(0) == std::string("turn_right"))
+		{
+			cameraInstance.rotate(sf::Vector3f(0.f, 0.f, 10.f));
+		}
+		else if(tokens.at(0) == std::string("move_forward"))
+		{
+			cameraInstance.moveForward(10.f);
+		}
 		else if(tokens.at(0) == std::string("select"))
 		{
 			if(tokens.at(1) == std::string("from") && tokens.at(4) == std::string("to"))

@@ -80,6 +80,7 @@ public:
 	void setView(const sf::Window& window) const;
 	void handleInput(sf::Event& event);
 	void update(float dt, float map_height, sf::Vector3f& normal);
+	void moveForward(float ds);
 	float getCarSpeed() const;
 	float getMotorRPM() const;
 	unsigned int getCarGear() const;

@@ -11,6 +11,9 @@
 namespace dfv
 {
 
+// Serializer test
+// write some variables to a file and read the same file back
+// check if corresponding values (written and read) are the same.
 TEST(serializerTest, serializationTest)
 {
 	Serializer ser;
@@ -24,6 +27,9 @@ TEST(serializerTest, serializationTest)
 
 	size_t testSizeT = 1234;
 	ser.write("testSizeT", testSizeT);
+
+	unsigned int testUnsignedInt = 1234;
+	ser.write("testUnsignedInt", testUnsignedInt);
 
 	float testFloat = 1234.f;
 	ser.write("testFloat", testFloat);
@@ -65,6 +71,12 @@ TEST(serializerTest, serializationTest)
 				float readValue;
 				isRead(reading, readValue);
 				ASSERT_FLOAT_EQ(readValue, testFloat);
+			}
+			else if(reading.name == "testUnsignedInt")
+			{
+				float readValue;
+				isRead(reading, readValue);
+				ASSERT_FLOAT_EQ(readValue, testUnsignedInt);
 			}
 		}
 	}
